@@ -25,10 +25,10 @@
  */
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { GitFork, List } from "lucide-react";
 
 import { FlowBuilder } from "./flow-builder";
-import { FlowCanvas } from "./flow-canvas";
 import { FlowEditorProvider } from "./flow-editor-state";
 import { EditorHeader } from "./header";
 import { ValidationPanel } from "./validation-panel";
@@ -48,6 +48,23 @@ const MOBILE_BREAKPOINT = "(max-width: 767px)";
 type View = "canvas" | "list";
 
 const STORAGE_KEY = "wacrm.flowEditor.view";
+
+// @xyflow/react (+ its stylesheet) is one of the heaviest client
+// dependencies in the app but only ever renders inside this editor.
+// Splitting it into its own chunk keeps it out of the initial JS for
+// every other route and lets the toolbar/header above paint before
+// the canvas library finishes downloading.
+const FlowCanvas = dynamic(
+  () => import("./flow-canvas").then((m) => m.FlowCanvas),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    ),
+  },
+);
 
 // Legend covers every node type, derived from NODE_META so a new type
 // can't silently go undocumented. NODE_META's key order already reads
@@ -106,7 +123,7 @@ export function FlowEditorShell({ initialFlow, initialNodes }: Props) {
           <div className="flex items-center gap-4 px-6 py-3.5">
             <div
               role="group"
-              aria-label="Editor view"
+              aria-label={t("editorViewGroupAria")}
               className="inline-flex gap-0.5 rounded-lg border border-border bg-muted p-0.5"
             >
               <SegButton

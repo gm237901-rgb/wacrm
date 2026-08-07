@@ -547,7 +547,7 @@ export function TemplateManager() {
                                 ? 'text-yellow-400'
                                 : 'text-red-400'
                           }`}
-                          title="Meta quality score"
+                          title={t('qualityScoreTitle')}
                         >
                           {template.quality_score}
                         </span>
@@ -707,7 +707,7 @@ export function TemplateManager() {
                 <Label className="text-muted-foreground">{t('language')}</Label>
                 <Input
                   list="template-language-codes"
-                  placeholder="en_US"
+                  placeholder="pt_BR"
                   value={form.language}
                   onChange={(e) =>
                     setForm({ ...form, language: e.target.value })
@@ -775,7 +775,7 @@ export function TemplateManager() {
                 <div className="space-y-2 mt-2">
                   <Input
                     id="template-header-text"
-                    aria-label="Header text"
+                    aria-label={t('headerTextAria')}
                     placeholder={t('headerTextPlaceholder')}
                     value={form.header_content}
                     onChange={(e) =>
@@ -845,7 +845,7 @@ export function TemplateManager() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={form.header_media_url}
-                      alt="Header sample"
+                      alt={t('headerSampleImageAlt')}
                       className="max-h-28 rounded-md border border-border object-contain"
                     />
                   )}

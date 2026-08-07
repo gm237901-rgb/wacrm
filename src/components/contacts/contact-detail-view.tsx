@@ -6,11 +6,12 @@ import { addContactTag, deleteContactTag } from '@/lib/contacts/tag-api';
 import { useAuth } from '@/hooks/use-auth';
 import { formatCurrency } from '@/lib/currency';
 import { toast } from 'sonner';
-import type { Contact, Tag, ContactTag, ContactNote, CustomField, ContactCustomValue, Deal, MessageTemplate } from '@/types';
+import type { Contact, Tag, ContactTag, ContactNote, CustomField, ContactCustomValue, Deal, MessageTemplate, CalendarEvent } from '@/types';
 import {
   TemplatePicker,
   type TemplateSendValues,
 } from '@/components/inbox/template-picker';
+import { EventForm } from '@/components/agenda/event-form';
 import {
   Sheet,
   SheetContent,
@@ -39,6 +40,8 @@ import {
   X,
   DollarSign,
   LayoutTemplate,
+  CalendarDays,
+  Clock,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -96,6 +99,12 @@ export function ContactDetailView({
   // Deals tab
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loadingDeals, setLoadingDeals] = useState(false);
+
+  // Agenda tab
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [eventFormOpen, setEventFormOpen] = useState(false);
+  const [editEvent, setEditEvent] = useState<CalendarEvent | null>(null);
 
   const fetchContact = useCallback(async () => {
     if (!contactId) return;
@@ -180,6 +189,18 @@ export function ContactDetailView({
     setLoadingDeals(false);
   }, [contactId, supabase]);
 
+  const fetchEvents = useCallback(async () => {
+    if (!contactId) return;
+    setLoadingEvents(true);
+    const { data } = await supabase
+      .from('events')
+      .select('*, deal:deals(id,title), assignee:profiles!events_assigned_to_fkey(id,full_name,email)')
+      .eq('contact_id', contactId)
+      .order('starts_at', { ascending: true });
+    setEvents((data ?? []) as CalendarEvent[]);
+    setLoadingEvents(false);
+  }, [contactId, supabase]);
+
   useEffect(() => {
     if (open && contactId) {
       fetchContact();
@@ -187,8 +208,19 @@ export function ContactDetailView({
       fetchNotes();
       fetchCustomFields();
       fetchDeals();
+      fetchEvents();
     }
-  }, [open, contactId, fetchContact, fetchTags, fetchNotes, fetchCustomFields, fetchDeals]);
+  }, [open, contactId, fetchContact, fetchTags, fetchNotes, fetchCustomFields, fetchDeals, fetchEvents]);
+
+  function openNewEvent() {
+    setEditEvent(null);
+    setEventFormOpen(true);
+  }
+
+  function openEditEvent(ev: CalendarEvent) {
+    setEditEvent(ev);
+    setEventFormOpen(true);
+  }
 
   async function copyPhone() {
     if (!contact) return;
@@ -359,8 +391,8 @@ export function ContactDetailView({
 
       toast.success(t('toastTemplateSent', { name: template.name }));
     } catch (err) {
-      const reason = err instanceof Error ? err.message : 'network error';
-      toast.error(`Failed to send template: ${reason}`);
+      const reason = err instanceof Error ? err.message : t('networkError');
+      toast.error(t('toastTemplateFailed', { reason }));
     } finally {
       setSendingTemplate(false);
     }
@@ -481,6 +513,12 @@ export function ContactDetailView({
                   className="data-active:bg-muted data-active:text-primary text-muted-foreground"
                 >
                   {t('tabs.deals')}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="agenda"
+                  className="data-active:bg-muted data-active:text-primary text-muted-foreground"
+                >
+                  {t('tabs.agenda')}
                 </TabsTrigger>
               </TabsList>
 
@@ -627,7 +665,7 @@ export function ContactDetailView({
                           </button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          {new Date(note.created_at).toLocaleDateString('en-US', {
+                          {new Date(note.created_at).toLocaleDateString('pt-BR', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',
@@ -744,6 +782,66 @@ export function ContactDetailView({
                   </div>
                 )}
               </TabsContent>
+
+              {/* Agenda Tab */}
+              <TabsContent value="agenda" className="flex-1 overflow-y-auto px-4 py-3">
+                <div className="space-y-3">
+                  <Button
+                    onClick={openNewEvent}
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground w-full"
+                  >
+                    <Plus className="size-3.5" />
+                    {t('agendaTab.newEvent')}
+                  </Button>
+
+                  {loadingEvents ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="size-5 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : events.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      {t('agendaTab.noEvents')}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {events.map((ev) => (
+                        <button
+                          key={ev.id}
+                          onClick={() => openEditEvent(ev)}
+                          className="w-full rounded-lg border border-border bg-muted/50 p-3 text-left hover:bg-muted transition-colors"
+                        >
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {ev.title}
+                          </p>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <CalendarDays className="size-3" />
+                              {new Date(ev.starts_at).toLocaleDateString('pt-BR', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </span>
+                            {!ev.all_day && (
+                              <span className="flex items-center gap-1">
+                                <Clock className="size-3" />
+                                {new Date(ev.starts_at).toLocaleTimeString('pt-BR', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                            )}
+                            {ev.assignee && (
+                              <span>{ev.assignee.full_name || ev.assignee.email}</span>
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
             </Tabs>
           </div>
         )}
@@ -753,6 +851,13 @@ export function ContactDetailView({
       open={templatePickerOpen}
       onOpenChange={setTemplatePickerOpen}
       onSelect={handleSendTemplate}
+    />
+    <EventForm
+      open={eventFormOpen}
+      onOpenChange={setEventFormOpen}
+      event={editEvent}
+      initialContactId={contactId ?? undefined}
+      onSaved={fetchEvents}
     />
     </>
   );

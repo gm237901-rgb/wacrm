@@ -10,6 +10,7 @@ import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import {
   Bell,
   Bot,
+  CalendarDays,
   Crown,
   GitBranch,
   LayoutDashboard,
@@ -94,6 +95,7 @@ const navItems: NavItem[] = [
   { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
   { href: "/notifications", labelKey: "notifications", icon: Bell },
   { href: "/contacts", labelKey: "contacts", icon: Users },
+  { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
   { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
   { href: "/broadcasts", labelKey: "broadcasts", icon: Radio },
   { href: "/automations", labelKey: "automations", icon: Zap },
@@ -182,7 +184,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           // Desktop: static, always visible — reset all the mobile framing.
           "lg:static lg:z-0 lg:w-60 lg:translate-x-0 lg:transition-none",
         )}
-        aria-label="Primary"
+        aria-label={t("navPrimaryAria")}
       >
         {/* Logo row. On mobile we put a close button here; on desktop the
             close button is hidden since the sidebar is always-visible. */}

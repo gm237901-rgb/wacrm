@@ -15,11 +15,13 @@
     "createAccount": "Create account"
   },
   "Sidebar": {
+    "navPrimaryAria": "Primary",
     "title": "CRM Template for WhatsApp",
     "dashboard": "Dashboard",
     "inbox": "Inbox",
     "notifications": "Notifications",
     "contacts": "Contacts",
+    "agenda": "Calendar",
     "pipelines": "Pipelines",
     "broadcasts": "Broadcasts",
     "automations": "Automations",
@@ -144,7 +146,28 @@
       "noMessagesYet": "No messages yet",
       "unknown": "Unknown"
     },
+    "newConversation": {
+      "trigger": "New conversation",
+      "title": "Start a conversation",
+      "description": "Start a conversation with a number that isn't in your contact list yet.",
+      "phoneLabel": "WhatsApp number",
+      "phonePlaceholder": "11987654321",
+      "phoneHint": "Include the area code, no country code needed (we add it automatically)",
+      "nameLabel": "Name (optional)",
+      "namePlaceholder": "Contact name",
+      "cancel": "Cancel",
+      "submit": "Start chatting",
+      "creating": "Creating...",
+      "createdToast": "Conversation started",
+      "invalidPhoneToast": "Enter a valid WhatsApp number",
+      "errorToast": "Couldn't start the conversation"
+    },
     "messageThread": {
+      "toastSendFailed": "Failed to send: {reason}",
+      "toastSendTemplateFailed": "Failed to send template: {reason}",
+      "toastWaitSending": "Wait for the message to finish sending",
+      "toastReactionFailed": "Reaction failed: {reason}",
+      "toastAssignmentFailed": "Failed to update assignment",
       "backToConversations": "Back to conversations",
       "hideContactPanel": "Hide contact panel",
       "showContactPanel": "Show contact panel",
@@ -175,6 +198,15 @@
       "noCustomerMessages": "No customer messages"
     },
     "composer": {
+      "toastAiNotConfigured": "AI isn't set up yet — enable it in Settings → AI Assistant.",
+      "toastDraftFailed": "Couldn't draft a reply.",
+      "toastNoDraftReply": "The assistant didn't return a reply.",
+      "toastAiUnreachable": "Couldn't reach the AI assistant.",
+      "toastUploadFailed": "Upload failed.",
+      "toastFileTooLarge": "File is {size} MB — {kind} limit is {limit} MB.",
+      "toastRecordingTooLong": "Recording is too long (over 16 MB).",
+      "toastVoiceUnsupported": "Voice recording isn't supported in this browser.",
+      "toastMicDenied": "Microphone access denied or unavailable.",
       "draftHint": "Tap the ✨ to draft a reply with AI — you can edit it before sending",
       "sessionExpiredHint": "24-hour session expired. Use a template to re-engage.",
       "templates": "Templates",
@@ -205,6 +237,7 @@
       "quickReplySaveError": "Couldn't save the quick reply."
     },
     "bubble": {
+      "sharedImageAlt": "Shared image",
       "photo": "Photo",
       "video": "Video",
       "audio": "Audio",
@@ -274,6 +307,178 @@
       "networkError": "Couldn’t reach the server."
     }
   },
+  "WhatsAppLink": {
+    "trigger": "Generate link",
+    "title": "WhatsApp link generator",
+    "description": "Generate a ready-to-share link that opens a WhatsApp conversation with any number, with a pre-filled message.",
+    "phoneLabel": "WhatsApp number",
+    "phonePlaceholder": "11987654321",
+    "phoneHint": "Include the area code, no country code needed (we add it automatically)",
+    "messageLabel": "Message (optional)",
+    "messagePlaceholder": "Hi! I saw your contact and would like to chat…",
+    "generateBtn": "Generate link",
+    "linkLabel": "Generated link",
+    "openBtn": "Open in WhatsApp",
+    "closeBtn": "Close",
+    "copiedToast": "Link copied",
+    "copyFailedToast": "Copy failed — copy it manually",
+    "invalidPhoneToast": "Enter a valid WhatsApp number"
+  },
+  "Common": {
+    "readOnlyGate": "Read-only — your role can't {reason}"
+  },
+  "InteractiveBuilder": {
+    "kindButtons": "Reply buttons",
+    "kindList": "List",
+    "bodyLabel": "Body",
+    "bodyPlaceholder": "What the customer reads above the options",
+    "headerLabel": "Header (optional)",
+    "footerLabel": "Footer (optional)",
+    "showReplyIds": "Show reply IDs (advanced)",
+    "previewLabel": "Preview",
+    "buttonsLabel": "Buttons ({count}/{max})",
+    "buttonIdPlaceholder": "id",
+    "buttonLabelPlaceholder": "Button label",
+    "addButton": "Add button",
+    "listButtonLabel": "List button label",
+    "rowsLabel": "Rows ({count}/{max})",
+    "sectionTitlePlaceholder": "Section title (optional)",
+    "rowIdPlaceholder": "id",
+    "rowTitlePlaceholder": "Row title",
+    "rowDescriptionPlaceholder": "Description (optional)",
+    "addRow": "Add row",
+    "addSection": "Add section",
+    "previewBodyPlaceholder": "Message body…",
+    "previewButtonFallback": "Button",
+    "previewMenuFallback": "Menu"
+  },
+  "QuickReplies": {
+    "title": "Quick replies",
+    "description": "Reusable snippets — plain text or a saved interactive message — that agents can insert from the inbox composer.",
+    "newQuickReply": "New quick reply",
+    "empty": "No quick replies yet. Create one to reuse it across conversations.",
+    "editTitle": "Edit quick reply",
+    "createTitle": "New quick reply",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Business hours",
+    "kindText": "Text",
+    "kindInteractive": "Interactive",
+    "textPlaceholder": "The message text to insert",
+    "cancel": "Cancel",
+    "save": "Save",
+    "toastNameRequired": "Give the quick reply a name.",
+    "toastSaveFailed": "Couldn't save the quick reply.",
+    "toastUpdated": "Quick reply updated.",
+    "toastCreated": "Quick reply created.",
+    "deleteConfirm": "Delete this quick reply?",
+    "toastDeleteFailed": "Couldn't delete the quick reply."
+  },
+  "Agents": {
+    "page": {
+      "title": "AI Agents",
+      "description": "Your bring-your-own-key AI agent — set it up, then test it in the playground before it replies to customers in the inbox.",
+      "tabPlayground": "Playground",
+      "tabSetup": "Setup",
+      "tabUsage": "Usage"
+    },
+    "playground": {
+      "title": "Playground",
+      "subtitle": "— test replies as if you were a customer",
+      "reset": "Reset",
+      "emptyTitle": "Send a message to see how your agent would reply.",
+      "emptyHint": "It uses your knowledge base and behaves exactly like the auto-reply bot — including handoff.",
+      "goToSetup": "Not set up yet? Go to Setup",
+      "wouldHandoff": "Would hand off to a human here",
+      "thinking": "Thinking…",
+      "placeholder": "Type a customer message…",
+      "toastNotConfigured": "No agent configured yet — finish Setup first.",
+      "toastNoReply": "Couldn't get a reply.",
+      "toastUnreachable": "Couldn't reach the agent."
+    },
+    "usage": {
+      "title": "Token usage",
+      "description": "Tokens spent on your provider key by drafts and the auto-reply bot. Counts only — no message content is stored here.",
+      "lastDays": "Last {days} days",
+      "toastLoadFailed": "Failed to load usage",
+      "noUsage": "No AI usage in the last {days} days yet.",
+      "noUsageHint": "This fills in as the assistant drafts and auto-replies.",
+      "totalTokens": "Total tokens",
+      "llmCalls": "LLM calls",
+      "autoReply": "Auto-reply",
+      "drafts": "Drafts",
+      "tokensPerDay": "Tokens per day",
+      "byModel": "By model",
+      "tokensCallsLabel": "{tokens} tok · {count} {count, plural, =1 {call} other {calls}}",
+      "truncated": "Showing a partial window — usage is high enough that only the most recent records are summarized here."
+    }
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "description": "Conversations and events other teammates assign to you show up here.",
+    "markAllRead": "Mark all as read",
+    "retry": "Retry",
+    "emptyTitle": "No notifications yet",
+    "emptyDesc": "You'll see an alert here when someone assigns you a conversation or event.",
+    "unreadAria": "Unread",
+    "toastMarkReadFailed": "Failed to mark notification as read",
+    "toastMarkAllFailed": "Failed to mark all as read"
+  },
+  "Agenda": {
+    "page": {
+      "title": "Calendar",
+      "subtitle": "Events linked to contacts and deals.",
+      "newEventBtn": "New event",
+      "today": "Today",
+      "noEventsDay": "No events on this day",
+      "addForDay": "Add event for this day",
+      "allDayLabel": "All day",
+      "moreEvents": "+{count} more",
+      "weekdays": {
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
+      }
+    },
+    "form": {
+      "newEvent": "New event",
+      "editEvent": "Edit event",
+      "title": "Title",
+      "titlePlaceholder": "E.g.: Call the client",
+      "date": "Date",
+      "start": "Start",
+      "end": "End",
+      "allDay": "All day",
+      "contact": "Contact",
+      "noContact": "No contact",
+      "deal": "Deal",
+      "noDeal": "No deal",
+      "assignedTo": "Assigned to",
+      "unassigned": "Unassigned",
+      "status": "Status",
+      "statusScheduled": "Scheduled",
+      "statusCompleted": "Completed",
+      "statusCancelled": "Cancelled",
+      "description": "Description",
+      "descriptionPlaceholder": "Event details...",
+      "saveChanges": "Save",
+      "saving": "Saving...",
+      "deleteEvent": "Delete",
+      "deletePrompt": "Delete this event?",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "toastRequired": "Fill in the title and date",
+      "toastNotLinked": "Account not linked",
+      "toastFailedSave": "Failed to save event",
+      "toastCreated": "Event created",
+      "toastUpdated": "Event updated",
+      "toastFailedDelete": "Failed to delete event",
+      "toastDeleted": "Event deleted"
+    }
+  },
   "Contacts": {
     "page": {
       "title": "Contacts",
@@ -284,6 +489,10 @@
       "addContactBtn": "Add Contact",
       "searchPlaceholder": "Search by name, phone, or email...",
       "filterByTags": "Filter by tags",
+      "filterByTagAria": "Filter by {name}",
+      "removeTagFilterAria": "Remove {name} filter",
+      "selectAllAria": "Select all contacts on this page",
+      "selectContactAria": "Select {name}",
       "clearAll": "Clear all",
       "noTagsYet": "No tags yet.",
       "selectedCount": "{count} selected",
@@ -359,6 +568,7 @@
         "custom": "Custom Fields",
         "deals": "Deals",
         "tags": "Tags",
+        "agenda": "Calendar",
       "noTags": "No tags",
       "noDeals": "No deals",
       "addNotePlaceholder": "Add a note..."
@@ -392,6 +602,10 @@
       "dealsTab": {
         "noDeals": "No deals yet"
       },
+      "agendaTab": {
+        "newEvent": "New event",
+        "noEvents": "No events yet"
+      },
       "tagsTab": {
         "clickTagDesc": "Click a tag to add or remove it from this contact.",
         "noTagsAvailable": "No tags available. Create tags in Settings."
@@ -410,7 +624,8 @@
       "toastCustomFieldsSaved": "Custom fields saved",
       "toastCustomFieldsFailed": "Failed to save custom fields",
       "toastTemplateSent": "Template \"{name}\" sent",
-      "toastTemplateFailed": "Failed to send template: {reason}"
+      "toastTemplateFailed": "Failed to send template: {reason}",
+      "networkError": "network error"
     },
     "importModal": {
       "title": "Import Contacts",
@@ -591,6 +806,7 @@
     "page": {
       "title": "Broadcasts",
       "subtitle": "Send bulk messages to your contacts using approved templates.",
+      "inProgressAria": "Broadcast in progress",
       "newBroadcast": "New Broadcast",
       "noBroadcastsYet": "No broadcasts yet",
       "createFirst": "Create your first broadcast to reach your contacts at scale.",
@@ -723,6 +939,10 @@
         "subtitle": "Map your template variables to contact fields or provide static values.",
         "headerImage": "Header Image",
         "headerImageDesc": "This template requires a header image.",
+        "headerPreviewAlt": "Header preview",
+        "mediaUrlRequired": "A media URL is required to send this template.",
+        "mediaUrlInvalid": "Enter a valid http(s) URL.",
+        "enterValuePlaceholder": "Enter value...",
         "imageUrl": "Image URL",
         "imageUrlPlaceholder": "https://example.com/image.jpg",
         "variables": "Variables",
@@ -772,6 +992,7 @@
     "list": {
       "title": "Automations",
       "subtitle": "Build workflows that react to WhatsApp® events automatically.",
+      "openMenuAria": "Open menu",
       "create": "Create Automation",
       "retry": "Retry",
       "templatesTitle": "Quick-start templates",
@@ -880,16 +1101,20 @@
       "replyIdsHelp": "Comma-separated button/list-row ids to match, exact. Use the same ids you set on a Send Buttons / Send List step.",
       "schedule": "Schedule",
       "scheduleHint": "Cron expression (e.g. 0 9 * * 1-5)",
+      "scheduleFieldPlaceholder": "Cron expression or HH:mm",
       "active": "Active",
       "activeAria": "Active",
       "save": "Save",
       "saveDraft": "Save Draft",
       "untitled": "Untitled automation",
       "backToAutomations": "Back to automations",
+      "moveUpAria": "Move up",
+      "moveDownAria": "Move down",
       "toasts": {
         "saved": "Automation saved",
         "created": "Automation created",
-        "saveFailed": "Save failed"
+        "saveFailed": "Save failed",
+        "issueAt": "at {path}"
       },
       "tags": {
         "select": "Select a tag…",
@@ -1035,6 +1260,24 @@
       "statusFailed": "Failed"
     },
     "builder": {
+      "header": {
+        "backToFlows": "Back to Flows",
+        "namePlaceholder": "Flow name",
+        "nameAria": "Flow name",
+        "edited": "Edited",
+        "unsavedTitle": "Unsaved changes — hit Save to persist",
+        "runs": "Runs",
+        "delete": "Delete",
+        "pause": "Pause",
+        "activate": "Activate",
+        "activateDisabledTitle": "Fix the issues below before activating",
+        "save": "Save",
+        "descriptionPlaceholder": "Add a short description (internal — customers don't see this)",
+        "descriptionAria": "Flow description",
+        "statusDraft": "Draft",
+        "statusActive": "Active",
+        "statusArchived": "Archived"
+      },
       "triggerTitle": "Trigger",
       "whenLabel": "When…",
       "triggerKeywordTitle": "A message contains a keyword",
@@ -1056,11 +1299,15 @@
       "badgeEntry": "Entry",
       "noNodesYet": "No nodes yet.",
       "deleteNode": "Delete node",
+      "editorViewGroupAria": "Editor view",
       "canvasView": "Canvas",
       "listView": "List",
       "noNodeSelected": "No node selected",
       "noNodeDesc": "Select a node on the canvas to edit its configuration.",
       "form": {
+        "toastFileTooLarge": "File is {size} MB — limit is 16 MB.",
+        "toastFileUploaded": "File uploaded.",
+        "toastUploadFailed": "Upload failed.",
         "advancesTo": "Advances to",
         "textToCustomer": "Text sent to the customer",
         "promptToCustomer": "Prompt sent to the customer",
@@ -1082,6 +1329,7 @@
         "rowTitlePlaceholder": "Row title (≤24)",
         "addRow": "Add row",
         "addSection": "Add section",
+        "removeSectionAria": "Remove section",
         "ifLabel": "If",
         "capturedVariable": "Captured variable",
         "contactHasTag": "Contact has tag",
@@ -1177,7 +1425,9 @@
       "fixIssues": "Fix the issues below before activating.",
       "statusActivated": "Flow activated.",
       "statusArchived": "Archived.",
-      "statusDraft": "Saved as draft."
+      "statusDraft": "Saved as draft.",
+      "deleteConfirm": "Delete \"{name}\"? Any active runs end immediately. This can't be undone.",
+      "deleteFailed": "Delete failed"
     },
     "summary": {
       "options": "{count} {count, plural, =1 {option} other {options}}",
@@ -1201,6 +1451,7 @@
   "Settings": {
     "pageTitle": "Settings",
     "pageDesc": "Everything in one place — your account and your workspace. Pick a section to manage it.",
+    "railAria": "Settings sections",
     "overview": {
       "notSetup": "Not set up yet",
       "connected": "Connected",
@@ -1222,6 +1473,13 @@
       "title": "Team members",
       "description": "People with access to this account. Roles control what each teammate can do.",
       "inviteMember": "Invite member",
+      "memberAlt": "Member",
+      "toastLoadMembersFailed": "Failed to load members",
+      "toastLoadInvitesFailed": "Failed to load invitations",
+      "toastServerUnreachable": "Could not reach the server",
+      "toastRoleUpdateFailed": "Failed to update role",
+      "toastRemoveFailed": "Failed to remove member",
+      "toastRevokeFailed": "Failed to revoke invitation",
       "online": "online",
       "away": "away",
       "offline": "offline",
@@ -1250,6 +1508,9 @@
       "removeBtn": "Remove member"
     },
     "invite": {
+      "toastCreateFailed": "Failed to create invitation",
+      "toastServerUnreachableRetry": "Could not reach the server. Try again?",
+      "defaultAccountName": "our wacrm account",
       "inviteCreated": "Invite created",
       "inviteCreatedDesc": "Share this link with your new teammate. They'll be able to sign up (or sign in) and join the account as <bold>{role}</bold>. The link is valid for <bold>{days} {days, plural, =1 {day} other {days}}</bold>.",
       "inviteLink": "Invite link",
@@ -1355,6 +1616,9 @@
       "headerDocument": "Document",
       "headerTextPlaceholder": "Header text (max 60 chars, optional {{1}})",
       "headerSampleAria": "Sample value for header variable",
+      "headerTextAria": "Header text",
+      "headerSampleImageAlt": "Header sample",
+      "qualityScoreTitle": "Meta quality score",
       "headerSamplePlaceholder": "Sample value for {{1}} (required for Meta review)",
       
       "uploadImage": "Upload image",
@@ -1431,6 +1695,28 @@
     "whatsapp": {
       "title": "WhatsApp connection",
       "description": "Connect your Meta WhatsApp Business API. Credentials, webhook, and setup steps all live here.",
+      "toastLoadFailed": "Failed to load WhatsApp configuration",
+      "toastPhoneRequired": "Phone Number ID is required",
+      "toastTokenRequiredInitial": "Access Token is required for initial setup",
+      "toastReenterToken": "Please re-enter the Access Token to save changes",
+      "toastSaveFailed": "Failed to save configuration",
+      "toastSavedButRegisterFailed": "Saved, but Meta couldn't register the number: {error}",
+      "toastCredentialsVerifiedSkipped": "Credentials saved and verified. Inbound registration was skipped (no PIN) — see Registration status below.",
+      "toastLiveWithName": "Live — {name} can now receive events.",
+      "toastConnected": "WhatsApp connected. Events will start flowing within a minute.",
+      "toastConnectedToName": "Connected to {name}",
+      "toastApiSuccess": "API connection successful",
+      "toastApiFailed": "API connection failed",
+      "toastTestFailed": "Connection test failed. Check network and try again.",
+      "toastVerifiedLive": "Number is fully wired — Meta is delivering events.",
+      "toastNotFullyRegistered": "Number is not fully registered. See the checks below for which step failed.",
+      "toastVerifyUnreachable": "Could not reach the verification endpoint.",
+      "resetConfirm": "This will delete the current WhatsApp config so you can re-enter it. Continue?",
+      "toastResetFailed": "Failed to reset configuration",
+      "toastResetSuccess": "Configuration cleared. You can now re-enter your credentials.",
+      "toastWebhookCopied": "Webhook URL copied to clipboard",
+      "phoneNumberIdPlaceholder": "e.g. 100234567890123",
+      "wabaIdPlaceholder": "e.g. 100234567890456",
       "tokenCorrupted": "Stored token can't be decrypted",
       "resetting": "Resetting...",
       "resetConfig": "Reset Configuration",
@@ -1568,7 +1854,10 @@
       "title": "Appearance",
       "description": "Set the mode and accent colour used across the app. Saved to this device — try it, it changes live.",
       "mode": "Mode",
+      "modeGroupAria": "Color mode",
       "useMode": "Use {mode} mode",
+      "modeLight": "Light",
+      "modeDark": "Dark",
       "active": "Active",
       "accentColor": "Accent color",
       "useTheme": "Use {name} theme"
@@ -1692,6 +1981,8 @@
       "addDoc": "Add document",
       "reindex": "Reindex",
       "reindexTooltip": "Re-embed all documents (e.g. after adding an embeddings key)",
+      "editButtonTitle": "Edit",
+      "deleteButtonTitle": "Delete",
       "loading": "Loading…"
     }
   }

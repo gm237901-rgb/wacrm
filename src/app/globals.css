@@ -147,7 +147,25 @@ html[data-mode="light"] {
 
 /* ---- ACCENT: primary color ---- */
 
+/* Sky Blue — the app's brand default, matched to the product logo
+ * (light blue gradient mark). Hue ~226 sits between cyan and
+ * indigo so it reads as a bright, friendly blue rather than the
+ * more indigo-leaning "cobalt" accent below. */
 :root,
+html[data-theme="skyblue"] {
+  --primary: oklch(0.64 0.17 226);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-hover: oklch(0.71 0.14 226);
+  --primary-soft: oklch(0.64 0.17 226 / 0.12);
+  --primary-soft-2: oklch(0.64 0.17 226 / 0.22);
+  --ring: oklch(0.64 0.17 226);
+  --chart-1: oklch(0.64 0.17 226);
+  --chart-2: oklch(0.78 0.11 205);
+  --sidebar-primary: oklch(0.64 0.17 226);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-ring: oklch(0.64 0.17 226);
+}
+
 html[data-theme="violet"] {
   --primary: oklch(0.526 0.247 293);
   --primary-foreground: oklch(0.985 0 0);
@@ -227,4 +245,21 @@ html[data-theme="rose"] {
   html {
     @apply font-sans;
   }
+}
+
+/* Glow for high-emphasis CTAs (e.g. the login submit button). Reads
+ * the active accent theme via color-mix() instead of a hardcoded
+ * color, so it stays correct if the accent is ever switched away
+ * from the sky-blue default. */
+.glow-btn {
+  box-shadow: 0 0 24px -4px color-mix(in oklch, var(--primary) 55%, transparent);
+  transition: box-shadow 0.2s ease;
+}
+.glow-btn:hover {
+  box-shadow: 0 0 34px -2px color-mix(in oklch, var(--primary) 75%, transparent);
+}
+.glow-btn:focus-visible {
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--primary) 35%, transparent),
+    0 0 34px -2px color-mix(in oklch, var(--primary) 75%, transparent);
 }

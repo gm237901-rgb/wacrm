@@ -113,7 +113,7 @@ function LoginPageInner() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="border-primary/30 bg-primary/5 text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/30"
               />
             </div>
 
@@ -136,14 +136,14 @@ function LoginPageInner() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
+                className="border-primary/30 bg-primary/5 text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/30"
               />
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="glow-btn mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
               {loading ? t('signingIn') : t('signIn')}
             </Button>

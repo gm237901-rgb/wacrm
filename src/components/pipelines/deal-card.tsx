@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Deal, PipelineStage } from "@/types";
 import { Calendar, Check, X } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
@@ -13,7 +14,7 @@ interface DealCardProps {
 }
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", {
+  return new Date(dateStr).toLocaleDateString("pt-BR", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -26,7 +27,7 @@ function initials(name?: string, fallback?: string) {
   return source.charAt(0).toUpperCase();
 }
 
-export function DealCard({ deal, stage, onEdit, isOverlay }: DealCardProps) {
+export const DealCard = memo(function DealCard({ deal, stage, onEdit, isOverlay }: DealCardProps) {
   const t = useTranslations("Pipelines.card");
   const contactLabel = deal.contact?.name || deal.contact?.phone || t("noContact");
   const assigneeLabel = deal.assignee?.full_name || null;
@@ -104,4 +105,4 @@ export function DealCard({ deal, stage, onEdit, isOverlay }: DealCardProps) {
       )}
     </button>
   );
-}
+});

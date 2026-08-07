@@ -187,7 +187,7 @@ export interface Conversation {
 // Notifications (migration 027)
 // ============================================================
 
-export type NotificationType = 'conversation_assigned';
+export type NotificationType = 'conversation_assigned' | 'event_assigned';
 
 export interface Notification {
   id: string;
@@ -197,12 +197,43 @@ export interface Notification {
   type: NotificationType;
   conversation_id?: string;
   contact_id?: string;
+  /** Set when type === 'event_assigned' (migration 037). */
+  event_id?: string;
   /** Who triggered it. Null when an automation/system assigned it. */
   actor_user_id?: string;
   title: string;
   body?: string;
   read_at?: string;
   created_at: string;
+}
+
+// ============================================================
+// Agenda (migration 037)
+// ============================================================
+
+export type EventStatus = 'scheduled' | 'completed' | 'cancelled';
+
+export interface CalendarEvent {
+  id: string;
+  account_id: string;
+  user_id: string;
+  /** Responsible agent. Null = unassigned. */
+  assigned_to?: string | null;
+  /** Nullable — SET NULL when the linked contact is deleted. */
+  contact_id?: string | null;
+  /** Nullable — SET NULL when the linked deal is deleted. */
+  deal_id?: string | null;
+  title: string;
+  description?: string | null;
+  starts_at: string;
+  ends_at?: string | null;
+  all_day: boolean;
+  status: EventStatus;
+  created_at: string;
+  updated_at: string;
+  contact?: Contact | null;
+  deal?: Deal | null;
+  assignee?: Profile | null;
 }
 
 export type SenderType = 'customer' | 'agent' | 'bot';

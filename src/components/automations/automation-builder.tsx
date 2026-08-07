@@ -693,7 +693,7 @@ export function AutomationBuilder({ initial }: { initial: BuilderInitial }) {
           body?.issues?.[0]
         if (firstIssue?.message) {
           toast.error(firstIssue.message, {
-            description: firstIssue.path ? `at ${firstIssue.path}` : undefined,
+            description: firstIssue.path ? t("toasts.issueAt", { path: firstIssue.path }) : undefined,
           })
         } else {
           toast.error(body?.error ?? t("toasts.saveFailed"))
@@ -866,7 +866,7 @@ function TriggerCard({
                   {t("schedule")}
                 </label>
                 <Input
-                  placeholder="Cron expression or HH:mm"
+                  placeholder={t("scheduleFieldPlaceholder")}
                   value={(config.schedule as string) ?? ""}
                   onChange={(e) =>
                     onConfigChange({ ...config, schedule: e.target.value })
@@ -1133,7 +1133,7 @@ function StepRenderer({
                     variant="ghost"
                     size="icon"
                     disabled={index === 0}
-                    aria-label="Move up"
+                    aria-label={t("moveUpAria")}
                     onClick={() => props.moveStepAt(path, -1)}
                   >
                     <ArrowUp className="h-4 w-4" />
@@ -1142,7 +1142,7 @@ function StepRenderer({
                     variant="ghost"
                     size="icon"
                     disabled={index === total - 1}
-                    aria-label="Move down"
+                    aria-label={t("moveDownAria")}
                     onClick={() => props.moveStepAt(path, 1)}
                   >
                     <ArrowDown className="h-4 w-4" />
