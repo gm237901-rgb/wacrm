@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import {
   Bell,
+  ChevronDown,
   HelpCircle,
   LogOut,
   Menu,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import {
   Avatar,
+  AvatarBadge,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
@@ -181,6 +183,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
             <AvatarFallback className="bg-primary/10 text-sm font-medium text-primary">
               {initial}
             </AvatarFallback>
+            <AvatarBadge className="bg-emerald-500 ring-2 ring-background" />
           </Avatar>
           <span className="hidden flex-col items-start sm:flex">
             <span className="text-sm font-medium text-foreground">
@@ -190,6 +193,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
               <span className="text-xs text-muted-foreground">{tRoles(roleLabelKey)}</span>
             )}
           </span>
+          <ChevronDown className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"

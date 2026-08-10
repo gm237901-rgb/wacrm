@@ -76,7 +76,7 @@
     "menuSignOut": "Sign out",
     "help": "Help",
     "search": {
-      "placeholder": "Search contacts, deals...",
+      "placeholder": "Search contacts, companies, deals...",
       "hint": "Type at least 2 characters to search",
       "noResults": "No results found"
     }

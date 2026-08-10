@@ -76,7 +76,7 @@
     "menuSignOut": "Sair",
     "help": "Ajuda",
     "search": {
-      "placeholder": "Buscar contatos, negócios...",
+      "placeholder": "Buscar contatos, empresas, negócios...",
       "hint": "Digite pelo menos 2 caracteres para buscar",
       "noResults": "Nenhum resultado encontrado"
     }

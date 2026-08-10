@@ -43,12 +43,12 @@ export function SalesFunnel({ data, loading, currency }: SalesFunnelProps) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {data.stages.map((stage) => (
               <div key={stage.id} className="flex flex-col rounded-lg border border-border">
-                <div
-                  className="h-1 rounded-t-lg"
-                  style={{ background: stage.color || 'var(--muted-foreground)' }}
-                  aria-hidden
-                />
-                <div className="flex flex-col gap-1 border-b border-border p-3">
+                <div className="flex flex-col gap-2 border-b border-border p-3">
+                  <div
+                    className="h-1.5 w-full rounded-full"
+                    style={{ background: stage.color || 'var(--muted-foreground)' }}
+                    aria-hidden
+                  />
                   <p className="truncate text-sm font-medium text-foreground">{stage.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {t('dealCount', { count: stage.dealCount })}
