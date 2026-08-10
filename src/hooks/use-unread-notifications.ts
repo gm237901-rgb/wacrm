@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Notification } from "@/types";
 
 /**
- * Count of unread notifications for the current user. Used by the
- * sidebar to surface a badge on the Notifications nav entry.
+ * Count of unread notifications for the current user. Used by both
+ * the sidebar (Notifications nav badge) and the header (bell icon).
  *
  * RLS on `notifications` already scopes every read to `auth.uid() =
  * user_id`, so no explicit filter is needed here — same pattern as
@@ -14,6 +14,14 @@ import type { Notification } from "@/types";
  */
 export function useUnreadNotifications(): number {
   const [count, setCount] = useState(0);
+  // Supabase's client returns the SAME RealtimeChannel object for two
+  // `.channel()` calls sharing a topic name — calling `.on()` on it a
+  // second time after the first caller already `.subscribe()`d throws
+  // "cannot add 'postgres_changes' callbacks ... after subscribe()"
+  // and crashes the whole tree (no error boundary catches an effect-
+  // phase throw). Now that both the sidebar and the header mount this
+  // hook simultaneously, the topic must be unique per instance.
+  const instanceId = useId();
 
   useEffect(() => {
     const supabase = createClient();
@@ -31,7 +39,7 @@ export function useUnreadNotifications(): number {
     })();
 
     const channel = supabase
-      .channel("notifications-unread-count")
+      .channel(`notifications-unread-count-${instanceId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications" },
@@ -57,7 +65,7 @@ export function useUnreadNotifications(): number {
       cancelled = true;
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [instanceId]);
 
   return count;
 }
