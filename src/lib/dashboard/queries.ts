@@ -6,16 +6,27 @@ import {
   localDayKey,
   mondayIndex,
   startOfLocalDay,
+  startOfMonth,
+  startOfMonthsAgo,
 } from './date-utils'
 import type {
   ActivityItem,
   ConversationsSeriesPoint,
+  FunnelStage,
+  KpiBundle,
+  LeadSourceData,
+  LeadSource,
   MetricsBundle,
   PipelineDonutData,
   PipelineStageSlice,
+  RecentLead,
   ResponseTimeBucket,
   ResponseTimeSummary,
+  RevenuePoint,
+  SalesFunnelData,
+  TodayActivity,
 } from './types'
+import { LEAD_SOURCES } from './types'
 
 // ------------------------------------------------------------
 // All client-side aggregation. RLS scopes every query to the
@@ -395,4 +406,253 @@ export async function loadActivity(db: DB, limit = 20): Promise<ActivityItem[]> 
   return items
     .sort((a, b) => (a.at > b.at ? -1 : a.at < b.at ? 1 : 0))
     .slice(0, limit)
+}
+
+// --- 6. KPI row (5 stat cards) ------------------------------------------
+
+export async function loadKpiRow(db: DB): Promise<KpiBundle> {
+  const thisMonthStart = startOfMonth().toISOString()
+  const lastMonthStart = startOfMonthsAgo(1).toISOString()
+
+  const [
+    contactsNow,
+    contactsAtMonthStart,
+    openDealsNow,
+    openDealsAtMonthStart,
+    wonThisMonth,
+    wonLastMonth,
+    closedThisMonth,
+    closedLastMonth,
+  ] = await Promise.all([
+    db.from('contacts').select('id', { count: 'exact', head: true }),
+    db.from('contacts').select('id', { count: 'exact', head: true }).lt('created_at', thisMonthStart),
+    db.from('deals').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+    db
+      .from('deals')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'open')
+      .lt('created_at', thisMonthStart),
+    db.from('deals').select('value').eq('status', 'won').gte('updated_at', thisMonthStart),
+    db
+      .from('deals')
+      .select('value')
+      .eq('status', 'won')
+      .gte('updated_at', lastMonthStart)
+      .lt('updated_at', thisMonthStart),
+    db.from('deals').select('status').in('status', ['won', 'lost']).gte('updated_at', thisMonthStart),
+    db
+      .from('deals')
+      .select('status')
+      .in('status', ['won', 'lost'])
+      .gte('updated_at', lastMonthStart)
+      .lt('updated_at', thisMonthStart),
+  ])
+
+  const wonThisMonthRows = (wonThisMonth.data ?? []) as { value: number | null }[]
+  const wonLastMonthRows = (wonLastMonth.data ?? []) as { value: number | null }[]
+  const revenueThisMonth = wonThisMonthRows.reduce((sum, d) => sum + (d.value ?? 0), 0)
+  const revenueLastMonth = wonLastMonthRows.reduce((sum, d) => sum + (d.value ?? 0), 0)
+
+  const conversionRate = (rows: { status: string }[]) => {
+    if (rows.length === 0) return 0
+    const won = rows.filter((r) => r.status === 'won').length
+    return (won / rows.length) * 100
+  }
+
+  return {
+    contactsTotal: { current: contactsNow.count ?? 0, previous: contactsAtMonthStart.count ?? 0 },
+    openDeals: { current: openDealsNow.count ?? 0, previous: openDealsAtMonthStart.count ?? 0 },
+    revenueThisMonth: { current: revenueThisMonth, previous: revenueLastMonth },
+    wonDealsThisMonth: { current: wonThisMonthRows.length, previous: wonLastMonthRows.length },
+    conversionRatePct: {
+      current: conversionRate((closedThisMonth.data ?? []) as { status: string }[]),
+      previous: conversionRate((closedLastMonth.data ?? []) as { status: string }[]),
+    },
+  }
+}
+
+// --- 7. Sales funnel (Dashboard mini pipeline) --------------------------
+
+export async function loadSalesFunnel(db: DB): Promise<SalesFunnelData> {
+  // Same "first pipeline by created_at" convention the Pipelines page
+  // uses as its default selection (src/app/(dashboard)/pipelines/page.tsx).
+  const { data: pipelineRows } = await db
+    .from('pipelines')
+    .select('id')
+    .order('created_at', { ascending: true })
+    .limit(1)
+  const pipelineId = pipelineRows?.[0]?.id ?? null
+  if (!pipelineId) return { pipelineId: null, stages: [] }
+
+  const [stagesRes, dealsRes] = await Promise.all([
+    db
+      .from('pipeline_stages')
+      .select('id, name, color')
+      .eq('pipeline_id', pipelineId)
+      .order('position'),
+    db
+      .from('deals')
+      .select('id, title, value, stage_id, contact:contacts(name, avatar_url)')
+      .eq('pipeline_id', pipelineId)
+      .eq('status', 'open')
+      .order('updated_at', { ascending: false }),
+  ])
+
+  const stages = (stagesRes.data ?? []) as { id: string; name: string; color: string }[]
+  const deals = (dealsRes.data ?? []) as unknown as Array<{
+    id: string
+    title: string
+    value: number | null
+    stage_id: string
+    contact:
+      | { name: string | null; avatar_url: string | null }[]
+      | { name: string | null; avatar_url: string | null }
+      | null
+  }>
+
+  const byStage = new Map<string, typeof deals>()
+  for (const d of deals) {
+    const list = byStage.get(d.stage_id) ?? []
+    list.push(d)
+    byStage.set(d.stage_id, list)
+  }
+
+  const funnelStages: FunnelStage[] = stages.map((s) => {
+    const stageDeals = byStage.get(s.id) ?? []
+    return {
+      id: s.id,
+      name: s.name,
+      color: s.color || '#64748b',
+      dealCount: stageDeals.length,
+      totalValue: stageDeals.reduce((sum, d) => sum + (d.value ?? 0), 0),
+      topDeals: stageDeals.slice(0, 3).map((d) => {
+        const contact = Array.isArray(d.contact) ? d.contact[0] : d.contact
+        return {
+          id: d.id,
+          title: d.title,
+          value: d.value ?? 0,
+          contactName: contact?.name ?? null,
+          avatarUrl: contact?.avatar_url ?? null,
+        }
+      }),
+    }
+  })
+
+  return { pipelineId, stages: funnelStages }
+}
+
+// --- 8. Today's activities -----------------------------------------------
+
+export async function loadTodayActivities(db: DB): Promise<TodayActivity[]> {
+  const dayStart = startOfLocalDay()
+  const dayEnd = new Date(dayStart)
+  dayEnd.setDate(dayEnd.getDate() + 1)
+
+  const { data, error } = await db
+    .from('events')
+    .select('id, title, starts_at, status, contact:contacts(name, company), deal:deals(title)')
+    .gte('starts_at', dayStart.toISOString())
+    .lt('starts_at', dayEnd.toISOString())
+    .order('starts_at', { ascending: true })
+  if (error) throw error
+
+  return (
+    (data ?? []) as unknown as Array<{
+      id: string
+      title: string
+      starts_at: string
+      status: 'scheduled' | 'completed' | 'cancelled'
+      contact: { name: string | null; company: string | null }[] | { name: string | null; company: string | null } | null
+      deal: { title: string }[] | { title: string } | null
+    }>
+  ).map((e) => {
+    const contact = Array.isArray(e.contact) ? e.contact[0] : e.contact
+    const deal = Array.isArray(e.deal) ? e.deal[0] : e.deal
+    return {
+      id: e.id,
+      title: e.title,
+      subtitle: contact?.name || contact?.company || deal?.title || null,
+      at: e.starts_at,
+      status: e.status,
+      href: `/agenda?e=${e.id}`,
+    }
+  })
+}
+
+// --- 9. Revenue over time --------------------------------------------------
+
+export async function loadRevenueSeries(db: DB, rangeDays: number): Promise<RevenuePoint[]> {
+  const start = daysAgoStart(rangeDays - 1).toISOString()
+  // deals has no dedicated "won_at" column — updated_at is the best
+  // available proxy for when the "Marcar como ganho" action landed.
+  const { data, error } = await db
+    .from('deals')
+    .select('value, updated_at')
+    .eq('status', 'won')
+    .gte('updated_at', start)
+    .order('updated_at', { ascending: true })
+  if (error) throw error
+
+  const keys = lastNDayKeys(rangeDays)
+  const buckets = new Map<string, number>()
+  for (const k of keys) buckets.set(k, 0)
+
+  for (const row of (data ?? []) as { value: number | null; updated_at: string }[]) {
+    const key = localDayKey(row.updated_at)
+    if (!buckets.has(key)) continue
+    buckets.set(key, (buckets.get(key) ?? 0) + (row.value ?? 0))
+  }
+
+  return keys.map((day) => ({ day, value: buckets.get(day) ?? 0 }))
+}
+
+// --- 10. Lead source donut --------------------------------------------------
+
+export async function loadLeadSource(db: DB): Promise<LeadSourceData> {
+  const { data, error } = await db.from('contacts').select('source')
+  if (error) throw error
+
+  const counts = new Map<LeadSource, number>()
+  for (const s of LEAD_SOURCES) counts.set(s, 0)
+  let total = 0
+  const known = new Set<string>(LEAD_SOURCES)
+  for (const row of (data ?? []) as { source: string | null }[]) {
+    total += 1
+    const key = (known.has(row.source ?? '') ? row.source : 'outros') as LeadSource
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+  }
+
+  return {
+    slices: LEAD_SOURCES.map((source) => ({ source, count: counts.get(source) ?? 0 })).filter(
+      (s) => s.count > 0,
+    ),
+    total,
+  }
+}
+
+// --- 11. Recent leads --------------------------------------------------------
+
+export async function loadRecentLeads(db: DB, limit = 5): Promise<RecentLead[]> {
+  const { data, error } = await db
+    .from('contacts')
+    .select('id, name, email, avatar_url, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+
+  return (
+    (data ?? []) as Array<{
+      id: string
+      name: string | null
+      email: string | null
+      avatar_url: string | null
+      created_at: string
+    }>
+  ).map((c) => ({
+    id: c.id,
+    name: c.name ?? '',
+    email: c.email,
+    avatarUrl: c.avatar_url,
+    createdAt: c.created_at,
+  }))
 }

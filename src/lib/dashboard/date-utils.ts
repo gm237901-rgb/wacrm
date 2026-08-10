@@ -50,3 +50,47 @@ export function mondayIndex(d: Date): number {
 }
 
 export const DOW_SHORT_MON_FIRST = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
+
+/** Local-timezone start of the calendar month containing `d`. */
+export function startOfMonth(d: Date = new Date()): Date {
+  const out = new Date(d.getFullYear(), d.getMonth(), 1)
+  out.setHours(0, 0, 0, 0)
+  return out
+}
+
+/** Local-timezone start of the calendar month `n` months before `d`'s month. */
+export function startOfMonthsAgo(n: number, d: Date = new Date()): Date {
+  const out = new Date(d.getFullYear(), d.getMonth() - n, 1)
+  out.setHours(0, 0, 0, 0)
+  return out
+}
+
+/** Local-timezone start of the Monday-first week containing `d`. */
+export function startOfWeek(d: Date = new Date()): Date {
+  const out = startOfLocalDay(d)
+  out.setDate(out.getDate() - mondayIndex(out))
+  return out
+}
+
+/**
+ * Inclusive list of week-start local-day keys spanning the last `n`
+ * Monday-first weeks (oldest first), for bucketing rows into weekly
+ * bars the same way `lastNDayKeys` buckets into daily ones.
+ */
+export function lastNWeekKeys(n: number): string[] {
+  const keys: string[] = []
+  const start = startOfWeek()
+  start.setDate(start.getDate() - 7 * (n - 1))
+  for (let i = 0; i < n; i++) {
+    const d = new Date(start)
+    d.setDate(d.getDate() + 7 * i)
+    keys.push(localDayKey(d))
+  }
+  return keys
+}
+
+/** Maps `d` to the local-day key of the Monday starting its week. */
+export function weekKeyFor(d: Date | string): string {
+  const date = typeof d === 'string' ? new Date(d) : d
+  return localDayKey(startOfWeek(date))
+}

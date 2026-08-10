@@ -4,35 +4,36 @@ import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatCurrency } from '@/lib/currency'
-import {
-  MessageSquare,
-  UserPlus,
-  DollarSign,
-  Send,
-} from 'lucide-react'
+import { Briefcase, DollarSign, Percent, Plus, Trophy, Users } from 'lucide-react'
 
 import {
-  loadActivity,
-  loadConversationsSeries,
-  loadMetrics,
-  loadPipelineDonut,
-  loadResponseTime,
+  loadKpiRow,
+  loadLeadSource,
+  loadRecentLeads,
+  loadRevenueSeries,
+  loadSalesFunnel,
+  loadTodayActivities,
 } from '@/lib/dashboard/queries'
 import type {
-  ActivityItem,
-  ConversationsSeriesPoint,
-  MetricsBundle,
-  PipelineDonutData,
-  ResponseTimeSummary,
+  KpiBundle,
+  KpiCard,
+  LeadSourceData,
+  RecentLead,
+  RevenuePoint,
+  SalesFunnelData,
+  TodayActivity,
 } from '@/lib/dashboard/types'
 
 import { MetricCard } from '@/components/dashboard/metric-card'
 import { SkeletonCard } from '@/components/dashboard/skeleton'
-import { QuickActions } from '@/components/dashboard/quick-actions'
-import { ConversationsChart } from '@/components/dashboard/conversations-chart'
-import { PipelineDonut } from '@/components/dashboard/pipeline-donut'
-import { ResponseTimeChart } from '@/components/dashboard/response-time-chart'
-import { ActivityFeed } from '@/components/dashboard/activity-feed'
+import { SalesFunnel } from '@/components/dashboard/sales-funnel'
+import { TodayActivities } from '@/components/dashboard/today-activities'
+import { RevenueChart } from '@/components/dashboard/revenue-chart'
+import { LeadSourceDonut } from '@/components/dashboard/lead-source-donut'
+import { RecentLeads } from '@/components/dashboard/recent-leads'
+import { DealForm } from '@/components/pipelines/deal-form'
+import { Button } from '@/components/ui/button'
+import type { PipelineStage } from '@/types'
 
 import { useTranslations } from 'next-intl'
 
@@ -40,195 +41,218 @@ type RangeDays = 7 | 30 | 90
 
 export default function DashboardPage() {
   const t = useTranslations('Dashboard.page')
-  const { defaultCurrency } = useAuth()
-  const [metrics, setMetrics] = useState<MetricsBundle | null>(null)
-  const [metricsLoading, setMetricsLoading] = useState(true)
+  const { profile, defaultCurrency } = useAuth()
+
+  const [kpis, setKpis] = useState<KpiBundle | null>(null)
+  const [kpisLoading, setKpisLoading] = useState(true)
+
+  const [funnel, setFunnel] = useState<SalesFunnelData | null>(null)
+  const [funnelLoading, setFunnelLoading] = useState(true)
+
+  const [today, setToday] = useState<TodayActivity[] | null>(null)
+  const [todayLoading, setTodayLoading] = useState(true)
 
   const [range, setRange] = useState<RangeDays>(30)
-  // Keep a cache per range so switching tabs doesn't re-fetch what we
-  // already have. Ranges the user hasn't opened yet stay null and
-  // trigger a fetch on first view.
-  const [series, setSeries] = useState<Record<RangeDays, ConversationsSeriesPoint[] | null>>({
+  const [revenue, setRevenue] = useState<Record<RangeDays, RevenuePoint[] | null>>({
     7: null,
     30: null,
     90: null,
   })
-  const [seriesLoading, setSeriesLoading] = useState(true)
+  const [revenueLoading, setRevenueLoading] = useState(true)
 
-  const [pipeline, setPipeline] = useState<PipelineDonutData | null>(null)
-  const [pipelineLoading, setPipelineLoading] = useState(true)
+  const [leadSource, setLeadSource] = useState<LeadSourceData | null>(null)
+  const [leadSourceLoading, setLeadSourceLoading] = useState(true)
 
-  const [responseTime, setResponseTime] = useState<ResponseTimeSummary | null>(null)
-  const [responseTimeLoading, setResponseTimeLoading] = useState(true)
+  const [recentLeads, setRecentLeads] = useState<RecentLead[] | null>(null)
+  const [recentLeadsLoading, setRecentLeadsLoading] = useState(true)
 
-  const [activity, setActivity] = useState<ActivityItem[] | null>(null)
-  const [activityLoading, setActivityLoading] = useState(true)
+  // Wiring for "+ Novo negócio" — same "first pipeline by created_at"
+  // convention the Pipelines page uses as its default selection.
+  const [dealFormOpen, setDealFormOpen] = useState(false)
+  const [dealPipelineId, setDealPipelineId] = useState('')
+  const [dealStages, setDealStages] = useState<PipelineStage[]>([])
 
   const loadAll = useCallback(() => {
     const db = createClient()
 
-    // Kick everything off in parallel. Each block has its own
-    // setState + finally so a slow query doesn't hold up faster
-    // sections — each widget shows its own skeleton independently.
-    void loadMetrics(db)
-      .then((m) => setMetrics(m))
-      .catch((err) => console.error('[dashboard] metrics failed:', err))
-      .finally(() => setMetricsLoading(false))
+    void loadKpiRow(db)
+      .then(setKpis)
+      .catch((err) => console.error('[dashboard] kpis failed:', err))
+      .finally(() => setKpisLoading(false))
 
-    void loadConversationsSeries(db, 30)
-      .then((s) => setSeries((prev) => ({ ...prev, 30: s })))
-      .catch((err) => console.error('[dashboard] series failed:', err))
-      .finally(() => setSeriesLoading(false))
+    void loadSalesFunnel(db)
+      .then(setFunnel)
+      .catch((err) => console.error('[dashboard] funnel failed:', err))
+      .finally(() => setFunnelLoading(false))
 
-    void loadPipelineDonut(db)
-      .then((p) => setPipeline(p))
-      .catch((err) => console.error('[dashboard] pipeline failed:', err))
-      .finally(() => setPipelineLoading(false))
+    void loadTodayActivities(db)
+      .then(setToday)
+      .catch((err) => console.error('[dashboard] today failed:', err))
+      .finally(() => setTodayLoading(false))
 
-    void loadResponseTime(db)
-      .then((r) => setResponseTime(r))
-      .catch((err) => console.error('[dashboard] response time failed:', err))
-      .finally(() => setResponseTimeLoading(false))
+    void loadRevenueSeries(db, 30)
+      .then((s) => setRevenue((prev) => ({ ...prev, 30: s })))
+      .catch((err) => console.error('[dashboard] revenue failed:', err))
+      .finally(() => setRevenueLoading(false))
 
-    // Fetch up to 50 so the biggest page-size option in the feed
-    // (50 rows) is already in memory — switching sizes then becomes
-    // a pure client-side slice with no extra round trip.
-    void loadActivity(db, 50)
-      .then((a) => setActivity(a))
-      .catch((err) => console.error('[dashboard] activity failed:', err))
-      .finally(() => setActivityLoading(false))
+    void loadLeadSource(db)
+      .then(setLeadSource)
+      .catch((err) => console.error('[dashboard] lead source failed:', err))
+      .finally(() => setLeadSourceLoading(false))
+
+    void loadRecentLeads(db, 5)
+      .then(setRecentLeads)
+      .catch((err) => console.error('[dashboard] recent leads failed:', err))
+      .finally(() => setRecentLeadsLoading(false))
+
+    void db
+      .from('pipelines')
+      .select('id')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .then(async ({ data }) => {
+        const pid = data?.[0]?.id
+        if (!pid) return
+        setDealPipelineId(pid)
+        const { data: stages } = await db
+          .from('pipeline_stages')
+          .select('*')
+          .eq('pipeline_id', pid)
+          .order('position')
+        setDealStages(stages ?? [])
+      })
   }, [])
 
   useEffect(() => {
     loadAll()
   }, [loadAll])
 
-  // Range switch handler — kept in an event callback (not an effect)
-  // so the setState calls stay out of the react-hooks/set-state-in-effect
-  // rule's way. The cached bucket check means switching back to a
-  // previously-viewed range is instant and doesn't re-fetch.
   const handleRangeChange = useCallback(
     (r: RangeDays) => {
       setRange(r)
-      if (series[r] !== null) return
-      setSeriesLoading(true)
+      if (revenue[r] !== null) return
+      setRevenueLoading(true)
       const db = createClient()
-      loadConversationsSeries(db, r)
-        .then((s) => setSeries((prev) => ({ ...prev, [r]: s })))
-        .catch((err) => console.error('[dashboard] series failed:', err))
-        .finally(() => setSeriesLoading(false))
+      loadRevenueSeries(db, r)
+        .then((s) => setRevenue((prev) => ({ ...prev, [r]: s })))
+        .catch((err) => console.error('[dashboard] revenue failed:', err))
+        .finally(() => setRevenueLoading(false))
     },
-    [series],
+    [revenue],
   )
+
+  const greetingName = profile?.full_name?.split(' ')[0] || t('fallbackName')
 
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('description')}
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{t('greeting', { name: greetingName })}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
+        </div>
+        <Button onClick={() => setDealFormOpen(true)} disabled={!dealPipelineId} className="w-fit">
+          <Plus />
+          {t('newDeal')}
+        </Button>
       </div>
 
-      {/* Metric cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {metricsLoading || !metrics ? (
-          Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+      {/* KPI row */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {kpisLoading || !kpis ? (
+          Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (
           <>
             <MetricCard
-              title={t('activeConversations')}
-              value={metrics.activeConversations.current.toLocaleString()}
-              icon={MessageSquare}
-              delta={{
-                sign: metrics.activeConversations.previous,
-                label: deltaLabel(
-                  metrics.activeConversations.previous, 
-                  t('newTodayVsYesterday'), 
-                  t('noChange', { suffix: t('newTodayVsYesterday') })
-                ),
-              }}
+              title={t('kpiContacts')}
+              value={kpis.contactsTotal.current.toLocaleString()}
+              icon={Users}
+              tone="blue"
+              delta={countDelta(kpis.contactsTotal, t)}
             />
             <MetricCard
-              title={t('newContactsToday')}
-              value={metrics.newContactsToday.current.toLocaleString()}
-              icon={UserPlus}
-              delta={{
-                sign:
-                  metrics.newContactsToday.current - metrics.newContactsToday.previous,
-                label: deltaLabel(
-                  metrics.newContactsToday.current - metrics.newContactsToday.previous,
-                  t('vsYesterday'),
-                  t('noChange', { suffix: t('vsYesterday') })
-                ),
-              }}
+              title={t('kpiDeals')}
+              value={kpis.openDeals.current.toLocaleString()}
+              icon={Briefcase}
+              tone="blue"
+              delta={countDelta(kpis.openDeals, t)}
             />
             <MetricCard
-              title={t('openDealsValue')}
-              value={formatCurrency(metrics.openDealsValue, defaultCurrency)}
+              title={t('kpiRevenue')}
+              value={formatCurrency(kpis.revenueThisMonth.current, defaultCurrency)}
               icon={DollarSign}
-              subtitle={t('openDeals', { count: metrics.openDealsCount })}
+              tone="green"
+              delta={countDelta(kpis.revenueThisMonth, t)}
             />
             <MetricCard
-              title={t('messagesSentToday')}
-              value={metrics.messagesSentToday.current.toLocaleString()}
-              icon={Send}
-              delta={{
-                sign:
-                  metrics.messagesSentToday.current - metrics.messagesSentToday.previous,
-                label: deltaLabel(
-                  metrics.messagesSentToday.current - metrics.messagesSentToday.previous,
-                  t('vsYesterday'),
-                  t('noChange', { suffix: t('vsYesterday') })
-                ),
-              }}
+              title={t('kpiWonDeals')}
+              value={kpis.wonDealsThisMonth.current.toLocaleString()}
+              icon={Trophy}
+              tone="orange"
+              delta={countDelta(kpis.wonDealsThisMonth, t)}
+            />
+            <MetricCard
+              title={t('kpiConversion')}
+              value={`${kpis.conversionRatePct.current.toFixed(1)}%`}
+              icon={Percent}
+              tone="violet"
+              delta={pointsDelta(kpis.conversionRatePct, t)}
             />
           </>
         )}
       </div>
 
-      {/* Quick actions */}
-      <QuickActions />
+      {/* Sales funnel + today's activities */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <SalesFunnel data={funnel} loading={funnelLoading} currency={defaultCurrency} />
+        </div>
+        <TodayActivities items={today} loading={todayLoading} />
+      </div>
 
-      {/* Charts row */}
-      {/* items-stretch (the grid default) stretches the two columns to
-          match the tallest sibling; adding h-full on each wrapper and
-          on the inner panels makes both cards actually fill that
-          stretched height so their rounded borders line up. Without
-          this, the pipeline card rendered at its natural (shorter)
-          height while the line chart drove the row height. */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-        <div className="h-full lg:col-span-3">
-          <ConversationsChart
-            series={series}
-            loading={seriesLoading}
+      {/* Revenue + lead source */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="h-full lg:col-span-2">
+          <RevenueChart
+            series={revenue}
+            loading={revenueLoading}
             range={range}
             onRangeChange={handleRangeChange}
-          />
-        </div>
-        <div className="h-full lg:col-span-2">
-          <PipelineDonut
-            data={pipeline}
-            loading={pipelineLoading}
             currency={defaultCurrency}
           />
         </div>
+        <div className="h-full">
+          <LeadSourceDonut data={leadSource} loading={leadSourceLoading} />
+        </div>
       </div>
 
-      {/* Response time */}
-      <ResponseTimeChart data={responseTime} loading={responseTimeLoading} />
+      {/* Recent leads */}
+      <RecentLeads items={recentLeads} loading={recentLeadsLoading} />
 
-      {/* Activity feed */}
-      <ActivityFeed items={activity} loading={activityLoading} />
+      <DealForm
+        open={dealFormOpen}
+        onOpenChange={setDealFormOpen}
+        pipelineId={dealPipelineId}
+        stages={dealStages}
+        onSaved={loadAll}
+      />
     </div>
   )
 }
 
 // ------------------------------------------------------------
 
-function deltaLabel(delta: number, suffix: string, noChangeLabel: string): string {
-  if (delta === 0) return noChangeLabel
-  const sign = delta > 0 ? '+' : ''
-  return `${sign}${delta.toLocaleString()} ${suffix}`
+function countDelta(card: KpiCard, t: ReturnType<typeof useTranslations>) {
+  if (card.previous === 0) {
+    return card.current === 0 ? undefined : { sign: 1, label: t('newThisMonth') }
+  }
+  const pct = ((card.current - card.previous) / card.previous) * 100
+  const sign = pct > 0 ? 1 : pct < 0 ? -1 : 0
+  return { sign, label: t('deltaPct', { pct: `${pct > 0 ? '+' : ''}${pct.toFixed(1)}` }) }
+}
+
+function pointsDelta(card: KpiCard, t: ReturnType<typeof useTranslations>) {
+  const diff = card.current - card.previous
+  const sign = diff > 0 ? 1 : diff < 0 ? -1 : 0
+  return { sign, label: t('deltaPoints', { pts: `${diff > 0 ? '+' : ''}${diff.toFixed(1)}` }) }
 }

@@ -2,11 +2,22 @@ import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { cn } from '@/lib/utils'
 
+export type MetricTone = 'blue' | 'green' | 'orange' | 'violet'
+
+const TONE_CLASSES: Record<MetricTone, string> = {
+  blue: 'bg-blue-500/10 text-blue-500',
+  green: 'bg-emerald-500/10 text-emerald-500',
+  orange: 'bg-amber-500/10 text-amber-500',
+  violet: 'bg-primary/10 text-primary',
+}
+
 interface MetricCardProps {
   title: string
   /** Pre-formatted value for display (e.g. "42" or "$1,250"). */
   value: string
   icon: ComponentType<{ className?: string }>
+  /** Colored icon-square tint. Defaults to the neutral bg-muted look. */
+  tone?: MetricTone
   /**
    * Delta-mode secondary row: arrow + delta text. Omit when the metric
    * doesn't have a sensible comparison (e.g. total pipeline value).
@@ -21,12 +32,17 @@ interface MetricCardProps {
   subtitle?: string
 }
 
-export function MetricCard({ title, value, icon: Icon, delta, subtitle }: MetricCardProps) {
+export function MetricCard({ title, value, icon: Icon, tone, delta, subtitle }: MetricCardProps) {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+        <div
+          className={cn(
+            'flex h-8 w-8 items-center justify-center rounded-lg',
+            tone ? TONE_CLASSES[tone] : 'bg-muted text-muted-foreground',
+          )}
+        >
           <Icon className="h-4 w-4" />
         </div>
       </div>

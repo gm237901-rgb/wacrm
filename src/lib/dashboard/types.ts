@@ -65,3 +65,90 @@ export interface ActivityItem {
   /** Optional deep-link for the whole row (not all items have a target). */
   href?: string
 }
+
+// --- KPI row (5 stat cards) --------------------------------------------
+
+export interface KpiCard {
+  current: number
+  /** Same metric as of the start of the current calendar month. */
+  previous: number
+}
+
+export interface KpiBundle {
+  contactsTotal: KpiCard
+  openDeals: KpiCard
+  /** Sum of `value` on deals won this month vs won last month. */
+  revenueThisMonth: KpiCard
+  /** Count of deals won this month vs won last month. */
+  wonDealsThisMonth: KpiCard
+  /** Won / (won+lost) as a 0-100 percentage, this month vs last month. */
+  conversionRatePct: KpiCard
+}
+
+// --- Sales funnel (Dashboard mini pipeline) -----------------------------
+
+export interface FunnelDealCard {
+  id: string
+  title: string
+  value: number
+  contactName: string | null
+  avatarUrl: string | null
+}
+
+export interface FunnelStage {
+  id: string
+  name: string
+  color: string
+  dealCount: number
+  totalValue: number
+  topDeals: FunnelDealCard[]
+}
+
+export interface SalesFunnelData {
+  pipelineId: string | null
+  stages: FunnelStage[]
+}
+
+// --- Today's activities --------------------------------------------------
+
+export interface TodayActivity {
+  id: string
+  title: string
+  subtitle: string | null
+  /** ISO timestamp — drives the displayed time and the sort order. */
+  at: string
+  status: 'scheduled' | 'completed' | 'cancelled'
+  href: string
+}
+
+// --- Revenue over time ----------------------------------------------------
+
+export interface RevenuePoint {
+  day: string // YYYY-MM-DD local
+  value: number
+}
+
+// --- Lead source donut -----------------------------------------------------
+
+export const LEAD_SOURCES = ['site', 'google_ads', 'indicacao', 'redes_sociais', 'outros'] as const
+export type LeadSource = (typeof LEAD_SOURCES)[number]
+
+export interface LeadSourceSlice {
+  source: LeadSource
+  count: number
+}
+
+export interface LeadSourceData {
+  slices: LeadSourceSlice[]
+  total: number
+}
+
+// --- Recent leads -----------------------------------------------------------
+
+export interface RecentLead {
+  id: string
+  name: string
+  email: string | null
+  avatarUrl: string | null
+  createdAt: string
+}
