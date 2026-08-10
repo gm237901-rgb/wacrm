@@ -439,13 +439,13 @@ function NodeCard({
             >
               {t(`nodes.${node.node_type}.label`)}
             </span>
-            <code className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 text-[10px]">
+            <code className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 text-[11px]">
               {node.node_key}
             </code>
             {isEntry && (
               <Badge
                 variant="outline"
-                className="border-primary/40 bg-primary/10 text-primary text-[10px]"
+                className="border-primary/40 bg-primary/10 text-primary text-[11px]"
               >
                 {t('badgeEntry')}
               </Badge>
@@ -564,7 +564,7 @@ function NodeConfigWithAdvanced({
               />
             </div>
             {hasReplyIds && (
-              <p className="text-muted-foreground text-[10px]">
+              <p className="text-muted-foreground text-[11px]">
                 {t('replyIdsHint')}
               </p>
             )}

@@ -233,15 +233,15 @@ function ButtonsEditor({
               placeholder={t("buttonLabelPlaceholder")}
               className="flex-1 bg-muted"
             />
-            <span className="w-10 shrink-0 text-right text-[10px] text-muted-foreground">
+            <span className="w-10 shrink-0 text-right text-[11px] text-muted-foreground">
               {b.title.length}/{INTERACTIVE_LIMITS.buttonTitleMaxLength}
             </span>
             {buttons.length > 1 && (
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon-lg"
                 onClick={() => remove(i)}
-                className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                className="shrink-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -349,9 +349,9 @@ function ListEditor({
             {sections.length > 1 && (
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon-lg"
                 onClick={() => removeSection(sIdx)}
-                className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                className="shrink-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -378,15 +378,15 @@ function ListEditor({
                     placeholder={t("rowTitlePlaceholder")}
                     className="flex-1 bg-muted"
                   />
-                  <span className="w-10 shrink-0 text-right text-[10px] text-muted-foreground">
+                  <span className="w-10 shrink-0 text-right text-[11px] text-muted-foreground">
                     {row.title.length}/{INTERACTIVE_LIMITS.listRowTitleMaxLength}
                   </span>
                   {totalRows > 1 && (
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon-lg"
                       onClick={() => removeRow(sIdx, rIdx)}
-                      className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                      className="shrink-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -464,7 +464,7 @@ function Field({
     <div>
       <div className="mb-1 flex items-center justify-between">
         <label className="text-xs text-muted-foreground">{label}</label>
-        {counter && <span className="text-[10px] text-muted-foreground">{counter}</span>}
+        {counter && <span className="text-[11px] text-muted-foreground">{counter}</span>}
       </div>
       {children}
     </div>

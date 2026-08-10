@@ -48,7 +48,10 @@ export function ResponseTimeChart({
 
   return (
     <section className="rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+      {/* Stacks below sm — the title/description block and the target
+          pill + this-week/last-week stats were fighting for the same row
+          on a 375px card and wrapping mid-word. */}
+      <header className="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold text-foreground">
             {t('title')}
@@ -57,7 +60,7 @@ export function ResponseTimeChart({
             {t('description')}
           </p>
         </div>
-        <div className="flex items-center gap-3 text-right text-xs">
+        <div className="flex items-center gap-3 text-xs sm:text-right">
           {thresholdMinutes > 0 && (
             <span className="rounded-full border border-rose-500/40 bg-rose-500/10 px-2 py-0.5 font-medium text-rose-300 tabular-nums">
               {t('target', { minutes: thresholdMinutes })}

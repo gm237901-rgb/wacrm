@@ -47,7 +47,7 @@ const MOBILE_BREAKPOINT = "(max-width: 767px)";
 
 type View = "canvas" | "list";
 
-const STORAGE_KEY = "wacrm.flowEditor.view";
+const STORAGE_KEY = "linovexa.flowEditor.view";
 
 // @xyflow/react (+ its stylesheet) is one of the heaviest client
 // dependencies in the app but only ever renders inside this editor.

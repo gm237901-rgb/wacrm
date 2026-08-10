@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { CURRENCIES } from "@/lib/currency";
 import type {
+  CalendarEvent,
   Contact,
   Conversation,
   Deal,
@@ -30,9 +31,13 @@ import {
   MessageSquare,
   DollarSign,
   Loader2,
+  Plus,
+  CalendarDays,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { EventForm } from "@/components/agenda/event-form";
 
 interface DealFormProps {
   open: boolean;
@@ -75,6 +80,13 @@ export function DealForm({
   const [statusAction, setStatusAction] = useState<DealStatus | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  // Agenda section — events linked to this deal (existing deals only,
+  // same "Agendar" shortcut pattern as the contact detail Agenda tab).
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+  const [eventFormOpen, setEventFormOpen] = useState(false);
+  const [editEvent, setEditEvent] = useState<CalendarEvent | null>(null);
 
   // Reset the form fields every time the sheet opens or its input
   // props change. This is a legitimate prop-driven sync; the rule is
@@ -150,6 +162,42 @@ export function DealForm({
       cancelled = true;
     };
   }, [open, contactId, supabase]);
+
+  const fetchEvents = useCallback(async () => {
+    if (!deal) return;
+    setLoadingEvents(true);
+    const { data } = await supabase
+      .from("events")
+      .select(
+        "*, contact:contacts(id,name,phone), assignee:profiles!events_assigned_to_fkey(id,full_name,email)"
+      )
+      .eq("deal_id", deal.id)
+      .order("starts_at", { ascending: true });
+    setEvents((data ?? []) as CalendarEvent[]);
+    setLoadingEvents(false);
+  }, [deal, supabase]);
+
+  useEffect(() => {
+    if (!open || !deal) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEvents([]);
+      return;
+    }
+    fetchEvents();
+    // fetchEvents already depends on `deal` — including it here too would
+    // just refire this identically, so it's deliberately left off.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, deal?.id]);
+
+  function openNewEvent() {
+    setEditEvent(null);
+    setEventFormOpen(true);
+  }
+
+  function openEditEvent(ev: CalendarEvent) {
+    setEditEvent(ev);
+    setEventFormOpen(true);
+  }
 
   async function handleSave() {
     if (!title.trim() || !contactId || !stageId) {
@@ -246,6 +294,7 @@ export function DealForm({
   }
 
   return (
+    <>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
@@ -258,7 +307,11 @@ export function DealForm({
             </SheetTitle>
           </SheetHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* overflow-x-hidden: a too-wide child (like the status buttons
+              below used to be) would otherwise force this whole panel to
+              scroll sideways instead of the offending element just
+              wrapping/shrinking — belt-and-suspenders after that bug. */}
+          <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden p-4">
             <div className="grid gap-2">
               <Label className="text-muted-foreground">{t("title")}</Label>
               <Input
@@ -381,19 +434,25 @@ export function DealForm({
                 <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   {t("status")}
                 </p>
-                <div className="flex gap-2">
+                {/* Stacked below sm — "Marcar como ganho"/"Marcar como
+                    perdido" side by side don't fit the panel at its
+                    narrowest (mobile Sheet, or a squeezed desktop split
+                    view) even at flex-1, since neither label can shrink
+                    below its own text width. Stacking removes the fight
+                    for width entirely instead of trying to cram them in. */}
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <Button
                     type="button"
                     onClick={() => handleStatusChange("won")}
                     disabled={!!statusAction || deal.status === "won"}
-                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                    className="min-w-0 flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                   >
                     {statusAction === "won" ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
-                        <Check className="mr-1 h-4 w-4" />
-                        {t("markAsWon")}
+                        <Check className="mr-1 h-4 w-4 shrink-0" />
+                        <span className="truncate">{t("markAsWon")}</span>
                       </>
                     )}
                   </Button>
@@ -401,14 +460,14 @@ export function DealForm({
                     type="button"
                     onClick={() => handleStatusChange("lost")}
                     disabled={!!statusAction || deal.status === "lost"}
-                    className="flex-1 bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                    className="min-w-0 flex-1 bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
                   >
                     {statusAction === "lost" ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
-                        <X className="mr-1 h-4 w-4" />
-                        {t("markAsLost")}
+                        <X className="mr-1 h-4 w-4 shrink-0" />
+                        <span className="truncate">{t("markAsLost")}</span>
                       </>
                     )}
                   </Button>
@@ -423,6 +482,69 @@ export function DealForm({
                   >
                     {t("reopenDeal")}
                   </Button>
+                )}
+              </div>
+            )}
+
+            {deal && (
+              <div className="space-y-2 rounded-lg border border-border bg-muted/50 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    {t("agendaTab.title")}
+                  </p>
+                  <Button
+                    type="button"
+                    onClick={openNewEvent}
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 gap-1 px-2 text-primary hover:text-primary"
+                  >
+                    <Plus className="size-3.5" />
+                    {t("agendaTab.newEvent")}
+                  </Button>
+                </div>
+
+                {loadingEvents ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : events.length === 0 ? (
+                  <p className="py-2 text-sm text-muted-foreground">
+                    {t("agendaTab.noEvents")}
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {events.map((ev) => (
+                      <button
+                        key={ev.id}
+                        type="button"
+                        onClick={() => openEditEvent(ev)}
+                        className="w-full rounded-lg border border-border bg-card p-2.5 text-left transition-colors hover:bg-muted"
+                      >
+                        <p className="truncate text-sm font-medium text-foreground">
+                          {ev.title}
+                        </p>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <CalendarDays className="size-3" />
+                            {new Date(ev.starts_at).toLocaleDateString("pt-BR", {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                          {!ev.all_day && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="size-3" />
+                              {new Date(ev.starts_at).toLocaleTimeString("pt-BR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
@@ -483,5 +605,14 @@ export function DealForm({
         </div>
       </SheetContent>
     </Sheet>
+    <EventForm
+      open={eventFormOpen}
+      onOpenChange={setEventFormOpen}
+      event={editEvent}
+      initialDealId={deal?.id}
+      initialContactId={contactId || undefined}
+      onSaved={fetchEvents}
+    />
+    </>
   );
 }

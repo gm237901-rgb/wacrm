@@ -88,32 +88,32 @@
 
 :root,
 html[data-mode="dark"] {
-  --background: oklch(0.13 0.01 260);
+  --background: oklch(0.13 0.025 260);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0.01 260);
-  --card-2: oklch(0.205 0.01 260);
+  --card: oklch(0.18 0.022 260);
+  --card-2: oklch(0.205 0.022 260);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0.01 260);
+  --popover: oklch(0.18 0.022 260);
   --popover-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.22 0.01 260);
+  --secondary: oklch(0.22 0.02 260);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.22 0.01 260);
-  --muted-foreground: oklch(0.65 0.01 260);
-  --accent: oklch(0.22 0.01 260);
+  --muted: oklch(0.22 0.02 260);
+  --muted-foreground: oklch(0.65 0.015 260);
+  --accent: oklch(0.22 0.02 260);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.28 0.01 260);
-  --input: oklch(0.28 0.01 260);
+  --border: oklch(0.28 0.02 260);
+  --input: oklch(0.28 0.02 260);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.16 0.01 260);
+  --sidebar: oklch(0.16 0.022 260);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.22 0.01 260);
+  --sidebar-accent: oklch(0.22 0.02 260);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.28 0.01 260);
+  --sidebar-border: oklch(0.28 0.02 260);
 }
 
 html[data-mode="light"] {
@@ -147,11 +147,28 @@ html[data-mode="light"] {
 
 /* ---- ACCENT: primary color ---- */
 
-/* Sky Blue — the app's brand default, matched to the product logo
+/* Linovexa — the app's brand default. Blue-violet, deliberately
+ * between "cobalt" (hue 254) and "violet" (hue 293) below so it
+ * reads as its own indigo identity rather than duplicating either. */
+:root,
+html[data-theme="linovexa"] {
+  --primary: oklch(0.58 0.21 275);
+  --primary-foreground: oklch(0.985 0 0);
+  --primary-hover: oklch(0.65 0.19 275);
+  --primary-soft: oklch(0.58 0.21 275 / 0.12);
+  --primary-soft-2: oklch(0.58 0.21 275 / 0.22);
+  --ring: oklch(0.58 0.21 275);
+  --chart-1: oklch(0.58 0.21 275);
+  --chart-2: oklch(0.68 0.19 300);
+  --sidebar-primary: oklch(0.58 0.21 275);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-ring: oklch(0.58 0.21 275);
+}
+
+/* Sky Blue — the original brand default, matched to the product logo
  * (light blue gradient mark). Hue ~226 sits between cyan and
  * indigo so it reads as a bright, friendly blue rather than the
  * more indigo-leaning "cobalt" accent below. */
-:root,
 html[data-theme="skyblue"] {
   --primary: oklch(0.64 0.17 226);
   --primary-foreground: oklch(0.99 0 0);

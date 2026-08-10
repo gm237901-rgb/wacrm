@@ -95,7 +95,7 @@ function ImportPreviewTags({
         return (
           <span
             key={name}
-            className="inline-flex max-w-full items-center gap-1 rounded-full px-2 py-0.5 text-[10px] leading-none font-medium"
+            className="inline-flex max-w-full items-center gap-1 rounded-full px-2 py-0.5 text-[11px] leading-none font-medium"
             style={{
               backgroundColor: `${color}18`,
               color,

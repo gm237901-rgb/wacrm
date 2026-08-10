@@ -177,8 +177,10 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          // Mobile: fixed drawer that slides in from the left.
-          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col border-r border-border bg-card",
+          // Mobile: fixed drawer that slides in from the left. pl- keeps the
+          // logo/nav row clear of a landscape notch/rounded corner now that
+          // viewportFit:"cover" lets content draw edge-to-edge.
+          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col border-r border-border bg-card pl-[env(safe-area-inset-left)]",
           "transition-transform duration-200 ease-out will-change-transform",
           open ? "translate-x-0" : "-translate-x-full",
           // Desktop: static, always visible — reset all the mobile framing.
@@ -207,8 +209,9 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* Main navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        {/* Main navigation. pb- adds the home-indicator clearance on top of
+            the existing py-4 so the last item isn't flush against it. */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           <ul className="flex flex-col gap-1">
             {navItems.map((item) => {
               const isActive =
@@ -242,7 +245,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                     {item.beta && (
                       <span
                         aria-label={t("beta")}
-                        className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-300"
+                        className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300"
                       >
                         {t("beta")}
                       </span>
@@ -259,7 +262,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                     {showNotificationBadge && (
                       <span
                         aria-label={t("unreadNotifications", { count: unreadNotifications })}
-                        className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground"
+                        className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-foreground"
                       >
                         {unreadNotifications > 9 ? "9+" : unreadNotifications}
                       </span>
@@ -322,7 +325,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                   const Icon = meta.icon;
                   return (
                     <span
-                      className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${meta.className}`}
+                      className={`ml-auto inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wider ${meta.className}`}
                     >
                       <Icon className="size-3" />
                       {t(meta.labelKey as string)}

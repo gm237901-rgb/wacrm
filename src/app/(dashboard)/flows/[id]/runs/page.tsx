@@ -180,10 +180,10 @@ export default function FlowRunsPage() {
       <button
         type="button"
         onClick={() => router.push(`/flows/${flow.id}`)}
-        className="mb-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        className="mb-2 inline-flex max-w-full items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3 w-3" />
-        {flow.name}
+        <ArrowLeft className="h-3 w-3 shrink-0" />
+        <span className="truncate">{flow.name}</span>
       </button>
       <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">
@@ -269,7 +269,7 @@ function RunCard({
               )}
             </Badge>
             {run.status === "active" && run.current_node_key && (
-              <code className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+              <code className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
                 {t("atNode", { node: run.current_node_key })}
               </code>
             )}
@@ -326,19 +326,19 @@ function EventLine({ ev }: { ev: EventRow }) {
   const cls = EVENT_COLOR[ev.event_type] ?? "text-muted-foreground";
   return (
     <div className="flex items-start gap-2 rounded-md px-2 py-1 text-xs">
-      <span className="w-32 shrink-0 text-[10px] text-muted-foreground">
+      <span className="w-16 shrink-0 text-[11px] text-muted-foreground">
         {format(new Date(ev.created_at), "HH:mm:ss")}
       </span>
-      <span className={cn("w-32 shrink-0 font-mono text-[10px]", cls)}>
+      <span className={cn("w-24 shrink-0 truncate font-mono text-[11px]", cls)}>
         {ev.event_type}
       </span>
       {ev.node_key && (
-        <code className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">
+        <code className="shrink-0 rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
           {ev.node_key}
         </code>
       )}
       {Object.keys(ev.payload).length > 0 && (
-        <span className="min-w-0 truncate text-[10px] text-muted-foreground">
+        <span className="min-w-0 truncate text-[11px] text-muted-foreground">
           {summarizePayload(ev.payload)}
         </span>
       )}

@@ -24,9 +24,15 @@ import { useTranslations } from "next-intl";
 
 interface ContactSidebarProps {
   contact: Contact | null;
+  /**
+   * Overrides the default fixed desktop width (w-70). Passed as "w-full"
+   * when this renders inside the mobile Sheet (see message-thread.tsx),
+   * where the Sheet's own width already constrains it.
+   */
+  widthClassName?: string;
 }
 
-export function ContactSidebar({ contact }: ContactSidebarProps) {
+export function ContactSidebar({ contact, widthClassName = "w-70" }: ContactSidebarProps) {
   const tSidebar = useTranslations("Inbox.sidebar");
   const tThread = useTranslations("Inbox.messageThread");
 
@@ -122,7 +128,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
 
   if (!contact) {
     return (
-      <div className="flex h-full w-70 items-center justify-center border-l border-border bg-card">
+      <div className={cn("flex h-full items-center justify-center border-l border-border bg-card", widthClassName)}>
         <p className="text-sm text-muted-foreground">{tThread("selectConversation")}</p>
       </div>
     );
@@ -132,7 +138,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const initials = displayName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex h-full w-70 flex-col border-l border-border bg-card">
+    <div className={cn("flex h-full flex-col border-l border-border bg-card", widthClassName)}>
       <ScrollArea className="flex-1">
         <div className="p-4">
           {/* Contact Info */}
@@ -195,7 +201,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                 tags.map((tag) => (
                   <span
                     key={tag.contact_tag_id}
-                    className="rounded-full px-2 py-0.5 text-[10px] font-medium"
+                    className="rounded-full px-2 py-0.5 text-[11px] font-medium"
                     style={{
                       backgroundColor: `${tag.color}20`,
                       color: tag.color,
@@ -236,7 +242,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                       </span>
                       {deal.stage && (
                         <span
-                          className="rounded-full px-1.5 py-0.5 text-[10px]"
+                          className="rounded-full px-1.5 py-0.5 text-[11px]"
                           style={{
                             backgroundColor: `${deal.stage.color}20`,
                             color: deal.stage.color,
@@ -289,7 +295,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                     <p className="whitespace-pre-wrap text-xs text-muted-foreground">
                       {note.note_text}
                     </p>
-                    <p className="mt-1 text-[10px] text-muted-foreground">
+                    <p className="mt-1 text-[11px] text-muted-foreground">
                       {format(new Date(note.created_at), "d MMM yyyy HH:mm", { locale: ptBR })}
                     </p>
                   </div>

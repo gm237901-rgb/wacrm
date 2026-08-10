@@ -540,7 +540,7 @@ export function TemplateManager() {
                       )}
                       {template.quality_score && (
                         <span
-                          className={`text-[10px] uppercase font-medium ${
+                          className={`text-[11px] uppercase font-medium ${
                             template.quality_score === 'GREEN'
                               ? 'text-emerald-400'
                               : template.quality_score === 'YELLOW'

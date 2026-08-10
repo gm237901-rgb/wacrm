@@ -16,7 +16,7 @@
   },
   "Sidebar": {
     "navPrimaryAria": "Principal",
-    "title": "CRM para WhatsApp",
+    "title": "Linovexa",
     "dashboard": "Painel",
     "inbox": "Caixa de entrada",
     "notifications": "Notificações",
@@ -441,7 +441,20 @@
         "thu": "Qui",
         "fri": "Sex",
         "sat": "Sáb"
-      }
+      },
+      "prevYear": "Ano anterior",
+      "nextYear": "Próximo ano",
+      "searchPlaceholder": "Pesquisar",
+      "clearSearch": "Limpar busca",
+      "notifications": "Notificações",
+      "noEvents": "Nenhum evento",
+      "noEventsSearch": "Nenhum evento encontrado",
+      "prevMonth": "Mês anterior",
+      "nextMonth": "Próximo mês",
+      "filtersTitle": "Filtros",
+      "statusScheduled": "Agendado",
+      "statusCompleted": "Concluído",
+      "statusCancelled": "Cancelado"
     },
     "form": {
       "newEvent": "Novo compromisso",
@@ -740,6 +753,11 @@
       "markAsWon": "Marcar como ganho",
       "markAsLost": "Marcar como perdido",
       "reopenDeal": "Reabrir negócio",
+      "agendaTab": {
+        "title": "Agenda",
+        "newEvent": "Agendar",
+        "noEvents": "Nenhum compromisso ainda"
+      },
       "cancel": "Cancelar",
       "saving": "Salvando...",
       "saveChanges": "Salvar alterações",
@@ -1510,7 +1528,7 @@
     "invite": {
       "toastCreateFailed": "Falha ao criar convite",
       "toastServerUnreachableRetry": "Não foi possível conectar ao servidor. Tentar de novo?",
-      "defaultAccountName": "nossa conta no wacrm",
+      "defaultAccountName": "nossa conta no Linovexa",
       "inviteCreated": "Convite criado",
       "inviteCreatedDesc": "Compartilhe este link com seu novo colega de equipe. A pessoa poderá se cadastrar (ou entrar) e se juntar à conta como <bold>{role}</bold>. O link é válido por <bold>{days} {days, plural, =1 {dia} other {dias}}</bold>.",
       "inviteLink": "Link de convite",
@@ -1536,7 +1554,7 @@
       "labelTooLong": "O rótulo deve ter no máximo {max} caracteres",
       "copied": "Link de convite copiado",
       "clipboardBlocked": "Área de transferência bloqueada — copie o link manualmente",
-      "whatsappMessage": "Junte-se à conta {accountName} no wacrm usando este link (válido por {expiresInDays} dias): {url}"
+      "whatsappMessage": "Junte-se à conta {accountName} no Linovexa usando este link (válido por {expiresInDays} dias): {url}"
     },
     "tagsAndFields": {
       "title": "Campos e etiquetas",
@@ -1659,8 +1677,8 @@
       "submitApproval": "Enviar para aprovação",
 
       "deleteDialogTitle": "Excluir modelo?",
-      "deleteMetaDesc": "\"{name}\" será excluído da Meta e do wacrm. Transmissões ativas usando este modelo começarão a falhar no próximo envio. Isso não pode ser desfeito.",
-      "deleteLocalDesc": "\"{name}\" será excluído do wacrm. Ele nunca foi enviado à Meta, então nenhuma limpeza remota é necessária.",
+      "deleteMetaDesc": "\"{name}\" será excluído da Meta e do Linovexa. Transmissões ativas usando este modelo começarão a falhar no próximo envio. Isso não pode ser desfeito.",
+      "deleteLocalDesc": "\"{name}\" será excluído do Linovexa. Ele nunca foi enviado à Meta, então nenhuma limpeza remota é necessária.",
       "deleting": "Excluindo…",
       "delete": "Excluir",
 
@@ -1724,7 +1742,7 @@
       "notConnected": "Não conectado",
       "connectedDesc": "Seu token de acesso autentica com a Meta. Veja o status de registro abaixo para saber se os webhooks estão realmente conectados.",
       "notConnectedDesc": "Configure suas credenciais da API da Meta abaixo para conectar sua conta comercial do WhatsApp.",
-      "registered": "Registrado — a Meta vai entregar eventos ao wacrm",
+      "registered": "Registrado — a Meta vai entregar eventos ao Linovexa",
       "notRegistered": "Não registrado — a Meta não vai entregar eventos",
       "verifyWithMeta": "Verificar com a Meta",
       "subscribedSince": "Inscrito desde {date}. Clique em Verificar com a Meta se os eventos pararem de chegar.",
@@ -1748,7 +1766,7 @@
       "twoStepPin": "PIN de verificação em duas etapas",
       "optional": "(opcional)",
       "pinPlaceholder": "PIN de 6 dígitos do Gerenciador do WhatsApp da Meta",
-      "pinHint": "Necessário apenas para conectar mensagens recebidas de um número em produção. Defina-o no Meta Business Manager → Contas do WhatsApp → Números de telefone → Verificação em duas etapas, depois cole aqui para que o wacrm possa inscrever o número — caso contrário, a Meta roteia eventos recebidos para qualquer que tenha sido o último app a reivindicá-lo (o sintoma que afeta segundos números em uma WABA compartilhada). Números de teste da Meta não têm PIN e já vêm pré-registrados — deixe em branco para eles. Deixar em branco também mantém um registro existente intocado.",
+      "pinHint": "Necessário apenas para conectar mensagens recebidas de um número em produção. Defina-o no Meta Business Manager → Contas do WhatsApp → Números de telefone → Verificação em duas etapas, depois cole aqui para que o Linovexa possa inscrever o número — caso contrário, a Meta roteia eventos recebidos para qualquer que tenha sido o último app a reivindicá-lo (o sintoma que afeta segundos números em uma WABA compartilhada). Números de teste da Meta não têm PIN e já vêm pré-registrados — deixe em branco para eles. Deixar em branco também mantém um registro existente intocado.",
       "webhookTitle": "Configuração do webhook",
       "webhookDesc": "Use esta URL como callback de webhook no Painel de Apps da Meta.",
       "webhookUrl": "URL de callback do webhook",
@@ -1918,7 +1936,7 @@
     },
     "aiConfig": {
       "title": "Configuração do agente",
-      "description": "Use sua própria chave da OpenAI ou Anthropic. O wacrm chama o provedor diretamente com sua chave — sem taxas de IA por usuário, e seus dados continuam seus. Isso alimenta respostas geradas por IA na caixa de entrada, o bot de resposta automática e o Playground.",
+      "description": "Use sua própria chave da OpenAI ou Anthropic. O Linovexa chama o provedor diretamente com sua chave — sem taxas de IA por usuário, e seus dados continuam seus. Isso alimenta respostas geradas por IA na caixa de entrada, o bot de resposta automática e o Playground.",
       "adminOnlyConfig": "Somente administradores e proprietários podem alterar a configuração de IA.",
       "loadFailed": "Falha ao carregar configuração de IA",
       "providerAndKey": "Provedor e chave",

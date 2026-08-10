@@ -386,7 +386,7 @@ export function MembersTab() {
                           {member.full_name || t('unnamed')}
                         </span>
                         {isSelf && (
-                          <Badge className="bg-muted text-muted-foreground border-border text-[10px] uppercase tracking-wide">
+                          <Badge className="bg-muted text-muted-foreground border-border text-[11px] uppercase tracking-wide">
                             {t('you')}
                           </Badge>
                         )}

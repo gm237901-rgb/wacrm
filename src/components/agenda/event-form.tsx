@@ -24,6 +24,8 @@ interface EventFormProps {
   event?: CalendarEvent | null;
   /** Pre-fills the contact select — used by the contact detail "Agenda" tab. */
   initialContactId?: string;
+  /** Pre-fills the deal select — used by the "Agendar" shortcut on a deal. */
+  initialDealId?: string;
   /** Pre-fills the date (yyyy-mm-dd) — used when a day is picked on the calendar. */
   initialDate?: string;
   onSaved: () => void;
@@ -41,6 +43,7 @@ export function EventForm({
   onOpenChange,
   event,
   initialContactId,
+  initialDealId,
   initialDate,
   onSaved,
 }: EventFormProps) {
@@ -86,7 +89,7 @@ export function EventForm({
       setTitle("");
       setDescription("");
       setContactId(initialContactId ?? "");
-      setDealId("");
+      setDealId(initialDealId ?? "");
       setAssignedTo("");
       setDate(initialDate ?? new Date().toISOString().slice(0, 10));
       setStartTime("09:00");
@@ -94,7 +97,7 @@ export function EventForm({
       setAllDay(false);
       setStatus("scheduled");
     }
-  }, [open, event, initialContactId, initialDate]);
+  }, [open, event, initialContactId, initialDealId, initialDate]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {

@@ -27,6 +27,7 @@ import {
   RefreshCw,
   PanelRightOpen,
   PanelRightClose,
+  Info,
 } from "lucide-react";
 import { format, isToday, isYesterday, differenceInHours } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -40,6 +41,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { MessageBubble } from "./message-bubble";
 import { MessageActions } from "./message-actions";
 import {
@@ -47,6 +54,7 @@ import {
   CHAT_MEDIA_BUCKET,
   type SendMediaPayload,
 } from "./message-composer";
+import { ContactSidebar } from "./contact-sidebar";
 import { deleteAccountMedia } from "@/lib/storage/upload-media";
 import { TemplatePicker } from "./template-picker";
 import { AiThreadBanner } from "./ai-thread-banner";
@@ -178,6 +186,12 @@ export function MessageThread({
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  // Contact info on mobile: there's no room for a permanent side panel
+  // below `lg`, so it opens as a Sheet instead. Independent from
+  // `contactPanelOpen` (the desktop inline-panel toggle) — the two only
+  // ever apply at different breakpoints, but sharing one boolean would
+  // leak an inline-panel state into a Sheet that should always start closed.
+  const [mobileContactOpen, setMobileContactOpen] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [reactions, setReactions] = useState<MessageReaction[]>([]);
   // Purely visual spin state for the manual-refresh button. The actual
@@ -907,7 +921,7 @@ export function MessageThread({
           <Badge
             variant="outline"
             className={cn(
-              "ml-1 hidden gap-1 border-border text-[10px] sm:inline-flex sm:ml-2",
+              "ml-1 hidden gap-1 border-border text-[11px] sm:inline-flex sm:ml-2",
               sessionInfo.expired ? "text-red-400" : "text-primary"
             )}
           >
@@ -943,6 +957,20 @@ export function MessageThread({
               )}
             </button>
           )}
+
+          {/* Contact-info button — mobile only. The sidebar never renders
+              as an inline panel below lg (no room), so this is its only
+              entry point on phone: opens the same ContactSidebar content
+              in a Sheet instead. */}
+          <button
+            type="button"
+            onClick={() => setMobileContactOpen(true)}
+            aria-label={t("showContact")}
+            title={t("showContact")}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+          >
+            <Info className="h-4 w-4" />
+          </button>
 
           {/* Manual refresh — forces a refetch of the messages + the
               conversation list (the parent bumps its resyncToken). Useful
@@ -1077,7 +1105,7 @@ export function MessageThread({
               <div key={group.date}>
                 {/* Date separator */}
                 <div className="mb-4 flex items-center justify-center">
-                  <span className="rounded-full bg-muted px-3 py-1 text-[10px] font-medium text-muted-foreground">
+                  <span className="rounded-full bg-muted px-3 py-1 text-[11px] font-medium text-muted-foreground">
                     {formatDateSeparator(group.date, t)}
                   </span>
                 </div>
@@ -1167,6 +1195,18 @@ export function MessageThread({
         onOpenChange={setTemplateModalOpen}
         onSelect={handleSendTemplate}
       />
+
+      {/* Contact info — mobile only (the Info button above is lg:hidden,
+          so this only ever opens below lg). Reuses the exact same
+          ContactSidebar the desktop inline panel renders. */}
+      <Sheet open={mobileContactOpen} onOpenChange={setMobileContactOpen}>
+        <SheetContent side="right" className="w-3/4 gap-0 p-0 sm:max-w-xs">
+          <SheetHeader className="border-b border-border p-4">
+            <SheetTitle>{t("showContact")}</SheetTitle>
+          </SheetHeader>
+          <ContactSidebar contact={contact} widthClassName="w-full flex-1 border-l-0" />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

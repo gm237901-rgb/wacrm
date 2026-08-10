@@ -205,7 +205,7 @@ export default function FlowsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
-            <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
+            <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-300">
               {t("beta")}
             </span>
           </div>
@@ -386,7 +386,7 @@ function FlowCard({
         <Badge
           variant="outline"
           className={cn(
-            "shrink-0 gap-1 text-[10px]",
+            "shrink-0 gap-1 text-[11px]",
             STATUS_COLORS[flow.status],
           )}
         >

@@ -473,11 +473,11 @@ export default function BroadcastDetailPage() {
               <TableHeader>
                 <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="text-muted-foreground">{t('table.contact')}</TableHead>
-                  <TableHead className="text-muted-foreground">{t('table.phone')}</TableHead>
+                  <TableHead className="hidden text-muted-foreground sm:table-cell">{t('table.phone')}</TableHead>
                   <TableHead className="text-muted-foreground">{t('table.status')}</TableHead>
-                  <TableHead className="text-muted-foreground">{t('table.sent')}</TableHead>
-                  <TableHead className="text-muted-foreground">{t('table.delivered')}</TableHead>
-                  <TableHead className="text-muted-foreground">{t('table.read')}</TableHead>
+                  <TableHead className="hidden text-muted-foreground md:table-cell">{t('table.sent')}</TableHead>
+                  <TableHead className="hidden text-muted-foreground lg:table-cell">{t('table.delivered')}</TableHead>
+                  <TableHead className="hidden text-muted-foreground lg:table-cell">{t('table.read')}</TableHead>
                   <TableHead className="text-muted-foreground">{t('table.error')}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -489,7 +489,7 @@ export default function BroadcastDetailPage() {
                       <TableCell className="font-medium text-foreground">
                         {recipient.contact?.name ?? 'Unknown'}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="hidden text-muted-foreground sm:table-cell">
                         {recipient.contact?.phone ?? '-'}
                       </TableCell>
                       <TableCell>
@@ -499,17 +499,17 @@ export default function BroadcastDetailPage() {
                           {tStatus(rStatus.label)}
                         </span>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="hidden text-muted-foreground md:table-cell">
                         {recipient.sent_at
                           ? new Date(recipient.sent_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="hidden text-muted-foreground lg:table-cell">
                         {recipient.delivered_at
                           ? new Date(recipient.delivered_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="hidden text-muted-foreground lg:table-cell">
                         {recipient.read_at
                           ? new Date(recipient.read_at).toLocaleString()
                           : '-'}

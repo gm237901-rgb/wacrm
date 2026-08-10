@@ -538,7 +538,9 @@ export function MessageComposer({
   // ---- Render --------------------------------------------------------
 
   return (
-    <div className="border-t border-border bg-card p-3">
+    // pb- adds home-indicator clearance on top of the existing p-3 so the
+    // send button isn't flush against the bottom edge on iOS.
+    <div className="border-t border-border bg-card p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
       {replyTo && (
         <div className="mb-2">
           <ReplyQuote
@@ -769,7 +771,7 @@ export function MessageComposer({
           `items-end` buttons below the textarea. Indented to line up
           under the textarea left edge. */}
       {!draft && !recording && (
-        <p className="mt-1 pl-[5.5rem] text-[10px] text-muted-foreground">
+        <p className="mt-1 pl-[5.5rem] text-[11px] text-muted-foreground">
           {t("draftHint")}
         </p>
       )}

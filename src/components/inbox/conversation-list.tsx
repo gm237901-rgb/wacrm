@@ -280,7 +280,7 @@ export function ConversationList({
               >
                 {t("tags")}
                 {selectedTagIds.length > 0 && (
-                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground">
                     {selectedTagIds.length}
                   </span>
                 )}
@@ -483,7 +483,7 @@ const ConversationItem = memo(function ConversationItem({
           <span className="truncate text-sm font-medium text-foreground">
             {displayName}
           </span>
-          <span className="shrink-0 text-[10px] text-muted-foreground">{timeAgo}</span>
+          <span className="shrink-0 text-[11px] text-muted-foreground">{timeAgo}</span>
         </div>
         <div className="mt-0.5 flex items-center justify-between gap-2">
           <p className="truncate text-xs text-muted-foreground">
@@ -491,7 +491,7 @@ const ConversationItem = memo(function ConversationItem({
           </p>
           <div className="flex shrink-0 items-center gap-1.5">
             {conversation.unread_count > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold text-primary-foreground">
                 {conversation.unread_count}
               </span>
             )}

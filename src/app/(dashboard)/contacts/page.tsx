@@ -414,7 +414,7 @@ export default function ContactsPage() {
               <Filter className="size-4" />
               {t('filterByTags')}
               {selectedTagIds.length > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
+                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">
                   {selectedTagIds.length}
                 </span>
               )}
@@ -620,7 +620,7 @@ export default function ContactsPage() {
                         contact.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag.id}
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
+                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
                             style={{
                               backgroundColor: tag.color + '20',
                               color: tag.color,
@@ -633,7 +633,7 @@ export default function ContactsPage() {
                         <span className="text-muted-foreground text-xs">-</span>
                       )}
                       {contact.tags && contact.tags.length > 3 && (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[11px] text-muted-foreground">
                           +{contact.tags.length - 3}
                         </span>
                       )}

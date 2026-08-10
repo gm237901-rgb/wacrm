@@ -57,7 +57,10 @@ export function Header({ onOpenSidebar }: HeaderProps) {
     "U";
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 lg:px-6">
+    <header className="flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 pt-[env(safe-area-inset-top)] lg:px-6">
+      {/* pt-[env(safe-area-inset-top)] keeps the bar clear of the iOS
+          status bar/notch now that viewportFit:"cover" lets content draw
+          under it (min-h- instead of h- so the extra padding doesn't clip). */}
       <div className="flex min-w-0 items-center gap-2">
         {/* Hamburger — mobile only. 44×44 hit target per Apple HIG. */}
         <button

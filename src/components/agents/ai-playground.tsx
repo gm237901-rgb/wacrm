@@ -83,12 +83,13 @@ export function AiPlayground({ onGoToSetup }: { onGoToSetup?: () => void }) {
 
   return (
     <div className="flex h-[60vh] min-h-[420px] flex-col rounded-xl border border-border bg-card">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <div className="flex items-center gap-2">
-          <Bot className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium text-foreground">{t('title')}</span>
-          <span className="text-xs text-muted-foreground">
+      {/* Header. Stacks below sm — icon+title+subtitle+Reset button don't
+          fit on one nowrap row at 375px (the subtitle is a full sentence). */}
+      <div className="flex flex-col gap-2 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
+        <div className="flex min-w-0 items-center gap-2">
+          <Bot className="h-4 w-4 shrink-0 text-primary" />
+          <span className="shrink-0 text-sm font-medium text-foreground">{t('title')}</span>
+          <span className="min-w-0 truncate text-xs text-muted-foreground">
             {t('subtitle')}
           </span>
         </div>
@@ -97,7 +98,7 @@ export function AiPlayground({ onGoToSetup }: { onGoToSetup?: () => void }) {
           size="sm"
           onClick={() => setTurns([])}
           disabled={turns.length === 0 || sending}
-          className="text-muted-foreground"
+          className="self-end text-muted-foreground sm:self-auto"
         >
           <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> {t('reset')}
         </Button>
