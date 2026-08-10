@@ -102,8 +102,11 @@ html[data-mode="dark"] {
   --accent: oklch(0.22 0.02 260);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.28 0.02 260);
-  --input: oklch(0.28 0.02 260);
+  /* Translucent white hairline instead of a flat grey — the "premium
+   * dark SaaS" border treatment (Linear/Vercel-style): it reads as a
+   * subtle edge regardless of what's behind it instead of a hard line. */
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
@@ -113,7 +116,7 @@ html[data-mode="dark"] {
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.22 0.02 260);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.28 0.02 260);
+  --sidebar-border: oklch(1 0 0 / 8%);
 }
 
 html[data-mode="light"] {
