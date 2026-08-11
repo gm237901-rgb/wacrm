@@ -62,7 +62,13 @@ function publicBaseUrl(request: Request): string {
   return new URL(request.url).origin;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Fetching the QR drives the Puppeteer page, and so does reading
+  // session status (WAHA takes ~3s per status call). Polling both every
+  // few seconds keeps Chromium permanently busy and destabilises the
+  // pairing the user is trying to complete. So the QR is opt-in: the
+  // client asks for it on a much slower cadence than the status.
+  const wantsQr = new URL(request.url).searchParams.get('qr') === '1';
   const supabase = await createClient();
   const {
     data: { user },
@@ -114,7 +120,7 @@ export async function GET() {
     // Only fetch a QR while one is actually expected — asking outside
     // SCAN_QR_CODE just 404s/422s and muddies the logs.
     let qr: string | null = null;
-    if (state.status === 'SCAN_QR_CODE') {
+    if (wantsQr && state.status === 'SCAN_QR_CODE') {
       qr = await getQrCode(server, config.session_name).catch(() => null);
     }
 

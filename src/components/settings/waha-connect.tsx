@@ -26,8 +26,19 @@ interface SessionState {
   qr?: string | null;
 }
 
-/** How often to re-check while a QR is on screen waiting to be scanned. */
-const PAIRING_POLL_MS = 3000;
+/**
+ * Status checks while a QR is on screen. Each one costs WAHA a real
+ * round trip into the Puppeteer page (~3s), so this stays well clear of
+ * that: polling faster than the server can answer just queues work and
+ * starves the pairing the user is trying to finish.
+ */
+const STATUS_POLL_MS = 6000;
+/**
+ * QR refreshes. WhatsApp rotates its pairing code roughly every 20s, so
+ * this keeps the displayed code current without re-rendering (and
+ * re-driving the browser) on every status tick.
+ */
+const QR_REFRESH_MS = 18000;
 
 export function WahaConnect() {
   const t = useTranslations("Settings.waha");
@@ -40,9 +51,9 @@ export function WahaConnect() {
   // re-subscribing (and restarting the interval) on every tick.
   const statusRef = useRef<Status>("STOPPED");
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (withQr = false) => {
     try {
-      const res = await fetch("/api/waha/session");
+      const res = await fetch(`/api/waha/session${withQr ? "?qr=1" : ""}`);
       const body = await res.json();
       if (!res.ok) {
         // A server without WAHA configured is an operator problem, not a
@@ -51,8 +62,15 @@ export function WahaConnect() {
         statusRef.current = "FAILED";
         return body?.error ? String(body.error) : null;
       }
-      setState(body as SessionState);
-      statusRef.current = (body as SessionState).status;
+      const next = body as SessionState;
+      // A status-only poll carries no QR. Keep the one already on
+      // screen rather than blanking it between refreshes — otherwise
+      // the code the user is mid-scan disappears under them.
+      setState((prev) => ({
+        ...next,
+        qr: next.qr ?? (next.status === "SCAN_QR_CODE" ? prev?.qr ?? null : null),
+      }));
+      statusRef.current = next.status;
       return null;
     } catch {
       setState({ connected: false, status: "FAILED", qr: null });
@@ -62,18 +80,30 @@ export function WahaConnect() {
   }, []);
 
   useEffect(() => {
-    refresh().finally(() => setLoading(false));
+    refresh(true).finally(() => setLoading(false));
   }, [refresh]);
 
   // While the user is looking at a QR, poll so the panel flips to
   // "connected" the moment they finish scanning — without them having
-  // to guess whether it worked and hit reload.
+  // to guess whether it worked and hit reload. Status and QR run on
+  // separate clocks (see the constants above): the status tick is
+  // cheap-ish and frequent, the QR refresh is slow and rare.
   useEffect(() => {
-    if (state?.status !== "SCAN_QR_CODE" && state?.status !== "STARTING") return;
-    const id = setInterval(() => {
-      void refresh();
-    }, PAIRING_POLL_MS);
-    return () => clearInterval(id);
+    const pairing =
+      state?.status === "SCAN_QR_CODE" || state?.status === "STARTING";
+    if (!pairing) return;
+
+    const statusTimer = setInterval(() => {
+      void refresh(false);
+    }, STATUS_POLL_MS);
+    const qrTimer = setInterval(() => {
+      void refresh(true);
+    }, QR_REFRESH_MS);
+
+    return () => {
+      clearInterval(statusTimer);
+      clearInterval(qrTimer);
+    };
   }, [state?.status, refresh]);
 
   async function connect() {
@@ -182,7 +212,7 @@ export function WahaConnect() {
               <li>{t("step2")}</li>
               <li>{t("step3")}</li>
             </ol>
-            <Button variant="ghost" size="sm" onClick={() => void refresh()} disabled={busy}>
+            <Button variant="ghost" size="sm" onClick={() => void refresh(true)} disabled={busy}>
               <RefreshCw className="size-4" />
               {t("refreshQr")}
             </Button>
