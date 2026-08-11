@@ -35,6 +35,7 @@ import {
   type InteractiveMessagePayload,
 } from '@/lib/whatsapp/interactive';
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption';
+import { WahaError, resolveWahaServer, sendText } from '@/lib/waha/client';
 import { supabaseAdmin } from '@/lib/flows/admin-client';
 import {
   sanitizePhoneForMeta,
@@ -245,6 +246,27 @@ export async function sendMessageToConversation(
       'Invalid phone number format',
       400
     );
+  }
+
+  // Provider fork. An account that paired via QR code sends through
+  // WAHA; everyone else keeps the Meta path below untouched. Checked
+  // before loading `whatsapp_config` because a WAHA-only account has no
+  // such row at all.
+  const { data: account } = await db
+    .from('accounts')
+    .select('wa_provider')
+    .eq('id', accountId)
+    .maybeSingle();
+
+  if (account?.wa_provider === 'waha') {
+    return sendViaWaha(db, accountId, {
+      conversationId,
+      contactId: contact.id,
+      phone: sanitizedPhone,
+      messageType,
+      contentText: contentText ?? null,
+      replyToMessageId: replyToMessageId ?? null,
+    });
   }
 
   // WhatsApp config, account-scoped.
@@ -510,6 +532,144 @@ export async function sendMessageToConversation(
       '[flows] pause-on-agent-send threw:',
       err instanceof Error ? err.message : err
     );
+  }
+
+  return { messageId: messageRecord.id, whatsappMessageId: waMessageId };
+}
+
+// ============================================================
+// WAHA send path
+//
+// Deliberately narrow for now: plain text only. Media, templates and
+// interactive messages still belong to the Meta path — WAHA has no
+// template concept at all, and media needs an upload pipeline this
+// slice doesn't build. Rejecting them explicitly (rather than silently
+// sending nothing) keeps the failure legible to the agent.
+// ============================================================
+
+async function sendViaWaha(
+  db: SupabaseClient,
+  accountId: string,
+  params: {
+    conversationId: string;
+    contactId: string;
+    phone: string;
+    messageType: string;
+    contentText: string | null;
+    replyToMessageId: string | null;
+  }
+): Promise<SendMessageResult> {
+  const { conversationId, phone, messageType, contentText, replyToMessageId } =
+    params;
+
+  if (messageType !== 'text') {
+    throw new SendMessageError(
+      'unsupported_for_waha',
+      `Só é possível enviar mensagens de texto pela conexão via QR Code. "${messageType}" ainda requer a conexão pela API oficial da Meta.`,
+      400
+    );
+  }
+
+  const { data: config } = await db
+    .from('waha_config')
+    .select('session_name, status')
+    .eq('account_id', accountId)
+    .maybeSingle();
+
+  if (!config) {
+    throw new SendMessageError(
+      'whatsapp_not_configured',
+      'WhatsApp não está conectado. Conecte lendo o QR Code em Configurações.',
+      400
+    );
+  }
+  if (config.status !== 'WORKING') {
+    throw new SendMessageError(
+      'whatsapp_not_connected',
+      'A conexão com o WhatsApp caiu. Reconecte lendo o QR Code em Configurações.',
+      409
+    );
+  }
+
+  // Resolve the reply target the same way the Meta path does — the
+  // parent must live in this conversation so a caller can't quote
+  // messages they can't see.
+  let replyTo: string | undefined;
+  if (replyToMessageId) {
+    const { data: parent } = await db
+      .from('messages')
+      .select('message_id')
+      .eq('id', replyToMessageId)
+      .eq('conversation_id', conversationId)
+      .maybeSingle();
+    replyTo = parent?.message_id ?? undefined;
+  }
+
+  let waMessageId: string;
+  try {
+    const result = await sendText(
+      resolveWahaServer(),
+      config.session_name,
+      phone,
+      contentText!,
+      replyTo
+    );
+    waMessageId = result.messageId;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[send-message] WAHA send failed:', message);
+    throw new SendMessageError(
+      'waha_error',
+      `Falha ao enviar pelo WhatsApp: ${message}`,
+      err instanceof WahaError ? err.status : 502
+    );
+  }
+
+  const { data: messageRecord, error: msgError } = await db
+    .from('messages')
+    .insert({
+      conversation_id: conversationId,
+      sender_type: 'agent',
+      content_type: 'text',
+      content_text: contentText,
+      message_id: waMessageId,
+      status: 'sent',
+      reply_to_message_id: replyToMessageId || null,
+    })
+    .select()
+    .single();
+
+  if (msgError) {
+    throw new SendMessageError(
+      'db_error',
+      `Mensagem enviada, mas falhou ao salvar: ${msgError.message}`,
+      500
+    );
+  }
+
+  await db
+    .from('conversations')
+    .update({
+      last_message_text: contentText,
+      last_message_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', conversationId);
+
+  // Same "human stepped in" signal the Meta path sends.
+  try {
+    await supabaseAdmin()
+      .from('flow_runs')
+      .update({
+        status: 'paused_by_agent',
+        ended_at: new Date().toISOString(),
+        end_reason: 'agent_replied',
+      })
+      .eq('account_id', accountId)
+      .eq('contact_id', params.contactId)
+      .eq('status', 'active');
+  } catch (err) {
+    console.error('[flows] pause-on-agent-send threw:', err);
   }
 
   return { messageId: messageRecord.id, whatsappMessageId: waMessageId };

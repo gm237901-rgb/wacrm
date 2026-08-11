@@ -42,7 +42,16 @@ export async function resolveConversationByPhone(
   db: SupabaseClient,
   accountId: string,
   phone: string,
-  name?: string | null
+  name?: string | null,
+  options?: {
+    /**
+     * Skip the "is Meta configured?" precondition. Set by callers that
+     * already know the account is connected through a different
+     * provider — the WAHA inbound webhook, which by definition has a
+     * live WAHA session and no `whatsapp_config` row at all.
+     */
+    skipProviderCheck?: boolean;
+  }
 ): Promise<ResolvedConversation> {
   const sanitized = sanitizePhoneForMeta(phone);
   if (!isValidE164(sanitized)) {
@@ -55,17 +64,19 @@ export async function resolveConversationByPhone(
 
   // Fail fast (and create nothing) when the account has no WhatsApp
   // connected — the same error the send would raise anyway.
-  const { data: config } = await db
-    .from('whatsapp_config')
-    .select('id')
-    .eq('account_id', accountId)
-    .maybeSingle();
-  if (!config) {
-    throw new SendMessageError(
-      'whatsapp_not_configured',
-      'WhatsApp not configured. Please set up your WhatsApp integration first.',
-      400
-    );
+  if (!options?.skipProviderCheck) {
+    const { data: config } = await db
+      .from('whatsapp_config')
+      .select('id')
+      .eq('account_id', accountId)
+      .maybeSingle();
+    if (!config) {
+      throw new SendMessageError(
+        'whatsapp_not_configured',
+        'WhatsApp not configured. Please set up your WhatsApp integration first.',
+        400
+      );
+    }
   }
 
   // Audit user for created rows = the single account-wide default used
