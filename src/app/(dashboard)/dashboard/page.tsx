@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useId, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatCurrency } from '@/lib/currency'
@@ -126,6 +126,29 @@ export default function DashboardPage() {
   useEffect(() => {
     loadAll()
   }, [loadAll])
+
+  // Live refresh: when a deal is created, moved, or marked won/lost
+  // anywhere in the app (Pipelines board, the deal-form's own status
+  // buttons, this page's own "+ Novo negócio"), the KPI row, sales
+  // funnel and revenue chart should reflect it without the user having
+  // to reload. instanceId scopes the channel topic to this mounted
+  // instance — sharing a hardcoded topic with another concurrently
+  // mounted subscriber throws (see useUnreadNotifications).
+  const instanceId = useId()
+  useEffect(() => {
+    const db = createClient()
+    const channel = db
+      .channel(`dashboard-deals-${instanceId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'deals' },
+        () => loadAll(),
+      )
+      .subscribe()
+    return () => {
+      db.removeChannel(channel)
+    }
+  }, [instanceId, loadAll])
 
   const handleRangeChange = useCallback(
     (r: RangeDays) => {
