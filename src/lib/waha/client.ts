@@ -130,10 +130,22 @@ async function wahaFetch<T>(
 }
 
 /**
- * Create-or-update the session and start it. WAHA 409s when the session
- * already exists, which is a normal re-connect (user hit "connect"
- * again after a drop) — not an error worth surfacing, so we fall
- * through to /start in that case.
+ * True when a create failed only because the session is already there —
+ * the normal path on every reconnect after the first.
+ *
+ * WAHA reports this as 422 ("Session '…' already exists. Use PUT to
+ * update it."), not the 409 the status code alone would suggest, so
+ * matching on the message is what actually holds across versions.
+ */
+function isAlreadyExists(err: unknown): boolean {
+  if (!(err instanceof WahaError)) return false;
+  return err.status === 409 || /already exists/i.test(err.message);
+}
+
+/**
+ * Create-or-update the session and start it. A session that already
+ * exists is a normal re-connect (user hit "connect" again after a
+ * drop), so we fall through to update-then-start rather than failing.
  *
  * `webhookUrl` is registered with the session itself, so WAHA knows
  * where to deliver inbound messages for this specific tenant.
@@ -164,8 +176,7 @@ export async function startSession(
     });
     return;
   } catch (err) {
-    const alreadyExists = err instanceof WahaError && err.status === 409;
-    if (!alreadyExists) throw err;
+    if (!isAlreadyExists(err)) throw err;
   }
 
   // Session already existed — push the current config, then start it.
@@ -173,16 +184,26 @@ export async function startSession(
   // domain), so update rather than blindly starting the old one.
   await wahaFetch(server, `/api/sessions/${encodeURIComponent(session)}`, {
     method: 'PUT',
-    body: JSON.stringify({ config }),
-  }).catch(() => {
-    /* Non-fatal: an older WAHA may not support PUT. Start anyway. */
+    body: JSON.stringify({ name: session, config }),
+  }).catch((err: unknown) => {
+    // Non-fatal: an older WAHA may not support PUT, and a stale webhook
+    // URL still beats refusing to connect. Log so a genuinely broken
+    // update doesn't just vanish.
+    console.warn('[waha] session config update failed:', err);
   });
 
   await wahaFetch(server, `/api/sessions/${encodeURIComponent(session)}/start`, {
     method: 'POST',
   }).catch((err: unknown) => {
     // Starting an already-running session is a no-op, not a failure.
-    if (err instanceof WahaError && err.status === 422) return;
+    // WAHA answers 422 here too, so match on the status *and* the
+    // "already started" wording rather than swallowing every 422.
+    if (
+      err instanceof WahaError &&
+      (err.status === 422 || /already (started|running)/i.test(err.message))
+    ) {
+      return;
+    }
     throw err;
   });
 }
