@@ -39,7 +39,7 @@
     "beta": "베타",
     "unreadConversations": "읽지 않은 대화 {count}건",
     "unreadNotifications": "읽지 않은 알림 {count}건",
-    "roleOwner": "소유자",
+    "roleOwner": "사용자",
     "roleAdmin": "관리자",
     "roleAgent": "상담원",
     "roleViewer": "뷰어",
@@ -125,6 +125,7 @@
     "revenueChart": {
       "title": "매출",
       "days": "{count}일",
+      "allTime": "전체",
       "noRevenue": "이 기간에는 매출이 없습니다",
       "noRevenueHint": "성사된 딜이 여기에 표시됩니다.",
       "ariaLabel": "일별 매출"

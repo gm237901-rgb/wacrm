@@ -41,7 +41,7 @@
     "beta": "Beta",
     "unreadConversations": "{count} {count, plural, =1 {conversa não lida} other {conversas não lidas}}",
     "unreadNotifications": "{count} {count, plural, =1 {notificação não lida} other {notificações não lidas}}",
-    "roleOwner": "Proprietário",
+    "roleOwner": "Usuário",
     "roleAdmin": "Administrador",
     "roleAgent": "Agente",
     "roleViewer": "Visualizador",
@@ -127,6 +127,7 @@
     "revenueChart": {
       "title": "Faturamento",
       "days": "{count} dias",
+      "allTime": "Tudo",
       "noRevenue": "Nenhum faturamento nesse período",
       "noRevenueHint": "Negócios marcados como ganhos vão aparecer aqui.",
       "ariaLabel": "Faturamento por dia"

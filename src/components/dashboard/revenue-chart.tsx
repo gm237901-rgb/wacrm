@@ -2,19 +2,19 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { DollarSign } from 'lucide-react'
-import type { RevenuePoint } from '@/lib/dashboard/types'
+import type { RevenuePoint, RevenueRange } from '@/lib/dashboard/types'
 import { formatCurrency, formatCurrencyShort } from '@/lib/currency'
 import { EmptyState } from './empty-state'
 import { Skeleton } from './skeleton'
 import { cn } from '@/lib/utils'
 
-type RangeDays = 7 | 30 | 90
+const RANGES: RevenueRange[] = [7, 30, 90, 'all']
 
 interface RevenueChartProps {
-  series: Record<RangeDays, RevenuePoint[] | null>
+  series: Record<RevenueRange, RevenuePoint[] | null>
   loading: boolean
-  range: RangeDays
-  onRangeChange: (r: RangeDays) => void
+  range: RevenueRange
+  onRangeChange: (r: RevenueRange) => void
   currency: string
 }
 
@@ -47,17 +47,17 @@ export function RevenueChart({ series, loading, range, onRangeChange, currency }
           </p>
         </div>
         <div className="flex items-center gap-1 rounded-lg bg-muted/60 p-1">
-          {[7, 30, 90].map((r) => (
+          {RANGES.map((r) => (
             <button
               key={r}
               type="button"
-              onClick={() => onRangeChange(r as RangeDays)}
+              onClick={() => onRangeChange(r)}
               className={cn(
                 'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
                 range === r ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground hover:text-foreground',
               )}
             >
-              {t('days', { count: r })}
+              {r === 'all' ? t('allTime') : t('days', { count: r })}
             </button>
           ))}
         </div>

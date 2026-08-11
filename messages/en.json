@@ -41,7 +41,7 @@
     "beta": "Beta",
     "unreadConversations": "{count} unread {count, plural, =1 {conversation} other {conversations}}",
     "unreadNotifications": "{count} unread {count, plural, =1 {notification} other {notifications}}",
-    "roleOwner": "Owner",
+    "roleOwner": "User",
     "roleAdmin": "Admin",
     "roleAgent": "Agent",
     "roleViewer": "Viewer",
@@ -127,6 +127,7 @@
     "revenueChart": {
       "title": "Revenue",
       "days": "{count} days",
+      "allTime": "All",
       "noRevenue": "No revenue in this range",
       "noRevenueHint": "Deals marked as won will appear here.",
       "ariaLabel": "Revenue per day"

@@ -60,13 +60,20 @@ function SignupPageInner() {
 
     setLoading(true);
 
-    // If we have an invite token, point Supabase's verification
-    // email back at the join page so the user can accept after
-    // verifying. Without a token, Supabase uses its default
-    // redirect (the app root).
+    // Always pin the verification link to the origin the user actually
+    // signed up from. Leaving this unset makes Supabase fall back to the
+    // project's dashboard "Site URL", which defaults to localhost — so
+    // every confirmation email sent from production pointed at
+    // http://localhost:3000 and died with ERR_CONNECTION_REFUSED on the
+    // user's machine. With an invite token we land them on the redeem
+    // step; otherwise the dashboard.
+    //
+    // NOTE: the origin must also be listed under Authentication →
+    // URL Configuration → Redirect URLs in the Supabase dashboard, or
+    // Supabase ignores this value and silently reverts to Site URL.
     const emailRedirectTo = inviteToken
       ? `${window.location.origin}/join/${encodeURIComponent(inviteToken)}`
-      : undefined;
+      : `${window.location.origin}/dashboard`;
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -75,7 +82,7 @@ function SignupPageInner() {
         data: {
           full_name: fullName,
         },
-        ...(emailRedirectTo ? { emailRedirectTo } : {}),
+        emailRedirectTo,
       },
     });
 

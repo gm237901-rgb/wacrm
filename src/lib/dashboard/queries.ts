@@ -23,6 +23,7 @@ import type {
   ResponseTimeBucket,
   ResponseTimeSummary,
   RevenuePoint,
+  RevenueRange,
   SalesFunnelData,
   TodayActivity,
 } from './types'
@@ -581,7 +582,35 @@ export async function loadTodayActivities(db: DB): Promise<TodayActivity[]> {
 
 // --- 9. Revenue over time --------------------------------------------------
 
-export async function loadRevenueSeries(db: DB, rangeDays: number): Promise<RevenuePoint[]> {
+export async function loadRevenueSeries(
+  db: DB,
+  range: RevenueRange,
+): Promise<RevenuePoint[]> {
+  let rangeDays: number
+  if (range === 'all') {
+    // Span from the first won deal to today. Without a won deal there's
+    // nothing to chart at all — return empty so the caller renders its
+    // empty state rather than a flat zero line over an arbitrary window.
+    const { data: earliest } = await db
+      .from('deals')
+      .select('updated_at')
+      .eq('status', 'won')
+      .order('updated_at', { ascending: true })
+      .limit(1)
+    const firstWonAt = (earliest as { updated_at: string }[] | null)?.[0]?.updated_at
+    if (!firstWonAt) return []
+    const spanDays =
+      Math.ceil(
+        (startOfLocalDay().getTime() - startOfLocalDay(new Date(firstWonAt)).getTime()) /
+          86_400_000,
+      ) + 1
+    // Floor at a week so a company whose first sale was yesterday still
+    // gets a readable axis instead of a two-point chart.
+    rangeDays = Math.max(7, spanDays)
+  } else {
+    rangeDays = range
+  }
+
   const start = daysAgoStart(rangeDays - 1).toISOString()
   // deals has no dedicated "won_at" column — updated_at is the best
   // available proxy for when the "Marcar como ganho" action landed.

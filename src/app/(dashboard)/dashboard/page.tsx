@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useId, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatCurrency } from '@/lib/currency'
@@ -20,6 +20,7 @@ import type {
   LeadSourceData,
   RecentLead,
   RevenuePoint,
+  RevenueRange,
   SalesFunnelData,
   TodayActivity,
 } from '@/lib/dashboard/types'
@@ -37,8 +38,6 @@ import type { PipelineStage } from '@/types'
 
 import { useTranslations } from 'next-intl'
 
-type RangeDays = 7 | 30 | 90
-
 export default function DashboardPage() {
   const t = useTranslations('Dashboard.page')
   const { profile, defaultCurrency } = useAuth()
@@ -52,11 +51,14 @@ export default function DashboardPage() {
   const [today, setToday] = useState<TodayActivity[] | null>(null)
   const [todayLoading, setTodayLoading] = useState(true)
 
-  const [range, setRange] = useState<RangeDays>(30)
-  const [revenue, setRevenue] = useState<Record<RangeDays, RevenuePoint[] | null>>({
+  const [range, setRange] = useState<RevenueRange>(30)
+  // Mirrors `range` for loadAll(), which must stay []-dep stable.
+  const rangeRef = useRef<RevenueRange>(30)
+  const [revenue, setRevenue] = useState<Record<RevenueRange, RevenuePoint[] | null>>({
     7: null,
     30: null,
     90: null,
+    all: null,
   })
   const [revenueLoading, setRevenueLoading] = useState(true)
 
@@ -90,8 +92,17 @@ export default function DashboardPage() {
       .catch((err) => console.error('[dashboard] today failed:', err))
       .finally(() => setTodayLoading(false))
 
-    void loadRevenueSeries(db, 30)
-      .then((s) => setRevenue((prev) => ({ ...prev, 30: s })))
+    // Refetch whichever window the user is actually looking at, and drop
+    // the other cached windows — a won/lost deal invalidates all of them,
+    // so they must refetch when next selected rather than serve stale
+    // numbers. Read via ref so this stays a stable []-dep callback and
+    // the Realtime subscription below doesn't resubscribe on every
+    // range switch.
+    const activeRange = rangeRef.current
+    void loadRevenueSeries(db, activeRange)
+      .then((s) =>
+        setRevenue({ 7: null, 30: null, 90: null, all: null, [activeRange]: s }),
+      )
       .catch((err) => console.error('[dashboard] revenue failed:', err))
       .finally(() => setRevenueLoading(false))
 
@@ -151,8 +162,9 @@ export default function DashboardPage() {
   }, [instanceId, loadAll])
 
   const handleRangeChange = useCallback(
-    (r: RangeDays) => {
+    (r: RevenueRange) => {
       setRange(r)
+      rangeRef.current = r
       if (revenue[r] !== null) return
       setRevenueLoading(true)
       const db = createClient()
