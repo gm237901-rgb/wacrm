@@ -80,6 +80,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>(readInitialTheme);
   const [mode, setModeState] = useState<Mode>(readInitialMode);
 
+  // Safety net: if a hydration mismatch anywhere in the tree makes React
+  // regenerate the client render, it can resync <html>'s data-theme/
+  // data-mode back to the JSX defaults from RootLayout (DEFAULT_THEME/
+  // DEFAULT_MODE) — undoing the boot script's correction and making a
+  // saved light-mode/other-theme preference appear to silently "reset to
+  // dark" on reload. Re-asserting our own state onto the DOM right after
+  // mount closes that window regardless of what triggered the mismatch.
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.mode = mode;
+    // Only ever needs to run once per mount — theme/mode changes are
+    // already applied to the DOM directly inside setTheme/setMode.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const setTheme = useCallback((next: ThemeId) => {
     setThemeState(next);
     if (typeof document !== "undefined") {
