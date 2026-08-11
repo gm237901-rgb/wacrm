@@ -695,6 +695,15 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
               tick={{
                 transform:
                   layout !== "vertical" ? "translate(0, 6)" : undefined,
+                // Recharts renders each tick's <text> with its own default
+                // fill, which wins over the fill-muted-foreground class
+                // below (inline SVG attrs on the generated node beat a
+                // CSS class in practice here) — set it directly so axis
+                // labels actually pick up the theme foreground color
+                // (near-white in dark mode) instead of Recharts' own
+                // hardcoded default, which read as near-invisible on a
+                // dark background.
+                fill: "var(--color-foreground)",
               }}
               fill=""
               stroke=""
@@ -752,6 +761,7 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                   layout !== "vertical"
                     ? "translate(-3, 0)"
                     : "translate(0, 0)",
+                fill: "var(--color-foreground)",
               }}
               {...(layout !== "vertical"
                 ? {
