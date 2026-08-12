@@ -11,7 +11,7 @@ import { SettingsOverview } from '@/components/settings/settings-overview';
 import { ProfileForm } from '@/components/settings/profile-form';
 import { SecurityPanel } from '@/components/settings/security-panel';
 import { AppearancePanel } from '@/components/settings/appearance-panel';
-import { WhatsAppConfig } from '@/components/settings/whatsapp-config';
+import { LegacyMetaConfig } from '@/components/settings/legacy-meta-config';
 import { WahaConnect } from '@/components/settings/waha-connect';
 import { TemplateManager } from '@/components/settings/template-manager';
 import { QuickRepliesManager } from '@/components/settings/quick-replies-manager';
@@ -75,13 +75,14 @@ function SettingsPageInner() {
     profile: <ProfileForm />,
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
-    // QR pairing first: it's the path a non-technical customer can
-    // finish unaided. The Meta Cloud API form stays below for accounts
-    // that need templates/broadcasts, which QR sessions can't do.
+    // QR pairing is the connection path. The Meta Cloud API form only
+    // surfaces for accounts already set up on it (see LegacyMetaConfig)
+    // — asking everyone else for credentials they don't have made the
+    // page read as broken.
     whatsapp: (
       <div className="space-y-6">
         <WahaConnect />
-        <WhatsAppConfig />
+        <LegacyMetaConfig />
       </div>
     ),
     templates: <TemplateManager />,
