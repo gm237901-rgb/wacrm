@@ -120,18 +120,31 @@ export function SettingsOverview({
     // WhatsApp connection status — slower, independent.
     (async () => {
       setWhatsappLoading(true);
-      const [row, health] = await Promise.allSettled([
+      // Either provider counts as connected: Meta Cloud API credentials
+      // or a QR-paired WAHA session. Reporting only Meta left QR-paired
+      // accounts reading "not set up" on their own settings page.
+      const [row, health, waha] = await Promise.allSettled([
         supabase
           .from('whatsapp_config')
           .select('phone_number_id')
           .eq('account_id', acctId)
           .maybeSingle(),
         fetch('/api/whatsapp/config', { cache: 'no-store' }).then((r) => r.json()),
+        supabase
+          .from('waha_config')
+          .select('status')
+          .eq('account_id', acctId)
+          .maybeSingle(),
       ]);
       if (cancelled) return;
+      const wahaWorking =
+        waha.status === 'fulfilled' && waha.value.data?.status === 'WORKING';
       setWhatsapp({
-        configured: row.status === 'fulfilled' && !!row.value.data?.phone_number_id,
-        connected: health.status === 'fulfilled' && !!health.value?.connected,
+        configured:
+          wahaWorking ||
+          (row.status === 'fulfilled' && !!row.value.data?.phone_number_id),
+        connected:
+          wahaWorking || (health.status === 'fulfilled' && !!health.value?.connected),
       });
       setWhatsappLoading(false);
     })();

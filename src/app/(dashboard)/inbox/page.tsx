@@ -200,13 +200,27 @@ function InboxPageInner() {
         return;
       }
 
-      const { data } = await supabase
-        .from("whatsapp_config")
-        .select("status")
-        .eq("account_id", accountId)
-        .maybeSingle();
+      // WhatsApp can be connected through either provider: the Meta
+      // Cloud API (`whatsapp_config`) or a QR-paired WAHA session
+      // (`waha_config`). Checking only Meta made the "not connected"
+      // banner stick for accounts paired by QR, which is now the
+      // simpler and more common path.
+      const [metaRes, wahaRes] = await Promise.all([
+        supabase
+          .from("whatsapp_config")
+          .select("status")
+          .eq("account_id", accountId)
+          .maybeSingle(),
+        supabase
+          .from("waha_config")
+          .select("status")
+          .eq("account_id", accountId)
+          .maybeSingle(),
+      ]);
 
-      setWhatsappConnected(data?.status === "connected");
+      setWhatsappConnected(
+        metaRes.data?.status === "connected" || wahaRes.data?.status === "WORKING",
+      );
     };
 
     checkConnection();
