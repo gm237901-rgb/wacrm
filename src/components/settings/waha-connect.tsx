@@ -27,18 +27,17 @@ interface SessionState {
 }
 
 /**
- * Status checks while a QR is on screen. Each one costs WAHA a real
- * round trip into the Puppeteer page (~3s), so this stays well clear of
- * that: polling faster than the server can answer just queues work and
- * starves the pairing the user is trying to finish.
+ * Status checks while pairing. Cheap on the NOWEB engine (WAHA answers
+ * in ~1ms, no browser involved), so this can stay snappy — it's what
+ * makes the panel flip to "connected" right after the scan.
  */
-const STATUS_POLL_MS = 6000;
+const STATUS_POLL_MS = 3000;
 /**
- * QR refreshes. WhatsApp rotates its pairing code roughly every 20s, so
- * this keeps the displayed code current without re-rendering (and
- * re-driving the browser) on every status tick.
+ * QR refreshes. WhatsApp rotates its pairing code roughly every 20s;
+ * refreshing a little ahead of that keeps a scannable code on screen
+ * without swapping the image out from under the user mid-scan.
  */
-const QR_REFRESH_MS = 18000;
+const QR_REFRESH_MS = 15000;
 
 export function WahaConnect() {
   const t = useTranslations("Settings.waha");
@@ -82,6 +81,23 @@ export function WahaConnect() {
   useEffect(() => {
     refresh(true).finally(() => setLoading(false));
   }, [refresh]);
+
+  // The QR only exists once the session reaches SCAN_QR_CODE, a moment
+  // after connect — so the connect response itself usually carries none.
+  // Grab it the instant the status flips instead of waiting for the slow
+  // refresh tick, which left the panel looking stuck for ~20s.
+  // `qrRequestedFor` stops this from re-firing (and hammering WAHA) when
+  // the fetch comes back empty.
+  const qrRequestedFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (state?.status !== "SCAN_QR_CODE") {
+      qrRequestedFor.current = null;
+      return;
+    }
+    if (state.qr || qrRequestedFor.current === state.status) return;
+    qrRequestedFor.current = state.status;
+    void refresh(true);
+  }, [state?.status, state?.qr, refresh]);
 
   // While the user is looking at a QR, poll so the panel flips to
   // "connected" the moment they finish scanning — without them having
@@ -217,7 +233,10 @@ export function WahaConnect() {
               {t("refreshQr")}
             </Button>
           </div>
-        ) : status === "STARTING" ? (
+        ) : status === "STARTING" || status === "SCAN_QR_CODE" ? (
+          // SCAN_QR_CODE with no image yet = the code is seconds away.
+          // Showing the "not connected" call-to-action here would read
+          // as "nothing happened" and send the user round again.
           <div className="flex flex-col items-center gap-3 py-8">
             <Loader2 className="size-6 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">{t("preparing")}</p>
