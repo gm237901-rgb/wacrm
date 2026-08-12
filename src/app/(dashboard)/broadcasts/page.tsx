@@ -65,6 +65,24 @@ export default function BroadcastsPage() {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Which composer to open. The Meta wizard starts by picking an
+  // approved template, which doesn't exist on a QR-paired session — so
+  // accounts without Meta credentials get the plain-text composer.
+  const [newBroadcastHref, setNewBroadcastHref] = useState('/broadcasts/new');
+
+  useEffect(() => {
+    let cancelled = false;
+    void createClient()
+      .from('whatsapp_config')
+      .select('id')
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && !data) setNewBroadcastHref('/broadcasts/new-text');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Used to kick off polling only while something is actively sending.
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -190,7 +208,7 @@ export default function BroadcastsPage() {
         <GatedButton
           canAct={canCreate}
           gateReason="criar transmissões"
-          onClick={() => router.push('/broadcasts/new')}
+          onClick={() => router.push(newBroadcastHref)}
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
@@ -208,7 +226,7 @@ export default function BroadcastsPage() {
           <GatedButton
             canAct={canCreate}
             gateReason="criar transmissões"
-            onClick={() => router.push('/broadcasts/new')}
+            onClick={() => router.push(newBroadcastHref)}
             className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="h-4 w-4" />
