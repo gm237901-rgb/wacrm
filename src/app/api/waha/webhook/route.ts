@@ -68,6 +68,15 @@ export async function POST(request: Request) {
 
   const result = (data ?? {}) as IngestResult;
 
+  // An ignored event is a normal outcome (our own echo, a group chat, a
+  // redelivery) but it's indistinguishable from a bug when messages
+  // "just don't arrive" — so name the reason in the logs.
+  if (result.ignored) {
+    console.log(
+      `[waha/webhook] ignored (${result.ignored}) session=${sessionName}`,
+    );
+  }
+
   if (!result.ok) {
     // A bad signature is the interesting case: either a forged call or
     // a session whose secret drifted from what WAHA holds. Both warrant

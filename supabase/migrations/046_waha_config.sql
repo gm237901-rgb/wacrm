@@ -75,3 +75,9 @@ ALTER TABLE accounts ADD COLUMN IF NOT EXISTS wa_provider TEXT NOT NULL DEFAULT 
 ALTER TABLE accounts DROP CONSTRAINT IF EXISTS accounts_wa_provider_check;
 ALTER TABLE accounts ADD CONSTRAINT accounts_wa_provider_check
   CHECK (wa_provider IN ('meta', 'waha'));
+
+-- NOTE: the inbound ingest itself lives in the `waha_ingest_webhook`
+-- SECURITY DEFINER function, applied separately (see the Supabase
+-- migration history: waha_webhook_ingest_rpc, waha_accept_baileys_jid).
+-- It verifies WAHA's HMAC against `webhook_secret` before writing, so
+-- the app never needs a service-role key for the webhook path.
