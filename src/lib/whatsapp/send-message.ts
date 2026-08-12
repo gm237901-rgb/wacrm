@@ -277,6 +277,24 @@ export async function sendMessageToConversation(
     .single();
 
   if (configError || !config) {
+    // An account that connected by QR has no Meta credentials and never
+    // will — telling it to "set up your WhatsApp integration" points at
+    // the wrong screen entirely. If a WAHA session exists, the real
+    // problem is that it dropped and needs re-scanning.
+    const { data: waha } = await db
+      .from('waha_config')
+      .select('id')
+      .eq('account_id', accountId)
+      .maybeSingle();
+
+    if (waha) {
+      throw new SendMessageError(
+        'whatsapp_not_connected',
+        'A conexão com o WhatsApp caiu. Reconecte lendo o QR Code em Configurações → WhatsApp.',
+        409
+      );
+    }
+
     throw new SendMessageError(
       'whatsapp_not_configured',
       'WhatsApp not configured. Please set up your WhatsApp integration first.',
