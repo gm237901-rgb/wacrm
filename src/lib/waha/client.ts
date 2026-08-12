@@ -192,6 +192,19 @@ export async function startSession(
     console.warn('[waha] session config update failed:', err);
   });
 
+  // A session WhatsApp has kicked out (conflict/device_removed, or any
+  // other FAILED state) still holds its old credentials on disk. Start
+  // it as-is and the engine retries a login that can only fail —
+  // "Connection Failure, do not reconnect" — so it never reaches
+  // SCAN_QR_CODE and no QR is ever produced. Logging out first wipes
+  // that dead auth state, which is what lets a fresh QR be generated.
+  const current = await getSessionState(server, session).catch(() => null);
+  if (current?.status === 'FAILED') {
+    await logoutSession(server, session).catch((err: unknown) => {
+      console.warn('[waha] pre-start logout failed, starting anyway:', err);
+    });
+  }
+
   await wahaFetch(server, `/api/sessions/${encodeURIComponent(session)}/start`, {
     method: 'POST',
   }).catch((err: unknown) => {
