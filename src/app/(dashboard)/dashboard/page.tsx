@@ -134,7 +134,7 @@ export default function DashboardPage() {
   const greetingName = profile?.full_name?.split(' ')[0] || t('fallbackName')
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -147,8 +147,9 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {/* KPI row */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {/* KPI row. Five cards at 1280px+; below that they'd be ~200px
+          wide, which is narrower than a formatted BRL total needs. */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {kpisLoading || !kpis ? (
           Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (
@@ -196,16 +197,22 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Sales funnel + today's activities */}
+      {/* Funnel takes the width it needs to stay readable; the two
+          narrow cards stack beside it rather than each claiming a full
+          row of their own. */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <SalesFunnel data={funnel} loading={funnelLoading} />
         </div>
-        <TodayActivities items={today} loading={todayLoading} />
+        {/* self-start stops the grid from stretching this column to the
+            funnel's height. Both cards carry `h-full` for their previous
+            one-per-cell layout, and two of those in a stretched column
+            would each claim the full height and overflow. */}
+        <div className="flex flex-col gap-4 self-start">
+          <TodayActivities items={today} loading={todayLoading} />
+          <LeadSourceDonut data={leadSource} loading={leadSourceLoading} />
+        </div>
       </div>
-
-      {/* Lead source */}
-      <LeadSourceDonut data={leadSource} loading={leadSourceLoading} />
 
       <DealForm
         open={dealFormOpen}
