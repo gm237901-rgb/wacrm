@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { formatDayMonth } from '@/lib/datetime'
+import { useCallback, useEffect, useId, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
-import { useAuth } from '@/hooks/use-auth'
 import { daysAgoStart, lastNWeekKeys, weekKeyFor } from '@/lib/dashboard/date-utils'
 import { loadPipelineDonut } from '@/lib/dashboard/queries'
 import type { PipelineDonutData } from '@/lib/dashboard/types'
@@ -20,21 +20,24 @@ interface WeeklyBar {
 
 export default function ReportsPage() {
   const t = useTranslations('Reports.page')
-  const { defaultCurrency } = useAuth()
 
   const [wonLost, setWonLost] = useState<WeeklyBar[] | null>(null)
   const [contactsGrowth, setContactsGrowth] = useState<WeeklyBar[] | null>(null)
   const [pipeline, setPipeline] = useState<PipelineDonutData | null>(null)
   const [loading, setLoading] = useState(true)
+  const instanceId = useId()
 
-  useEffect(() => {
+  // Deliberately does NOT flip `loading` back on. The first render shows
+  // skeletons; a Realtime refetch swaps the numbers underneath without
+  // blanking the charts the user is reading.
+  const loadAll = useCallback(() => {
     const db = createClient()
     const weekKeys = lastNWeekKeys(13) // ~90 days
     const weekKeysShort = lastNWeekKeys(12)
 
     const labelFor = (key: string) => {
       const [y, m, d] = key.split('-').map(Number)
-      return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+      return formatDayMonth(new Date(y, m - 1, d))
     }
 
     Promise.all([
@@ -82,10 +85,34 @@ export default function ReportsPage() {
       setPipeline(pipelineData)
       setLoading(false)
     })
-    // t() identity changes every render under next-intl; this effect
-    // should only ever run once on mount.
+    // t() identity changes every render under next-intl; keeping it out
+    // of the deps is what makes this callback stable enough to hang a
+    // subscription off. The labels it produces don't change at runtime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    loadAll()
+  }, [loadAll])
+
+  // Move a deal into Ganho on the pipeline board and this page has to
+  // agree — otherwise "Relatórios" quietly reports the state of the
+  // world at the moment the tab was opened. `deals` is in the Realtime
+  // publication (migration 045), so the change arrives without polling.
+  useEffect(() => {
+    const db = createClient()
+    const channel = db
+      .channel(`reports-deals-${instanceId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'deals' },
+        () => loadAll(),
+      )
+      .subscribe()
+    return () => {
+      db.removeChannel(channel)
+    }
+  }, [instanceId, loadAll])
 
   return (
     <div className="space-y-5">
@@ -143,7 +170,7 @@ export default function ReportsPage() {
           </div>
         </section>
 
-        <PipelineDonut data={pipeline} loading={loading} currency={defaultCurrency} />
+        <PipelineDonut data={pipeline} loading={loading} />
       </div>
     </div>
   )

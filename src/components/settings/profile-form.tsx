@@ -1,5 +1,6 @@
 'use client';
 
+import { formatLongDate } from '@/lib/datetime';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Upload, Trash2, Mail, CircleAlert } from 'lucide-react';
@@ -199,11 +200,7 @@ export function ProfileForm() {
       removeAvatar);
 
   const joined = user?.created_at
-    ? new Date(user.created_at).toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+    ? formatLongDate(user.created_at)
     : '—';
 
   return (

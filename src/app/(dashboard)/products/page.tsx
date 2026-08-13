@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useCan } from "@/hooks/use-can";
-import { formatCurrency } from "@/lib/currency";
+import { DEFAULT_CURRENCY, formatCurrency } from "@/lib/currency";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import {
@@ -59,15 +59,15 @@ interface Product {
   created_at: string;
 }
 
-function emptyForm(currency: string) {
-  return { name: "", sku: "", price: "0", currency, description: "", active: true };
+function emptyForm() {
+  return { name: "", sku: "", price: "0", description: "", active: true };
 }
 
 export default function ProductsPage() {
   const t = useTranslations("Products.page");
   const tForm = useTranslations("Products.form");
   const supabase = createClient();
-  const { accountId, defaultCurrency } = useAuth();
+  const { accountId } = useAuth();
   const canEdit = useCan("send-messages");
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -76,7 +76,7 @@ export default function ProductsPage() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
-  const [form, setForm] = useState(emptyForm(defaultCurrency));
+  const [form, setForm] = useState(emptyForm());
   const [saving, setSaving] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
@@ -103,7 +103,7 @@ export default function ProductsPage() {
 
   function openAddForm() {
     setEditing(null);
-    setForm(emptyForm(defaultCurrency));
+    setForm(emptyForm());
     setFormOpen(true);
   }
 
@@ -113,7 +113,6 @@ export default function ProductsPage() {
       name: product.name,
       sku: product.sku ?? "",
       price: String(product.price),
-      currency: product.currency,
       description: product.description ?? "",
       active: product.active,
     });
@@ -127,7 +126,7 @@ export default function ProductsPage() {
       name: form.name.trim(),
       sku: form.sku.trim() || null,
       price: Number(form.price) || 0,
-      currency: form.currency,
+      currency: DEFAULT_CURRENCY,
       description: form.description.trim() || null,
       active: form.active,
     };
@@ -217,7 +216,7 @@ export default function ProductsPage() {
                     {p.sku || "-"}
                   </TableCell>
                   <TableCell className="text-sm text-foreground tabular-nums">
-                    {formatCurrency(p.price, p.currency)}
+                    {formatCurrency(p.price)}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <span

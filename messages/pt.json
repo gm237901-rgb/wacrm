@@ -126,14 +126,6 @@
       "noActivitiesHint": "Compromissos agendados para hoje aparecem aqui.",
       "viewAll": "Ver todas as atividades →"
     },
-    "revenueChart": {
-      "title": "Faturamento",
-      "days": "{count} dias",
-      "allTime": "Tudo",
-      "noRevenue": "Nenhum faturamento nesse período",
-      "noRevenueHint": "Negócios marcados como ganhos vão aparecer aqui.",
-      "ariaLabel": "Faturamento por dia"
-    },
     "leadSource": {
       "title": "Origem dos leads",
       "description": "De onde vêm seus contatos",
@@ -148,17 +140,6 @@
         "redes_sociais": "Redes Sociais",
         "outros": "Outros"
       }
-    },
-    "recentLeads": {
-      "title": "Leads mais recentes",
-      "noLeads": "Nenhum lead ainda",
-      "noLeadsHint": "Novos contatos aparecem aqui.",
-      "unnamed": "Sem nome",
-      "viewAll": "Ver todos os leads →",
-      "timeS": "há {sec}s",
-      "timeM": "há {min}min",
-      "timeH": "há {hr}h",
-      "timeD": "há {day}d"
     },
     "quickActions": {
       "newContact": "Novo contato",
@@ -493,17 +474,11 @@
       "noTeammates": "Nenhum colega de equipe disponível",
       "me": " (eu)",
       "noMessagesYet": "Nenhuma mensagem ainda",
-      "sendTemplateHint": "Envie um modelo para iniciar a conversa",
+      "sendTemplateHint": "Envie uma mensagem para iniciar a conversa",
       "selectConversation": "Selecione uma conversa",
       "selectConversationHint": "Escolha uma conversa à esquerda para começar a conversar",
       "today": "Hoje",
       "yesterday": "Ontem"
-    },
-    "sessionTimer": {
-      "expired": "Expirada",
-      "xhRemaining": "faltam {hours}h",
-      "xmRemaining": "faltam {minutes}min",
-      "noCustomerMessages": "Nenhuma mensagem do cliente"
     },
     "composer": {
       "toastAiNotConfigured": "A IA ainda não foi configurada — ative em Configurações → Assistente de IA.",
@@ -516,10 +491,7 @@
       "toastVoiceUnsupported": "Gravação de voz não é suportada neste navegador.",
       "toastMicDenied": "Acesso ao microfone negado ou indisponível.",
       "draftHint": "Toque no ✨ para gerar uma resposta com IA — você pode editá-la antes de enviar",
-      "sessionExpiredHint": "Sessão de 24 horas expirada. Use um modelo para reengajar.",
-      "templates": "Modelos",
       "readOnlyPlaceholder": "Somente leitura — visualizadores podem navegar, mas não responder",
-      "sessionExpiredPlaceholder": "Sessão expirada - use um modelo",
       "typeMessagePlaceholder": "Digite uma mensagem... (Shift+Enter para nova linha)",
       "readOnlyTitle": "Somente leitura — sua função não permite enviar mensagens",
       "recording": "Gravando… {current} / {max}",
@@ -530,7 +502,6 @@
       "video": "Vídeo",
       "document": "Documento",
       "voiceNote": "Mensagem de voz",
-      "sendTemplate": "Enviar modelo",
       "draftWithAI": "Gerar resposta com IA",
       "addCaption": "Adicionar legenda…",
       "removeAttachment": "Remover anexo",
@@ -1941,13 +1912,11 @@
       "deleteLocallyAria": "Excluir modelo localmente",
       "deleteMetaLocallyTitle": "Excluir da Meta e localmente",
       "deleteLocallyTitle": "Excluir localmente",
-
       "dialogEditTitle": "Editar modelo de mensagem",
       "dialogNewTitle": "Novo modelo de mensagem",
       "dialogEditDesc": "Salve suas alterações para reenviar à Meta. O status volta para PENDENTE durante a revisão.",
       "dialogNewDesc": "Crie um modelo e envie-o para aprovação da Meta. Após aprovado, você pode usá-lo em transmissões e na caixa de entrada.",
       "authWarning": "Modelos de AUTENTICAÇÃO têm um formato fixo de corpo + botão de OTP que precisa de um construtor diferente. Crie-os no Gerenciador do WhatsApp da Meta por enquanto e use <bold>Sincronizar da Meta</bold> para trazê-los.",
-
       "templateName": "Nome do modelo",
       "namePlaceholder": "ex.: confirmacao_pedido",
       "nameFixed": "O nome é fixo assim que um modelo existe na Meta — crie um novo modelo para alterá-lo.",
@@ -1956,7 +1925,6 @@
       "language": "Idioma",
       "langFixed": "O idioma é fixo assim que um modelo existe na Meta.",
       "langHint": "Deve corresponder exatamente ao código na Meta — <code>pt_BR</code> e <code>pt</code> são distintos.",
-
       "header": "Cabeçalho",
       "headerNone": "Nenhum",
       "headerText": "Texto",
@@ -1969,7 +1937,6 @@
       "headerSampleImageAlt": "Exemplo de imagem do cabeçalho",
       "qualityScoreTitle": "Nota de qualidade da Meta",
       "headerSamplePlaceholder": "Valor de exemplo para {{1}} (obrigatório para revisão da Meta)",
-
       "uploadImage": "Enviar imagem",
       "uploadHint": "JPEG ou PNG, ≤5 MB",
       "mediaUrlPlaceholder": "https://… (ou cole um link público {format})",
@@ -1977,17 +1944,14 @@
       "mediaHint": "Deve ser um link HTTPS publicamente acessível. A Meta o acessa uma vez durante a revisão, então ele precisa ficar disponível por ~24h.",
       "videoHint": " Recomendado: MP4 / 3GPP, ≤16 MB, ≤60 segundos.",
       "documentHint": " Recomendado: PDF, ≤100 MB.",
-
       "bodyText": "Texto do corpo",
       "bodyPlaceholder": "Olá {{1}}, seu pedido {{2}} está confirmado.",
       "bodyHint": "Use {{1}}, {{2}} para variáveis (devem ser contínuas a partir de {{1}}).",
       "sampleValues": "Valores de exemplo (a Meta os usa para revisar seu modelo)",
       "sampleAria": "Valor de exemplo para a variável do corpo {var}",
       "samplePlaceholder": "Exemplo para {var}",
-
       "footer": "Rodapé (opcional)",
       "footerPlaceholder": "Texto de rodapé opcional (máx. 60 caracteres)",
-
       "buttons": "Botões (opcional)",
       "addButton": "Adicionar botão",
       "buttonsLimit": "Até {max} botões. Botões de RESPOSTA RÁPIDA devem vir antes dos botões de URL / telefone / código de cópia.",
@@ -2000,19 +1964,16 @@
       "urlSamplePlaceholder": "Valor de exemplo para {{1}} (obrigatório quando a URL tem uma variável)",
       "phonePlaceholder": "+5511999999999",
       "codePlaceholder": "Código de exemplo (ex.: VERAO20)",
-
       "cancel": "Cancelar",
       "saving": "Salvando…",
       "submitting": "Enviando…",
       "saveResubmit": "Salvar e reenviar",
       "submitApproval": "Enviar para aprovação",
-
       "deleteDialogTitle": "Excluir modelo?",
       "deleteMetaDesc": "\"{name}\" será excluído da Meta e do Linovexa. Transmissões ativas usando este modelo começarão a falhar no próximo envio. Isso não pode ser desfeito.",
       "deleteLocalDesc": "\"{name}\" será excluído do Linovexa. Ele nunca foi enviado à Meta, então nenhuma limpeza remota é necessária.",
       "deleting": "Excluindo…",
       "delete": "Excluir",
-
       "toastLoadFailed": "Falha ao carregar modelos",
       "toastSubmitFailed": "Falha ao enviar",
       "toastSubmitEditSuccess": "Edição enviada — a Meta costuma revisar em até 24 horas.",
@@ -2174,7 +2135,6 @@
       "profileSaved": "Perfil salvo",
       "emailChangeFailed": "Falha ao alterar e-mail: {message}",
       "profileSavedEmailCheck": "Perfil salvo — verifique seu e-mail para confirmar a alteração do endereço",
-
       "passwordTitle": "Senha",
       "passwordDesc": "Use pelo menos {min} caracteres. Você continuará conectado neste dispositivo após alterá-la.",
       "currentPassword": "Senha atual",
@@ -2188,7 +2148,6 @@
       "currentPasswordIncorrect": "Senha atual incorreta",
       "passwordUpdateFailed": "Falha ao atualizar a senha: {message}",
       "passwordUpdated": "Senha atualizada",
-
       "sessionsTitle": "Sessões ativas",
       "sessionsDesc": "Desconecte-se de todos os dispositivos em que você está conectado — incluindo este. Útil se você perdeu um notebook ou compartilhou sua senha.",
       "signOutAll": "Sair de todos os dispositivos",
@@ -2255,15 +2214,10 @@
     },
     "deals": {
       "title": "Negócios e moeda",
-      "description": "A moeda usada para novos negócios e para os totais do funil e do painel.",
-      "defaultCurrency": "Moeda padrão",
-      "defaultCurrencyDesc": "Novos negócios usam esta moeda por padrão, e os totais do funil e do painel são exibidos nela. Negócios existentes mantêm a moeda com que foram salvos.",
-      "currencyLabel": "Moeda",
-      "adminOnlyHint": "Somente administradores da conta podem alterar a moeda padrão.",
-      "save": "Salvar",
-      "saving": "Salvando...",
-      "saveFailed": "Falha ao salvar a moeda padrão",
-      "saveSuccess": "Moeda padrão atualizada"
+      "description": "A moeda usada em todo o CRM.",
+      "defaultCurrency": "Moeda",
+      "currencyName": "Real brasileiro (R$)",
+      "currencyNote": "O CRM opera exclusivamente em real. Todo valor de negócio, preço de produto e total do painel é gravado e exibido em BRL."
     },
     "aiConfig": {
       "title": "Configuração do agente",

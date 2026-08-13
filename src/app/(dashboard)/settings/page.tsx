@@ -4,8 +4,8 @@ import { Suspense, useMemo, type ReactNode } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
+import { DEFAULT_CURRENCY } from '@/lib/currency';
 import { SettingsRail } from '@/components/settings/settings-rail';
 import { SettingsOverview } from '@/components/settings/settings-overview';
 import { ProfileForm } from '@/components/settings/profile-form';
@@ -13,7 +13,6 @@ import { SecurityPanel } from '@/components/settings/security-panel';
 import { AppearancePanel } from '@/components/settings/appearance-panel';
 import { LegacyMetaConfig } from '@/components/settings/legacy-meta-config';
 import { WahaConnect } from '@/components/settings/waha-connect';
-import { TemplateManager } from '@/components/settings/template-manager';
 import { QuickRepliesManager } from '@/components/settings/quick-replies-manager';
 import { FieldsAndTagsPanel } from '@/components/settings/fields-and-tags-panel';
 import { DealsSettings } from '@/components/settings/deals-settings';
@@ -43,7 +42,6 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency } = useAuth();
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
@@ -65,9 +63,9 @@ function SettingsPageInner() {
   const hints: Partial<Record<SettingsSection, ReactNode>> = useMemo(
     () => ({
       appearance: mode.charAt(0).toUpperCase() + mode.slice(1),
-      deals: defaultCurrency,
+      deals: DEFAULT_CURRENCY,
     }),
-    [mode, defaultCurrency],
+    [mode],
   );
 
   const panel: Record<SettingsSection, ReactNode> = {
@@ -85,7 +83,6 @@ function SettingsPageInner() {
         <LegacyMetaConfig />
       </div>
     ),
-    templates: <TemplateManager />,
     'quick-replies': <QuickRepliesManager />,
     fields: <FieldsAndTagsPanel />,
     deals: <DealsSettings />,

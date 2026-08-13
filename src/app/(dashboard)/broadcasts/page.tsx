@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@/lib/datetime';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -295,7 +296,7 @@ export default function BroadcastsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="hidden text-muted-foreground sm:table-cell">
-                      {new Date(broadcast.created_at).toLocaleDateString()}
+                      {formatDate(broadcast.created_at)}
                     </TableCell>
                   </TableRow>
                 );

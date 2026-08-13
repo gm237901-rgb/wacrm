@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDateTime } from '@/lib/datetime';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import {
@@ -502,7 +503,7 @@ export function WhatsAppConfig() {
                   dangerouslySetInnerHTML={{
                     __html: t('subscribedSince', {
                       date: config.registered_at
-                        ? new Date(config.registered_at).toLocaleString()
+                        ? formatDateTime(config.registered_at)
                         : t('unknownDate'),
                     }),
                   }}

@@ -133,20 +133,6 @@ export interface TodayActivity {
   href: string
 }
 
-// --- Revenue over time ----------------------------------------------------
-
-export interface RevenuePoint {
-  day: string // YYYY-MM-DD local
-  value: number
-}
-
-/**
- * Revenue chart window. `'all'` spans from the company's first won deal
- * to today, so a business that closed its last deal months ago still
- * sees its full history instead of an empty 90-day window.
- */
-export type RevenueRange = 7 | 30 | 90 | 'all'
-
 // --- Lead source donut -----------------------------------------------------
 
 export const LEAD_SOURCES = ['site', 'google_ads', 'indicacao', 'redes_sociais', 'outros'] as const
@@ -160,14 +146,4 @@ export interface LeadSourceSlice {
 export interface LeadSourceData {
   slices: LeadSourceSlice[]
   total: number
-}
-
-// --- Recent leads -----------------------------------------------------------
-
-export interface RecentLead {
-  id: string
-  name: string
-  email: string | null
-  avatarUrl: string | null
-  createdAt: string
 }

@@ -15,6 +15,7 @@
 // bug (same lesson as the invite-link flow).
 // ============================================================
 
+import { formatDate } from '@/lib/datetime';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Copy, KeyRound, Loader2, Plus, Trash2 } from 'lucide-react';
@@ -55,11 +56,7 @@ interface ApiKey {
 }
 
 function fmtDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  return formatDate(iso);
 }
 
 function keyStatus(k: ApiKey): 'active' | 'revoked' | 'expired' {

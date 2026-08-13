@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTime } from "@/lib/datetime";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -192,7 +193,7 @@ export default function ActivitiesPage() {
                       {typeLabel[a.type]}
                       {a.contact && ` · ${a.contact.name || a.contact.phone}`}
                       {" · "}
-                      {new Date(a.occurred_at).toLocaleString()}
+                      {formatDateTime(a.occurred_at)}
                     </p>
                   </div>
                   <Button

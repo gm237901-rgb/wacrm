@@ -10,12 +10,11 @@ import { Skeleton } from './skeleton'
 interface SalesFunnelProps {
   data: SalesFunnelData | null
   loading: boolean
-  currency: string
 }
 
 import { useTranslations } from 'next-intl'
 
-export function SalesFunnel({ data, loading, currency }: SalesFunnelProps) {
+export function SalesFunnel({ data, loading }: SalesFunnelProps) {
   const t = useTranslations('Dashboard.salesFunnel')
   // Scale the stage bars against the biggest stage rather than the total:
   // against the total, a healthy five-stage funnel shows five stubs.
@@ -52,7 +51,7 @@ export function SalesFunnel({ data, loading, currency }: SalesFunnelProps) {
                     {t('dealCount', { count: stage.dealCount })}
                   </p>
                   <p className="text-lg font-semibold tabular-nums text-foreground">
-                    {formatCurrencyShort(stage.totalValue, currency)}
+                    {formatCurrencyShort(stage.totalValue)}
                   </p>
                   {/* Fill is the stage's share of the largest stage, so the
                       bars compare against each other at a glance instead of
@@ -87,7 +86,7 @@ export function SalesFunnel({ data, loading, currency }: SalesFunnelProps) {
                           )}
                         </div>
                         <span className="flex-shrink-0 text-[11px] font-medium tabular-nums text-muted-foreground">
-                          {formatCurrencyShort(deal.value, currency)}
+                          {formatCurrencyShort(deal.value)}
                         </span>
                       </div>
                     ))

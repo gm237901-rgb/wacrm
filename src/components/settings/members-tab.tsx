@@ -21,6 +21,7 @@
 //   the role anyway.
 // ============================================================
 
+import { formatDate } from '@/lib/datetime';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -106,13 +107,7 @@ const EDITABLE_ROLES: { value: AccountRole }[] = [
 // primary (admin) → muted (agent / viewer).
 
 function fmtDate(iso: string): string {
-  // Match the rest of the dashboard's locale-light formatting.
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  return formatDate(iso);
 }
 
 function fmtExpiresIn(iso: string, t: (key: string, values?: Record<string, string | number>) => string): string {

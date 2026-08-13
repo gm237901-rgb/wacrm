@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate } from "@/lib/datetime";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -288,7 +289,7 @@ export default function TasksPage() {
                   </TableCell>
                   <TableCell className="hidden text-sm text-muted-foreground sm:table-cell">
                     {task.due_date
-                      ? new Date(task.due_date + "T00:00:00").toLocaleDateString()
+                      ? formatDate(task.due_date + "T00:00:00")
                       : t("noDueDate")}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">

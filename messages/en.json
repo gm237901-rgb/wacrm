@@ -126,14 +126,6 @@
       "noActivitiesHint": "Events scheduled for today will appear here.",
       "viewAll": "View all activities →"
     },
-    "revenueChart": {
-      "title": "Revenue",
-      "days": "{count} days",
-      "allTime": "All",
-      "noRevenue": "No revenue in this range",
-      "noRevenueHint": "Deals marked as won will appear here.",
-      "ariaLabel": "Revenue per day"
-    },
     "leadSource": {
       "title": "Lead Source",
       "description": "Where your contacts come from",
@@ -148,17 +140,6 @@
         "redes_sociais": "Social Media",
         "outros": "Other"
       }
-    },
-    "recentLeads": {
-      "title": "Recent Leads",
-      "noLeads": "No leads yet",
-      "noLeadsHint": "New contacts will appear here.",
-      "unnamed": "Unnamed",
-      "viewAll": "View all leads →",
-      "timeS": "{sec}s ago",
-      "timeM": "{min}m ago",
-      "timeH": "{hr}h ago",
-      "timeD": "{day}d ago"
     },
     "quickActions": {
       "newContact": "New Contact",
@@ -493,17 +474,11 @@
       "noTeammates": "No teammates available",
       "me": " (me)",
       "noMessagesYet": "No messages yet",
-      "sendTemplateHint": "Send a template to start the conversation",
+      "sendTemplateHint": "Send a message to start the conversation",
       "selectConversation": "Select a conversation",
       "selectConversationHint": "Choose a conversation from the left to start messaging",
       "today": "Today",
       "yesterday": "Yesterday"
-    },
-    "sessionTimer": {
-      "expired": "Expired",
-      "xhRemaining": "{hours}h remaining",
-      "xmRemaining": "{minutes}m remaining",
-      "noCustomerMessages": "No customer messages"
     },
     "composer": {
       "toastAiNotConfigured": "AI isn't set up yet — enable it in Settings → AI Assistant.",
@@ -516,10 +491,7 @@
       "toastVoiceUnsupported": "Voice recording isn't supported in this browser.",
       "toastMicDenied": "Microphone access denied or unavailable.",
       "draftHint": "Tap the ✨ to draft a reply with AI — you can edit it before sending",
-      "sessionExpiredHint": "24-hour session expired. Use a template to re-engage.",
-      "templates": "Templates",
       "readOnlyPlaceholder": "Read-only — viewers can browse but not reply",
-      "sessionExpiredPlaceholder": "Session expired - use a template",
       "typeMessagePlaceholder": "Type a message... (Shift+Enter for new line)",
       "readOnlyTitle": "Read-only — your role can't send messages",
       "recording": "Recording… {current} / {max}",
@@ -530,7 +502,6 @@
       "video": "Video",
       "document": "Document",
       "voiceNote": "Voice note",
-      "sendTemplate": "Send template",
       "draftWithAI": "Draft a reply with AI",
       "addCaption": "Add a caption…",
       "removeAttachment": "Remove attachment",
@@ -890,9 +861,9 @@
         "deals": "Deals",
         "tags": "Tags",
         "agenda": "Calendar",
-      "noTags": "No tags",
-      "noDeals": "No deals",
-      "addNotePlaceholder": "Add a note..."
+        "noTags": "No tags",
+        "noDeals": "No deals",
+        "addNotePlaceholder": "Add a note..."
       },
       "actions": {
         "edit": "Edit",
@@ -1941,13 +1912,11 @@
       "deleteLocallyAria": "Delete template locally",
       "deleteMetaLocallyTitle": "Delete from Meta and locally",
       "deleteLocallyTitle": "Delete locally",
-      
       "dialogEditTitle": "Edit Message Template",
       "dialogNewTitle": "New Message Template",
       "dialogEditDesc": "Save your changes to re-submit to Meta. Status will flip back to PENDING during review.",
       "dialogNewDesc": "Build a template and submit it to Meta for approval. Once approved, you can use it in broadcasts and the inbox.",
       "authWarning": "AUTHENTICATION templates have a fixed body + OTP button shape that needs a different builder. Create them in Meta WhatsApp Manager for now and use <bold>Sync from Meta</bold> to bring them in.",
-      
       "templateName": "Template Name",
       "namePlaceholder": "e.g. order_confirmation",
       "nameFixed": "Name is fixed once a template exists on Meta — create a new template to change it.",
@@ -1956,7 +1925,6 @@
       "language": "Language",
       "langFixed": "Language is fixed once a template exists on Meta.",
       "langHint": "Must match the exact code on Meta — <code>en_US</code> and <code>en</code> are distinct.",
-      
       "header": "Header",
       "headerNone": "None",
       "headerText": "Text",
@@ -1969,7 +1937,6 @@
       "headerSampleImageAlt": "Header sample",
       "qualityScoreTitle": "Meta quality score",
       "headerSamplePlaceholder": "Sample value for {{1}} (required for Meta review)",
-      
       "uploadImage": "Upload image",
       "uploadHint": "JPEG or PNG, ≤5 MB",
       "mediaUrlPlaceholder": "https://… (or paste a public {format} link)",
@@ -1977,17 +1944,14 @@
       "mediaHint": "Must be a publicly accessible HTTPS link. Meta fetches it once during review, so it needs to stay live for ~24 hrs.",
       "videoHint": " Recommended: MP4 / 3GPP, ≤16 MB, ≤60 seconds.",
       "documentHint": " Recommended: PDF, ≤100 MB.",
-      
       "bodyText": "Body Text",
       "bodyPlaceholder": "Hello {{1}}, your order {{2}} is confirmed.",
       "bodyHint": "Use {{1}}, {{2}} for variables (must be contiguous starting at {{1}}).",
       "sampleValues": "Sample values (Meta uses these to review your template)",
       "sampleAria": "Sample value for body variable {var}",
       "samplePlaceholder": "Sample for {var}",
-      
       "footer": "Footer (optional)",
       "footerPlaceholder": "Optional footer text (max 60 chars)",
-      
       "buttons": "Buttons (optional)",
       "addButton": "Add Button",
       "buttonsLimit": "Up to {max} buttons. QUICK_REPLY buttons must come before URL / phone / copy-code buttons.",
@@ -2000,19 +1964,16 @@
       "urlSamplePlaceholder": "Example value for {{1}} (required when URL has a variable)",
       "phonePlaceholder": "+15551234567",
       "codePlaceholder": "Example code (e.g. SUMMER20)",
-      
       "cancel": "Cancel",
       "saving": "Saving…",
       "submitting": "Submitting…",
       "saveResubmit": "Save & Resubmit",
       "submitApproval": "Submit for Approval",
-      
       "deleteDialogTitle": "Delete template?",
       "deleteMetaDesc": "\"{name}\" will be deleted from Meta and from Linovexa. Active broadcasts using this template will start failing on their next send. This can't be undone.",
       "deleteLocalDesc": "\"{name}\" will be deleted from Linovexa. It was never submitted to Meta, so no remote cleanup is needed.",
       "deleting": "Deleting…",
       "delete": "Delete",
-      
       "toastLoadFailed": "Failed to load templates",
       "toastSubmitFailed": "Failed to submit",
       "toastSubmitEditSuccess": "Edit submitted — Meta typically reviews within 24 hours.",
@@ -2174,7 +2135,6 @@
       "profileSaved": "Profile saved",
       "emailChangeFailed": "Email change failed: {message}",
       "profileSavedEmailCheck": "Profile saved — check your email to confirm the address change",
-      
       "passwordTitle": "Password",
       "passwordDesc": "Use at least {min} characters. You will stay signed in on this device after changing it.",
       "currentPassword": "Current password",
@@ -2188,7 +2148,6 @@
       "currentPasswordIncorrect": "Current password is incorrect",
       "passwordUpdateFailed": "Password update failed: {message}",
       "passwordUpdated": "Password updated",
-      
       "sessionsTitle": "Active sessions",
       "sessionsDesc": "Sign out of every device where you're logged in — including this one. Useful if you lost a laptop or shared your password.",
       "signOutAll": "Sign out of all devices",
@@ -2255,15 +2214,10 @@
     },
     "deals": {
       "title": "Deals & currency",
-      "description": "The currency used for new deals and for pipeline and dashboard totals.",
-      "defaultCurrency": "Default currency",
-      "defaultCurrencyDesc": "New deals default to this currency, and pipeline and dashboard totals are shown in it. Existing deals keep the currency they were saved with.",
-      "currencyLabel": "Currency",
-      "adminOnlyHint": "Only account admins can change the default currency.",
-      "save": "Save",
-      "saving": "Saving...",
-      "saveFailed": "Failed to save default currency",
-      "saveSuccess": "Default currency updated"
+      "description": "The currency used across the CRM.",
+      "defaultCurrency": "Currency",
+      "currencyName": "Brazilian real (R$)",
+      "currencyNote": "The CRM operates in Brazilian reais only. Every deal value, product price and dashboard total is stored and shown in BRL."
     },
     "aiConfig": {
       "title": "Agent setup",

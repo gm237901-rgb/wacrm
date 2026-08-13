@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDateTime } from "@/lib/datetime";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -185,7 +186,7 @@ export default function EmailsPage() {
                       {e.direction === "inbound" ? t("directionInbound") : t("directionOutbound")}
                       {e.contact && ` · ${e.contact.name || e.contact.phone}`}
                       {" · "}
-                      {new Date(e.occurred_at).toLocaleString()}
+                      {formatDateTime(e.occurred_at)}
                     </p>
                   </div>
                   <Button

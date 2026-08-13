@@ -37,7 +37,6 @@ export function PipelineBoard({
   onAddDeal,
   onEditDeal,
 }: PipelineBoardProps) {
-  const { defaultCurrency } = useAuth();
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
 
   const sortedStages = useMemo(
@@ -116,7 +115,6 @@ export function PipelineBoard({
               stage={stage}
               deals={stageDeals}
               totalValue={totalValue}
-              currency={defaultCurrency}
               onAddDeal={onAddDeal}
               onEditDeal={onEditDeal}
             />
@@ -190,14 +188,12 @@ function StageColumn({
   stage,
   deals,
   totalValue,
-  currency,
   onAddDeal,
   onEditDeal,
 }: {
   stage: PipelineStage;
   deals: Deal[];
   totalValue: number;
-  currency: string;
   onAddDeal: (stageId: string) => void;
   onEditDeal: (deal: Deal) => void;
 }) {
@@ -226,7 +222,7 @@ function StageColumn({
         </span>
       </div>
       <p className="text-xs text-muted-foreground">
-        {formatCurrency(totalValue, currency)}
+        {formatCurrency(totalValue)}
       </p>
 
       <div
