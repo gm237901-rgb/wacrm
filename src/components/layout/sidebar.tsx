@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
@@ -15,14 +15,12 @@ import {
   Building2,
   CalendarDays,
   CheckSquare,
+  ChevronsLeft,
   Crown,
   GitBranch,
   LayoutDashboard,
   LogOut,
-  Mail,
   MessageSquare,
-  Package,
-  Radio,
   Settings,
   Shield,
   User,
@@ -119,7 +117,6 @@ const navSections: NavSection[] = [
       { href: "/tasks", labelKey: "tasks", icon: CheckSquare },
       { href: "/activities", labelKey: "activities", icon: Activity },
       { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
-      { href: "/emails", labelKey: "emails", icon: Mail },
       { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
     ],
   },
@@ -127,8 +124,6 @@ const navSections: NavSection[] = [
     labelKey: "sectionGestao",
     items: [
       { href: "/reports", labelKey: "reports", icon: BarChart3 },
-      { href: "/products", labelKey: "products", icon: Package },
-      { href: "/broadcasts", labelKey: "broadcasts", icon: Radio },
       { href: "/automations", labelKey: "automations", icon: Zap },
       { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
     ],
@@ -154,10 +149,37 @@ interface SidebarProps {
 
 import { useTranslations } from "next-intl";
 
+/** Desktop-only collapse preference. Device-scoped, like the theme. */
+const COLLAPSE_STORAGE_KEY = "linovexa.sidebar.collapsed";
+
 export function Sidebar({ open = false, onClose }: SidebarProps) {
   const t = useTranslations("Sidebar");
   const pathname = usePathname();
   const { profile, profileLoading, account, accountRole, signOut } = useAuth();
+  // Collapsed applies to the desktop rail only — on mobile the sidebar
+  // is a drawer that's either open or gone, so narrowing it would just
+  // produce an unusable sliver.
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      setCollapsed(localStorage.getItem(COLLAPSE_STORAGE_KEY) === "1");
+    } catch {
+      // localStorage throws in private-browsing/sandboxed contexts.
+    }
+  }, []);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(COLLAPSE_STORAGE_KEY, next ? "1" : "0");
+      } catch {
+        // Same private-browsing case; the session still reflects it.
+      }
+      return next;
+    });
+  }, []);
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
   // Only surface the account-name strip when it actually carries
@@ -223,13 +245,21 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           "transition-transform duration-200 ease-out will-change-transform",
           open ? "translate-x-0" : "-translate-x-full",
           // Desktop: static, always visible — reset all the mobile framing.
-          "lg:static lg:z-0 lg:w-60 lg:translate-x-0 lg:transition-none",
+          // Width animates so collapsing reads as the rail shrinking
+          // rather than the page jumping.
+          "lg:static lg:z-0 lg:translate-x-0 lg:transition-[width] lg:duration-200",
+          collapsed ? "lg:w-[4.5rem]" : "lg:w-60",
         )}
         aria-label={t("navPrimaryAria")}
       >
         {/* Logo row. On mobile we put a close button here; on desktop the
             close button is hidden since the sidebar is always-visible. */}
-        <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+        <div
+          className={cn(
+            "flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4",
+            collapsed && "lg:justify-center lg:px-0",
+          )}
+        >
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-primary">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden>
@@ -241,7 +271,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 />
               </svg>
             </div>
-            <span className="flex flex-col leading-none">
+            <span
+              className={cn(
+                "flex flex-col leading-none",
+                collapsed && "lg:hidden",
+              )}
+            >
               <span className="text-sm font-semibold text-foreground">
                 {t("title")}
               </span>
@@ -265,7 +300,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-3 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           {navSections.map((section, sectionIdx) => (
             <div key={section.labelKey} className={sectionIdx > 0 ? "mt-4" : undefined}>
-              <p className="px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase">
+              <p
+                className={cn(
+                  "px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase",
+                  collapsed && "lg:hidden",
+                )}
+              >
                 {t(section.labelKey as string)}
               </p>
               <ul className="flex flex-col gap-1">
@@ -288,20 +328,31 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                     <li key={item.href}>
                       <Link
                         href={item.href}
+                        // Collapsed rows show only an icon, so the label has
+                        // to survive as the accessible name and the hover
+                        // tooltip — otherwise the rail is unreadable to a
+                        // screen reader and guesswork for everyone else.
+                        title={collapsed ? t(item.labelKey as string) : undefined}
                         className={cn(
                           // Taller on mobile so fingers can hit the row reliably (≥44px).
                           "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
+                          collapsed && "lg:justify-center lg:px-0",
                           isActive
                             ? "bg-primary/10 text-primary"
                             : "text-muted-foreground hover:bg-muted hover:text-foreground",
                         )}
                       >
-                        <item.icon className="h-4 w-4" />
-                        <span className="flex-1">{t(item.labelKey as string)}</span>
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        <span className={cn("flex-1", collapsed && "lg:hidden")}>
+                          {t(item.labelKey as string)}
+                        </span>
                         {item.beta && (
                           <span
                             aria-label={t("beta")}
-                            className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300"
+                            className={cn(
+                              "rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-amber-300",
+                              collapsed && "lg:hidden",
+                            )}
                           >
                             {t("beta")}
                           </span>
@@ -340,15 +391,19 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    title={collapsed ? t(item.labelKey as string) : undefined}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
+                      collapsed && "lg:justify-center lg:px-0",
                       isActive
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground",
                     )}
                   >
-                    <item.icon className="h-4 w-4" />
-                    {t(item.labelKey as string)}
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    <span className={cn(collapsed && "lg:hidden")}>
+                      {t(item.labelKey as string)}
+                    </span>
                   </Link>
                 </li>
               );
@@ -365,7 +420,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               below; for renamed or shared accounts it tells the user
               which account they're acting in. */}
           {showAccountStrip && account?.name ? (
-            <div className="mb-2 flex items-center gap-2 px-3 text-xs text-muted-foreground">
+            <div
+              className={cn(
+                "mb-2 flex items-center gap-2 px-3 text-xs text-muted-foreground",
+                collapsed && "lg:hidden",
+              )}
+            >
               <UsersRound className="size-3.5 shrink-0" />
               {/* `title=` exposes the full name on hover when it
                   gets truncated (long account names + narrow
@@ -394,7 +454,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             </div>
           ) : null}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none data-popup-open:bg-muted/60">
+            <DropdownMenuTrigger
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none data-popup-open:bg-muted/60",
+                collapsed && "lg:justify-center lg:px-0",
+              )}
+            >
               <Avatar className="size-8 shrink-0">
                 {profile?.avatar_url ? (
                   <AvatarImage
@@ -408,7 +473,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                     "U"}
                 </AvatarFallback>
               </Avatar>
-              <div className="min-w-0 flex-1">
+              <div className={cn("min-w-0 flex-1", collapsed && "lg:hidden")}>
                 <p className="truncate text-sm font-medium text-foreground">
                   {profile?.full_name ?? t("defaultUser")}
                 </p>
@@ -457,6 +522,30 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Desktop only: on mobile the drawer already closes via the
+              backdrop and the X in the header, and a 4.5rem sliver would
+              be worse than either. */}
+          <button
+            type="button"
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? t("expandMenu") : t("collapseMenu")}
+            title={collapsed ? t("expandMenu") : t("collapseMenu")}
+            className={cn(
+              "mt-1 hidden w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:flex",
+              collapsed && "lg:justify-center lg:px-0",
+            )}
+          >
+            <ChevronsLeft
+              className={cn(
+                "size-4 shrink-0 transition-transform",
+                collapsed && "rotate-180",
+              )}
+            />
+            <span className={cn(collapsed && "lg:hidden")}>
+              {t("collapseMenu")}
+            </span>
+          </button>
         </div>
       </aside>
     </>

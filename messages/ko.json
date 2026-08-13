@@ -43,6 +43,8 @@
     "roleAdmin": "관리자",
     "roleAgent": "상담원",
     "roleViewer": "뷰어",
+    "collapseMenu": "메뉴 접기",
+    "expandMenu": "메뉴 펼치기",
     "closeMenu": "메뉴 닫기",
     "defaultUser": "사용자",
     "defaultAvatar": "아바타",

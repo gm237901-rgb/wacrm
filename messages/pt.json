@@ -45,6 +45,8 @@
     "roleAdmin": "Administrador",
     "roleAgent": "Agente",
     "roleViewer": "Visualizador",
+    "collapseMenu": "Recolher menu",
+    "expandMenu": "Expandir menu",
     "closeMenu": "Fechar menu",
     "defaultUser": "Usuário",
     "defaultAvatar": "Avatar",
