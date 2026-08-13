@@ -17,6 +17,9 @@ import { useTranslations } from 'next-intl'
 
 export function SalesFunnel({ data, loading, currency }: SalesFunnelProps) {
   const t = useTranslations('Dashboard.salesFunnel')
+  // Scale the stage bars against the biggest stage rather than the total:
+  // against the total, a healthy five-stage funnel shows five stubs.
+  const maxValue = Math.max(0, ...(data?.stages ?? []).map((s) => s.totalValue))
 
   return (
     <section className="rounded-xl border border-border bg-card">
@@ -43,20 +46,31 @@ export function SalesFunnel({ data, loading, currency }: SalesFunnelProps) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {data.stages.map((stage) => (
               <div key={stage.id} className="flex flex-col rounded-lg border border-border">
-                <div className="flex flex-col gap-2 border-b border-border p-3">
-                  <div
-                    className="h-1.5 w-full rounded-full"
-                    style={{ background: stage.color || 'var(--muted-foreground)' }}
-                    aria-hidden
-                  />
+                <div className="flex flex-col gap-2 p-3">
                   <p className="truncate text-sm font-medium text-foreground">{stage.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {t('dealCount', { count: stage.dealCount })}
                   </p>
-                  <p className="text-sm font-semibold tabular-nums text-foreground">
+                  <p className="text-lg font-semibold tabular-nums text-foreground">
                     {formatCurrencyShort(stage.totalValue, currency)}
                   </p>
+                  {/* Fill is the stage's share of the largest stage, so the
+                      bars compare against each other at a glance instead of
+                      each being a full-width strip of colour. */}
+                  <div
+                    className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                    role="presentation"
+                  >
+                    <div
+                      className="h-full rounded-full transition-[width] duration-500"
+                      style={{
+                        width: `${maxValue > 0 ? Math.max(4, (stage.totalValue / maxValue) * 100) : 0}%`,
+                        background: stage.color || 'var(--muted-foreground)',
+                      }}
+                    />
+                  </div>
                 </div>
+                <div className="border-t border-border" />
                 <div className="flex flex-1 flex-col gap-2 p-3">
                   {stage.topDeals.length === 0 ? (
                     <p className="text-xs text-muted-foreground">{t('emptyStage')}</p>

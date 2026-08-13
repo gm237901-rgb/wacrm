@@ -8,6 +8,7 @@ import { Briefcase, DollarSign, Percent, Plus, Trophy, Users } from 'lucide-reac
 
 import {
   loadKpiRow,
+  loadKpiSparklines,
   loadLeadSource,
   loadRecentLeads,
   loadRevenueSeries,
@@ -17,6 +18,7 @@ import {
 import type {
   KpiBundle,
   KpiCard,
+  KpiSparklines,
   LeadSourceData,
   RecentLead,
   RevenuePoint,
@@ -44,6 +46,9 @@ export default function DashboardPage() {
 
   const [kpis, setKpis] = useState<KpiBundle | null>(null)
   const [kpisLoading, setKpisLoading] = useState(true)
+  // Loads independently of the KPI numbers: the cards render fine
+  // without a sparkline, so a slow series must not hold up the row.
+  const [sparks, setSparks] = useState<KpiSparklines | null>(null)
 
   const [funnel, setFunnel] = useState<SalesFunnelData | null>(null)
   const [funnelLoading, setFunnelLoading] = useState(true)
@@ -81,6 +86,10 @@ export default function DashboardPage() {
       .then(setKpis)
       .catch((err) => console.error('[dashboard] kpis failed:', err))
       .finally(() => setKpisLoading(false))
+
+    void loadKpiSparklines(db)
+      .then(setSparks)
+      .catch((err) => console.error('[dashboard] sparklines failed:', err))
 
     void loadSalesFunnel(db)
       .then(setFunnel)
@@ -203,6 +212,7 @@ export default function DashboardPage() {
               value={kpis.contactsTotal.current.toLocaleString()}
               icon={Users}
               tone="blue"
+              spark={sparks?.contacts}
               delta={countDelta(kpis.contactsTotal, t)}
             />
             <MetricCard
@@ -210,6 +220,7 @@ export default function DashboardPage() {
               value={kpis.openDeals.current.toLocaleString()}
               icon={Briefcase}
               tone="blue"
+              spark={sparks?.deals}
               delta={countDelta(kpis.openDeals, t)}
             />
             <MetricCard
@@ -217,6 +228,7 @@ export default function DashboardPage() {
               value={formatCurrency(kpis.revenueThisMonth.current, defaultCurrency)}
               icon={DollarSign}
               tone="green"
+              spark={sparks?.revenue}
               delta={countDelta(kpis.revenueThisMonth, t)}
             />
             <MetricCard
@@ -224,6 +236,7 @@ export default function DashboardPage() {
               value={kpis.wonDealsThisMonth.current.toLocaleString()}
               icon={Trophy}
               tone="orange"
+              spark={sparks?.wonDeals}
               delta={countDelta(kpis.wonDealsThisMonth, t)}
             />
             <MetricCard

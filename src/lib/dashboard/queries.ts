@@ -14,6 +14,7 @@ import type {
   ConversationsSeriesPoint,
   FunnelStage,
   KpiBundle,
+  KpiSparklines,
   LeadSourceData,
   LeadSource,
   MetricsBundle,
@@ -469,6 +470,60 @@ export async function loadKpiRow(db: DB): Promise<KpiBundle> {
       current: conversionRate((closedThisMonth.data ?? []) as { status: string }[]),
       previous: conversionRate((closedLastMonth.data ?? []) as { status: string }[]),
     },
+  }
+}
+
+// --- 6b. KPI sparklines --------------------------------------------------
+
+const SPARK_DAYS = 14
+
+/**
+ * Daily series behind each KPI card. One pass over the last 14 days of
+ * contacts and deals, bucketed client-side — cheaper than five separate
+ * range queries and consistent with how the other charts aggregate.
+ */
+export async function loadKpiSparklines(db: DB): Promise<KpiSparklines> {
+  const since = daysAgoStart(SPARK_DAYS - 1).toISOString()
+  const keys = lastNDayKeys(SPARK_DAYS)
+
+  const [contactsRes, dealsRes] = await Promise.all([
+    db.from('contacts').select('created_at').gte('created_at', since),
+    db.from('deals').select('created_at, updated_at, status, value'),
+  ])
+
+  const bucket = () => new Map<string, number>(keys.map((k) => [k, 0]))
+  const add = (map: Map<string, number>, iso: string, amount = 1) => {
+    const key = localDayKey(iso)
+    if (map.has(key)) map.set(key, (map.get(key) ?? 0) + amount)
+  }
+
+  const contacts = bucket()
+  for (const row of (contactsRes.data ?? []) as { created_at: string }[]) {
+    add(contacts, row.created_at)
+  }
+
+  const deals = bucket()
+  const revenue = bucket()
+  const wonDeals = bucket()
+  for (const row of (dealsRes.data ?? []) as {
+    created_at: string
+    updated_at: string
+    status: string
+    value: number | null
+  }[]) {
+    add(deals, row.created_at)
+    if (row.status === 'won') {
+      add(revenue, row.updated_at, row.value ?? 0)
+      add(wonDeals, row.updated_at)
+    }
+  }
+
+  const series = (map: Map<string, number>) => keys.map((k) => map.get(k) ?? 0)
+  return {
+    contacts: series(contacts),
+    deals: series(deals),
+    revenue: series(revenue),
+    wonDeals: series(wonDeals),
   }
 }
 

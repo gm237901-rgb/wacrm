@@ -85,6 +85,18 @@ export interface KpiBundle {
   conversionRatePct: KpiCard
 }
 
+/**
+ * Last-14-day shape behind each KPI card, drawn as a sparkline. Real
+ * series, not decoration: a card that shows "+12% this month" next to a
+ * flat line would be lying about how that number got there.
+ */
+export interface KpiSparklines {
+  contacts: number[]
+  deals: number[]
+  revenue: number[]
+  wonDeals: number[]
+}
+
 // --- Sales funnel (Dashboard mini pipeline) -----------------------------
 
 export interface FunnelDealCard {
