@@ -179,9 +179,27 @@ export async function startSession(
     if (!isAlreadyExists(err)) throw err;
   }
 
-  // Session already existed — push the current config, then start it.
-  // Config may have drifted (webhook URL changed with the deploy
-  // domain), so update rather than blindly starting the old one.
+  // The session already exists. Before touching it, find out what it's
+  // doing — every write below (PUT, logout, start) tears the session
+  // down and rebuilds it, which destroys a QR the user may be halfway
+  // through scanning.
+  const before = await getSessionState(server, session).catch(() => null);
+
+  // Already connected: nothing to do. Reconfiguring would drop a live
+  // session for no reason.
+  if (before?.status === 'WORKING') return;
+
+  // Already producing a QR (or about to): leave it completely alone.
+  // "Connect" is idempotent from the user's point of view — pressing it
+  // again, or the panel re-checking, must not restart the pairing that
+  // is already in flight.
+  if (before?.status === 'SCAN_QR_CODE' || before?.status === 'STARTING') {
+    return;
+  }
+
+  // Stale/failed session — safe to reconfigure. Config may have drifted
+  // (the webhook URL changes with the deploy domain), so update rather
+  // than blindly starting the old one.
   await wahaFetch(server, `/api/sessions/${encodeURIComponent(session)}`, {
     method: 'PUT',
     body: JSON.stringify({ name: session, config }),
@@ -198,17 +216,13 @@ export async function startSession(
   // reconnect" — so it never reaches SCAN_QR_CODE and no QR is ever
   // produced, leaving the user stuck with no way out from the UI.
   //
-  // Logging out first wipes that dead auth state. We do it for any
-  // non-WORKING state, not just FAILED: the same stale credentials also
-  // sit behind STOPPED, and reaching this function at all means the user
-  // explicitly asked to connect — so there is no live session to
-  // protect and nothing of value to discard.
-  const current = await getSessionState(server, session).catch(() => null);
-  if (current && current.status !== 'WORKING') {
-    await logoutSession(server, session).catch((err: unknown) => {
-      console.warn('[waha] pre-start logout failed, starting anyway:', err);
-    });
-  }
+  // Logging out first wipes that dead auth state. Only reached for
+  // STOPPED/FAILED sessions: the healthy in-flight states returned
+  // above, because logging those out is what was tearing down QRs
+  // mid-scan.
+  await logoutSession(server, session).catch((err: unknown) => {
+    console.warn('[waha] pre-start logout failed, starting anyway:', err);
+  });
 
   await wahaFetch(server, `/api/sessions/${encodeURIComponent(session)}/start`, {
     method: 'POST',
