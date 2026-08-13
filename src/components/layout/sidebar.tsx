@@ -8,13 +8,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
 import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import {
-  Activity,
   BarChart3,
   Bell,
   Bot,
-  Building2,
   CalendarDays,
-  CheckSquare,
   ChevronsLeft,
   Crown,
   GitBranch,
@@ -99,45 +96,38 @@ interface NavSection {
   items: NavItem[];
 }
 
-// Grouped nav — every route that existed before this reorganisation
-// is still here, just filed under a section instead of one flat list.
+// Two groups, one of them unlabelled. With Empresas, Tarefas,
+// Atividades, Produtos and E-mails gone, the old four sections held two
+// or three rows each — at that size a section header costs more
+// attention than the grouping saves, and four of them stacked was most
+// of why the sidebar read as crowded.
 const navSections: NavSection[] = [
   {
-    labelKey: "sectionPrincipal",
+    labelKey: "",
     items: [
       { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-      { href: "/contacts", labelKey: "contacts", icon: Users },
-      { href: "/companies", labelKey: "companies", icon: Building2 },
-      { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
-    ],
-  },
-  {
-    labelKey: "sectionProdutividade",
-    items: [
-      { href: "/tasks", labelKey: "tasks", icon: CheckSquare },
-      { href: "/activities", labelKey: "activities", icon: Activity },
-      { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
       { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
+      { href: "/contacts", labelKey: "contacts", icon: Users },
+      { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
+      { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
+      { href: "/reports", labelKey: "reports", icon: BarChart3 },
     ],
   },
   {
-    labelKey: "sectionGestao",
+    labelKey: "sectionAutomacao",
     items: [
-      { href: "/reports", labelKey: "reports", icon: BarChart3 },
       { href: "/automations", labelKey: "automations", icon: Zap },
       { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
-    ],
-  },
-  {
-    labelKey: "sectionSistema",
-    items: [
       { href: "/agents", labelKey: "aiAgents", icon: Bot },
-      { href: "/notifications", labelKey: "notifications", icon: Bell },
     ],
   },
 ];
 
+// Notifications joins Settings at the bottom: the header already carries
+// a bell with the unread count, so its row up top was a second entrance
+// to the same screen.
 const bottomNavItems = [
+  { href: "/notifications", labelKey: "notifications", icon: Bell },
   { href: "/settings", labelKey: "settings", icon: Settings },
 ];
 
@@ -300,14 +290,18 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-3 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           {navSections.map((section, sectionIdx) => (
             <div key={section.labelKey} className={sectionIdx > 0 ? "mt-4" : undefined}>
-              <p
-                className={cn(
-                  "px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase",
-                  collapsed && "lg:hidden",
-                )}
-              >
-                {t(section.labelKey as string)}
-              </p>
+              {/* The first group is deliberately unlabelled — the primary
+                  routes need no heading to explain them. */}
+              {section.labelKey ? (
+                <p
+                  className={cn(
+                    "px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase",
+                    collapsed && "lg:hidden",
+                  )}
+                >
+                  {t(section.labelKey)}
+                </p>
+              ) : null}
               <ul className="flex flex-col gap-1">
                 {section.items.map((item) => {
                   const isActive =
