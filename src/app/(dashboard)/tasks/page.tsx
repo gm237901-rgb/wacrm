@@ -16,6 +16,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { GatedButton } from "@/components/ui/gated-button";
+import { PageHeader } from "@/components/layout/page-header";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -213,18 +215,17 @@ export default function TasksPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {tasks.length > 0 ? t("subtitle", { count: tasks.length }) : t("subtitleZero")}
-          </p>
-        </div>
-        <GatedButton canAct={canEdit} gateReason={t("gateCreate")} onClick={openAddForm}>
+      <PageHeader
+        title={t("title")}
+        description={tasks.length > 0 ? t("subtitle", { count: tasks.length }) : t("subtitleZero")}
+        icon={CheckSquare}
+        actions={
+          <GatedButton canAct={canEdit} gateReason={t("gateCreate")} onClick={openAddForm}>
           <Plus className="size-4" />
           {t("addBtn")}
         </GatedButton>
-      </div>
+        }
+      />
 
       <div className="relative max-w-sm">
         <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -236,7 +237,7 @@ export default function TasksPage() {
         />
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
@@ -249,11 +250,7 @@ export default function TasksPage() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow className="border-border">
-                <TableCell colSpan={5} className="py-12 text-center">
-                  <Loader2 className="mx-auto size-6 animate-spin text-primary" />
-                </TableCell>
-              </TableRow>
+              <TableSkeleton columns={5} label={t("loading")} />
             ) : tasks.length === 0 ? (
               <TableRow className="border-border">
                 <TableCell colSpan={5} className="py-12 text-center">
