@@ -2287,6 +2287,11 @@
       "editButtonTitle": "Edit",
       "deleteButtonTitle": "Delete",
       "loading": "Loading…"
-    }
+    },
+    "whatsappDesc": "Connect the WhatsApp number the CRM uses to talk to your customers."
+  },
+  "Account": {
+    "title": "My account",
+    "description": "Profile, password, quick replies, tags, members and API keys."
   }
 }

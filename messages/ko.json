@@ -1976,6 +1976,11 @@
       "reindex": "재색인",
       "reindexTooltip": "모든 문서를 다시 임베딩합니다 (예: 임베딩 키 추가 후)",
       "loading": "불러오는 중…"
-    }
+    },
+    "whatsappDesc": "CRM이 고객과 대화할 때 사용할 WhatsApp을 연결하세요."
+  },
+  "Account": {
+    "title": "내 계정",
+    "description": "프로필, 비밀번호, 빠른 답장, 태그, 멤버, API 키."
   }
 }

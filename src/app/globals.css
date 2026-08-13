@@ -88,35 +88,41 @@
 
 :root,
 html[data-mode="dark"] {
-  --background: oklch(0.13 0.025 260);
+  /* Navy, not near-black. The surfaces carry real blue chroma (~0.03)
+   * so the dark mode reads as a deliberate colour rather than grey with
+   * the lights off, and each step up the stack — page, sidebar, card —
+   * is a visible lift instead of a guess. */
+  --background: oklch(0.17 0.032 265);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0.022 260);
-  --card-2: oklch(0.205 0.022 260);
+  --card: oklch(0.235 0.03 265);
+  --card-2: oklch(0.265 0.028 265);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0.022 260);
+  --popover: oklch(0.235 0.03 265);
   --popover-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.22 0.02 260);
+  --secondary: oklch(0.285 0.026 265);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.22 0.02 260);
-  --muted-foreground: oklch(0.65 0.015 260);
-  --accent: oklch(0.22 0.02 260);
+  --muted: oklch(0.285 0.026 265);
+  /* Lifted from 0.65: secondary text sits on a lighter card now, and
+   * the old value landed just under 4.5:1 against it. */
+  --muted-foreground: oklch(0.72 0.024 265);
+  --accent: oklch(0.285 0.026 265);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   /* Translucent white hairline instead of a flat grey — the "premium
    * dark SaaS" border treatment (Linear/Vercel-style): it reads as a
    * subtle edge regardless of what's behind it instead of a hard line. */
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 12%);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.16 0.022 260);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.205 0.032 265);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.22 0.02 260);
+  --sidebar-accent: oklch(0.285 0.026 265);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-border: oklch(1 0 0 / 10%);
 }
 
 html[data-mode="light"] {
@@ -140,7 +146,7 @@ html[data-mode="light"] {
   --chart-3: oklch(0.7 0.06 260);
   --chart-4: oklch(0.8 0.04 260);
   --chart-5: oklch(0.87 0.03 260);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0.002 260);
   --sidebar-foreground: oklch(0.21 0.01 260);
   --sidebar-accent: oklch(0.96 0.004 260);
@@ -150,22 +156,28 @@ html[data-mode="light"] {
 
 /* ---- ACCENT: primary color ---- */
 
-/* Linovexa — the app's brand default. Blue-violet, deliberately
- * between "cobalt" (hue 254) and "violet" (hue 293) below so it
- * reads as its own indigo identity rather than duplicating either. */
+/* Linovexa — the app's brand default. A calm blue: chroma 0.13 where
+ * this used to sit at 0.21. That single number is most of what makes
+ * a dense CRM feel quiet, because the accent repeats on every button,
+ * chip, active row and chart series on screen. The other themes below
+ * keep their original saturation — this is the default, not a rule.
+ *
+ * `--primary` stays dark enough (L 0.55) to carry white label text at
+ * 4.5:1; the lighter tint lives in `--chart-1`, which only ever paints
+ * shapes, never sits behind text. */
 :root,
 html[data-theme="linovexa"] {
-  --primary: oklch(0.58 0.21 275);
+  --primary: oklch(0.55 0.14 252);
   --primary-foreground: oklch(0.985 0 0);
-  --primary-hover: oklch(0.65 0.19 275);
-  --primary-soft: oklch(0.58 0.21 275 / 0.12);
-  --primary-soft-2: oklch(0.58 0.21 275 / 0.22);
-  --ring: oklch(0.58 0.21 275);
-  --chart-1: oklch(0.58 0.21 275);
-  --chart-2: oklch(0.68 0.19 300);
-  --sidebar-primary: oklch(0.58 0.21 275);
+  --primary-hover: oklch(0.62 0.13 252);
+  --primary-soft: oklch(0.62 0.13 252 / 0.14);
+  --primary-soft-2: oklch(0.62 0.13 252 / 0.24);
+  --ring: oklch(0.62 0.13 252);
+  --chart-1: oklch(0.72 0.12 250);
+  --chart-2: oklch(0.6 0.1 235);
+  --sidebar-primary: oklch(0.55 0.14 252);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-ring: oklch(0.58 0.21 275);
+  --sidebar-ring: oklch(0.62 0.13 252);
 }
 
 /* Sky Blue — the original brand default, matched to the product logo
