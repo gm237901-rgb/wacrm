@@ -29,6 +29,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { AccountRole } from "@/lib/auth/roles";
+import { LogoLockup } from "@/components/brand/logo";
 
 // Per-role chip metadata used in the sidebar's account strip + the
 // Members tab roster. Keeping this near both consumers in a single
@@ -250,30 +251,8 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             collapsed && "lg:justify-center lg:px-0",
           )}
         >
-          <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-primary">
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden>
-                <path
-                  d="M5 5L19 19M19 5L5 19"
-                  stroke="white"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <span
-              className={cn(
-                "flex flex-col leading-none",
-                collapsed && "lg:hidden",
-              )}
-            >
-              <span className="text-sm font-semibold text-foreground">
-                {t("title")}
-              </span>
-              <span className="mt-0.5 text-[10px] font-medium tracking-widest text-muted-foreground uppercase">
-                CRM
-              </span>
-            </span>
+          <Link href="/dashboard">
+            <LogoLockup subtitle="CRM" hideText={collapsed} />
           </Link>
           <button
             type="button"
