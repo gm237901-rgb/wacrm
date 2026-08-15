@@ -13,6 +13,7 @@ import type {
   MessageReaction,
   Contact,
   ConversationStatus,
+  MessageTemplate,
   Profile,
   InteractiveMessagePayload,
 } from "@/types";
@@ -21,15 +22,17 @@ import {
   ChevronDown,
   UserPlus,
   Check,
+  Clock,
   ArrowLeft,
   RefreshCw,
   PanelRightOpen,
   PanelRightClose,
   Info,
 } from "lucide-react";
-import { format, isToday, isYesterday } from "date-fns";
+import { format, isToday, isYesterday, differenceInHours } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useTranslations } from "next-intl";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,6 +56,7 @@ import {
 } from "./message-composer";
 import { ContactSidebar } from "./contact-sidebar";
 import { deleteAccountMedia } from "@/lib/storage/upload-media";
+import { TemplatePicker } from "./template-picker";
 import { AiThreadBanner } from "./ai-thread-banner";
 import { buildReplyPreview } from "./reply-quote";
 import { toast } from "sonner";
@@ -61,6 +65,13 @@ interface ReplyDraft {
   id: string;
   authorLabel: string;
   preview: string;
+}
+
+function renderTemplateBody(body: string, params: string[]): string {
+  return body.replace(/\{\{(\d+)\}\}/g, (_, raw) => {
+    const idx = Number(raw) - 1;
+    return params[idx] ?? `{{${raw}}}`;
+  });
 }
 
 interface MessageThreadProps {
@@ -167,12 +178,14 @@ export function MessageThread({
   onToggleContactPanel,
 }: MessageThreadProps) {
   const t = useTranslations("Inbox.messageThread");
+  const tTimer = useTranslations("Inbox.sessionTimer");
   const tQuote = useTranslations("Inbox.replyQuote");
 
   const { user } = useAuth();
   const { getPresence, getRow, now } = usePresence();
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
   // Contact info on mobile: there's no room for a permanent side panel
   // below `lg`, so it opens as a Sheet instead. Independent from
   // `contactPanelOpen` (the desktop inline-panel toggle) — the two only
@@ -227,6 +240,33 @@ export function MessageThread({
       cancelled = true;
     };
   }, []);
+
+  // 24-hour session timer
+  const sessionInfo = useMemo(() => {
+    if (!messages.length) return { expired: false, remaining: "" };
+
+    // Find last customer message
+    const lastCustomerMsg = [...messages]
+      .reverse()
+      .find((m) => m.sender_type === "customer");
+
+    if (!lastCustomerMsg) return { expired: true, remaining: "No customer messages" };
+
+    const hoursSince = differenceInHours(new Date(), new Date(lastCustomerMsg.created_at));
+    const expired = hoursSince >= 24;
+
+    if (expired) {
+      return { expired: true, remaining: tTimer("expired") };
+    }
+
+    const hoursLeft = 24 - hoursSince;
+    const remaining =
+      hoursLeft >= 1
+        ? tTimer("xhRemaining", { hours: Math.floor(hoursLeft) })
+        : tTimer("xmRemaining", { minutes: Math.floor(hoursLeft * 60) });
+
+    return { expired, remaining };
+  }, [messages, tTimer]);
 
   // Store latest callback in a ref so fetchMessages doesn't need to
   // depend on `onMessagesLoaded` — otherwise parent re-renders cause
@@ -611,6 +651,80 @@ export function MessageThread({
     [conversation, onStatusChange]
   );
 
+  const handleOpenTemplates = useCallback(() => {
+    setTemplateModalOpen(true);
+  }, []);
+
+  const handleSendTemplate = useCallback(
+    async (
+      template: MessageTemplate,
+      values: {
+        body: string[];
+        headerText?: string;
+        buttonParams?: Record<number, string>;
+      },
+    ) => {
+      if (!conversation) return;
+
+      const renderedBody = renderTemplateBody(template.body_text, values.body);
+      const tempId = `temp-${Date.now()}`;
+
+      const optimisticMsg: Message = {
+        id: tempId,
+        conversation_id: conversation.id,
+        sender_type: "agent",
+        content_type: "template",
+        content_text: renderedBody,
+        template_name: template.name,
+        status: "sending",
+        created_at: new Date().toISOString(),
+      };
+      onNewMessage(optimisticMsg);
+
+      try {
+        const res = await fetch("/api/whatsapp/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conversation_id: conversation.id,
+            message_type: "template",
+            template_name: template.name,
+            template_language: template.language,
+            // Structured params drive the new send-builder path
+            // (header media + URL button substitution). Body values
+            // are mirrored under both shapes so the route can fall
+            // back if the template row isn't found locally.
+            template_message_params: {
+              body: values.body,
+              headerText: values.headerText,
+              buttonParams: values.buttonParams,
+            },
+            template_params: values.body,
+            content_text: renderedBody,
+          }),
+        });
+
+        const payload = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          const reason = payload?.error || `HTTP ${res.status}`;
+          console.error("Failed to send template:", reason);
+          toast.error(t("toastSendTemplateFailed", { reason }));
+          onUpdateMessage(tempId, { status: "failed" });
+          return;
+        }
+
+        onUpdateMessage(tempId, { status: "sent" });
+      } catch (err) {
+        console.error("Failed to send template:", err);
+        const reason = err instanceof Error ? err.message : "network error";
+        toast.error(t("toastSendTemplateFailed", { reason }));
+        onUpdateMessage(tempId, { status: "failed" });
+      }
+    },
+    [conversation, onNewMessage, onUpdateMessage],
+  );
+
   // Build a quick id → Message map so reply quotes can be rendered without
   // an extra fetch — the thread already holds the full conversation.
   const messagesById = useMemo(() => {
@@ -802,6 +916,18 @@ export function MessageThread({
             <h2 className="truncate text-sm font-semibold text-foreground">{displayName}</h2>
             <p className="truncate text-xs text-muted-foreground">{contact.phone}</p>
           </div>
+          {/* Session timer badge — hidden on the narrowest phones so
+              the name + back arrow keep their room. */}
+          <Badge
+            variant="outline"
+            className={cn(
+              "ml-1 hidden gap-1 border-border text-[11px] sm:inline-flex sm:ml-2",
+              sessionInfo.expired ? "text-red-400" : "text-primary"
+            )}
+          >
+            <Clock className="h-3 w-3" />
+            {sessionInfo.remaining}
+          </Badge>
         </div>
 
         <div className="flex items-center gap-2">
@@ -1055,11 +1181,19 @@ export function MessageThread({
       {/* Composer */}
       <MessageComposer
         conversationId={conversation.id}
+        sessionExpired={sessionInfo.expired}
         onSend={handleSend}
         onSendMedia={handleSendMedia}
         onSendInteractive={handleSendInteractive}
+        onOpenTemplates={handleOpenTemplates}
         replyTo={replyTo}
         onClearReply={() => setReplyTo(null)}
+      />
+
+      <TemplatePicker
+        open={templateModalOpen}
+        onOpenChange={setTemplateModalOpen}
+        onSelect={handleSendTemplate}
       />
 
       {/* Contact info — mobile only (the Info button above is lg:hidden,

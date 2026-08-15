@@ -1,6 +1,5 @@
 'use client';
 
-import { formatDate, formatDateTime, formatNumber } from '@/lib/datetime';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -59,7 +58,7 @@ function StatCard({ label, value, total, icon, color }: StatCardProps) {
         </div>
         <span className="text-xs text-muted-foreground">{pct}%</span>
       </div>
-      <p className="mt-3 text-2xl font-bold text-foreground">{formatNumber(value)}</p>
+      <p className="mt-3 text-2xl font-bold text-foreground">{value.toLocaleString()}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   );
@@ -99,7 +98,7 @@ function FunnelChart({ steps }: { steps: FunnelStep[] }) {
                   style={{ width: `${pctOfMax}%` }}
                 />
                 <span className="absolute inset-0 flex items-center px-3 text-xs font-medium text-foreground">
-                  {formatNumber(step.value)}
+                  {step.value.toLocaleString()}
                   <span className="ml-2 text-muted-foreground/80">
                     ({pctOfSent}%)
                   </span>
@@ -299,7 +298,7 @@ export default function BroadcastDetailPage() {
               <span>{t('template', { name: broadcast.template_name })}</span>
               <span>-</span>
               <span>
-                {t('createdAt', { date: formatDate(broadcast.created_at) })}
+                {t('createdAt', { date: new Date(broadcast.created_at).toLocaleDateString() })}
               </span>
             </div>
           </div>
@@ -501,13 +500,19 @@ export default function BroadcastDetailPage() {
                         </span>
                       </TableCell>
                       <TableCell className="hidden text-muted-foreground md:table-cell">
-                        {recipient.sent_at ? formatDateTime(recipient.sent_at) : '-'}
+                        {recipient.sent_at
+                          ? new Date(recipient.sent_at).toLocaleString()
+                          : '-'}
                       </TableCell>
                       <TableCell className="hidden text-muted-foreground lg:table-cell">
-                        {recipient.delivered_at ? formatDateTime(recipient.delivered_at) : '-'}
+                        {recipient.delivered_at
+                          ? new Date(recipient.delivered_at).toLocaleString()
+                          : '-'}
                       </TableCell>
                       <TableCell className="hidden text-muted-foreground lg:table-cell">
-                        {recipient.read_at ? formatDateTime(recipient.read_at) : '-'}
+                        {recipient.read_at
+                          ? new Date(recipient.read_at).toLocaleString()
+                          : '-'}
                       </TableCell>
                       <TableCell className="max-w-xs truncate text-xs text-red-400">
                         {recipient.error_message ?? '-'}

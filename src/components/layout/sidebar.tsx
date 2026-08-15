@@ -8,10 +8,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
 import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
 import {
+  Activity,
   BarChart3,
   Bell,
   Bot,
+  Building2,
   CalendarDays,
+  CheckSquare,
   ChevronsLeft,
   Crown,
   GitBranch,
@@ -29,7 +32,6 @@ import {
   Zap,
 } from "lucide-react";
 import type { AccountRole } from "@/lib/auth/roles";
-import { LogoLockup } from "@/components/brand/logo";
 
 // Per-role chip metadata used in the sidebar's account strip + the
 // Members tab roster. Keeping this near both consumers in a single
@@ -97,38 +99,45 @@ interface NavSection {
   items: NavItem[];
 }
 
-// Two groups, one of them unlabelled. With Empresas, Tarefas,
-// Atividades, Produtos and E-mails gone, the old four sections held two
-// or three rows each — at that size a section header costs more
-// attention than the grouping saves, and four of them stacked was most
-// of why the sidebar read as crowded.
+// Grouped nav — every route that existed before this reorganisation
+// is still here, just filed under a section instead of one flat list.
 const navSections: NavSection[] = [
   {
-    labelKey: "",
+    labelKey: "sectionPrincipal",
     items: [
       { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-      { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
       { href: "/contacts", labelKey: "contacts", icon: Users },
+      { href: "/companies", labelKey: "companies", icon: Building2 },
       { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
-      { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
-      { href: "/reports", labelKey: "reports", icon: BarChart3 },
     ],
   },
   {
-    labelKey: "sectionAutomacao",
+    labelKey: "sectionProdutividade",
     items: [
+      { href: "/tasks", labelKey: "tasks", icon: CheckSquare },
+      { href: "/activities", labelKey: "activities", icon: Activity },
+      { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
+      { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
+    ],
+  },
+  {
+    labelKey: "sectionGestao",
+    items: [
+      { href: "/reports", labelKey: "reports", icon: BarChart3 },
       { href: "/automations", labelKey: "automations", icon: Zap },
       { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
+    ],
+  },
+  {
+    labelKey: "sectionSistema",
+    items: [
       { href: "/agents", labelKey: "aiAgents", icon: Bot },
+      { href: "/notifications", labelKey: "notifications", icon: Bell },
     ],
   },
 ];
 
-// Notifications joins Settings at the bottom: the header already carries
-// a bell with the unread count, so its row up top was a second entrance
-// to the same screen.
 const bottomNavItems = [
-  { href: "/notifications", labelKey: "notifications", icon: Bell },
   { href: "/settings", labelKey: "settings", icon: Settings },
 ];
 
@@ -251,8 +260,30 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             collapsed && "lg:justify-center lg:px-0",
           )}
         >
-          <Link href="/dashboard">
-            <LogoLockup subtitle="CRM" hideText={collapsed} />
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-primary">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden>
+                <path
+                  d="M5 5L19 19M19 5L5 19"
+                  stroke="white"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <span
+              className={cn(
+                "flex flex-col leading-none",
+                collapsed && "lg:hidden",
+              )}
+            >
+              <span className="text-sm font-semibold text-foreground">
+                {t("title")}
+              </span>
+              <span className="mt-0.5 text-[10px] font-medium tracking-widest text-muted-foreground uppercase">
+                CRM
+              </span>
+            </span>
           </Link>
           <button
             type="button"
@@ -269,18 +300,14 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-3 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           {navSections.map((section, sectionIdx) => (
             <div key={section.labelKey} className={sectionIdx > 0 ? "mt-4" : undefined}>
-              {/* The first group is deliberately unlabelled — the primary
-                  routes need no heading to explain them. */}
-              {section.labelKey ? (
-                <p
-                  className={cn(
-                    "px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase",
-                    collapsed && "lg:hidden",
-                  )}
-                >
-                  {t(section.labelKey)}
-                </p>
-              ) : null}
+              <p
+                className={cn(
+                  "px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground/70 uppercase",
+                  collapsed && "lg:hidden",
+                )}
+              >
+                {t(section.labelKey as string)}
+              </p>
               <ul className="flex flex-col gap-1">
                 {section.items.map((item) => {
                   const isActive =
@@ -464,7 +491,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               <DropdownMenuItem
                 render={
                   <Link
-                    href="/conta"
+                    href="/settings?tab=profile"
                     onClick={onClose}
                     className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
                   />
@@ -476,7 +503,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               <DropdownMenuItem
                 render={
                   <Link
-                    href="/settings"
+                    href="/settings?tab=whatsapp"
                     onClick={onClose}
                     className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
                   />

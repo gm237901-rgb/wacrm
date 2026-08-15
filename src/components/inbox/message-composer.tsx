@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   Send,
+  LayoutTemplate,
   Paperclip,
   Image as ImageIcon,
   Video,
@@ -110,9 +111,11 @@ interface MediaDraft {
 
 interface MessageComposerProps {
   conversationId: string;
+  sessionExpired: boolean;
   onSend: (text: string, replyToId?: string) => void;
   onSendMedia: (payload: SendMediaPayload) => void;
   onSendInteractive: (payload: InteractiveMessagePayload, replyToId?: string) => void;
+  onOpenTemplates: () => void;
   replyTo?: ReplyDraft | null;
   onClearReply?: () => void;
 }
@@ -130,9 +133,11 @@ const OPUS_ENCODER_PATH = "/opus/encoderWorker.min.js";
 
 export function MessageComposer({
   conversationId,
+  sessionExpired,
   onSend,
   onSendMedia,
   onSendInteractive,
+  onOpenTemplates,
   replyTo,
   onClearReply,
 }: MessageComposerProps) {
@@ -184,7 +189,8 @@ export function MessageComposer({
   // every capability — so the disabled branch is a no-op there.
   const canSend = useCan("send-messages");
   const readOnly = !canSend;
-  const inputsDisabled = readOnly;
+  // Media (like free-form text) is only allowed inside the 24h window.
+  const inputsDisabled = readOnly || sessionExpired;
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -216,7 +222,7 @@ export function MessageComposer({
 
   const handleSend = useCallback(async () => {
     const trimmed = text.trim();
-    if (!trimmed || sending) return;
+    if (!trimmed || sending || sessionExpired) return;
 
     setSending(true);
     try {
@@ -228,7 +234,7 @@ export function MessageComposer({
     } finally {
       setSending(false);
     }
-  }, [text, sending, onSend, replyTo?.id]);
+  }, [text, sending, sessionExpired, onSend, replyTo?.id]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -544,6 +550,23 @@ export function MessageComposer({
           />
         </div>
       )}
+      {sessionExpired && (
+        <div className="mb-2 flex items-center justify-between rounded-lg bg-amber-500/10 px-3 py-2">
+          <p className="text-xs text-amber-400">
+            {t("sessionExpiredHint")}
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs text-amber-400 hover:text-amber-300"
+            onClick={onOpenTemplates}
+          >
+            <LayoutTemplate className="mr-1 h-3 w-3" />
+            {t("templates")}
+          </Button>
+        </div>
+      )}
+
       {/* Hidden file inputs driven by the attach menu. */}
       <input
         ref={imageInputRef}
@@ -683,6 +706,18 @@ export function MessageComposer({
             size="sm"
             canAct={!readOnly}
             gateReason="enviar mensagens"
+            title={readOnly ? undefined : t("sendTemplate")}
+            className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-foreground"
+            onClick={onOpenTemplates}
+          >
+            <LayoutTemplate className="h-4 w-4" />
+          </GatedButton>
+
+          <GatedButton
+            variant="ghost"
+            size="sm"
+            canAct={!readOnly}
+            gateReason="enviar mensagens"
             disabled={drafting}
             title={readOnly ? undefined : t("draftWithAI")}
             className="h-9 w-9 shrink-0 p-0 text-muted-foreground hover:text-primary"
@@ -701,9 +736,13 @@ export function MessageComposer({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder={
-              readOnly ? t("readOnlyPlaceholder") : t("typeMessagePlaceholder")
+              readOnly
+                ? t("readOnlyPlaceholder")
+                : sessionExpired
+                  ? t("sessionExpiredPlaceholder")
+                  : t("typeMessagePlaceholder")
             }
-            disabled={readOnly}
+            disabled={sessionExpired || readOnly}
             rows={1}
             // Textarea keeps its own inline title — the GatedButton
             // wrapping pattern doesn't apply to non-button inputs.
@@ -711,7 +750,7 @@ export function MessageComposer({
             title={readOnly ? t("readOnlyTitle") : undefined}
             className={cn(
               "flex-1 resize-none rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-colors focus:border-primary/50",
-              readOnly && "cursor-not-allowed opacity-50"
+              (sessionExpired || readOnly) && "cursor-not-allowed opacity-50"
             )}
           />
 
@@ -719,7 +758,7 @@ export function MessageComposer({
             size="sm"
             canAct={!readOnly}
             gateReason="enviar mensagens"
-            disabled={!text.trim() || sending}
+            disabled={!text.trim() || sessionExpired || sending}
             onClick={handleSend}
             className="h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40"
           >

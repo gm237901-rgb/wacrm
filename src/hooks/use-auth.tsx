@@ -12,6 +12,7 @@ import {
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { DEFAULT_CURRENCY } from "@/lib/currency";
 import {
   canEditSettings as canEditSettingsFor,
   canManageMembers as canManageMembersFor,
@@ -39,6 +40,9 @@ interface Profile {
 interface AccountSummary {
   id: string;
   name: string;
+  /** Default deal currency (ISO-4217). NOT NULL DEFAULT 'USD' in the
+   *  DB (migration 021); narrowed to DEFAULT_CURRENCY when absent. */
+  default_currency: string;
 }
 
 interface AuthContextValue {
@@ -78,8 +82,12 @@ interface AuthContextValue {
   accountId: string | null;
   /** Role within that account. Null while loading. */
   accountRole: AccountRole | null;
-  /** Lightweight account meta — id + name. Null while loading. */
+  /** Lightweight account meta — id + name + default_currency. Null while loading. */
   account: AccountSummary | null;
+  /** Account default deal currency. Falls back to DEFAULT_CURRENCY
+   *  while loading or when no account is resolved, so callers can use
+   *  it unconditionally. */
+  defaultCurrency: string;
   /** True if `accountRole === 'owner'`. */
   isOwner: boolean;
   /** True if `accountRole === 'admin'` (does NOT include owner — use canManageMembers for "admin or above"). */
@@ -161,7 +169,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.account_id) {
           const { data: account, error: accountErr } = await supabase
             .from("accounts")
-            .select("id, name")
+            // default_currency added in migration 021; narrowed to the
+            // USD fallback below for older schemas where it reads null.
+            .select("id, name, default_currency")
             .eq("id", data.account_id)
             .maybeSingle();
           if (accountErr) {
@@ -175,6 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             accountRow = {
               id: account.id,
               name: account.name,
+              default_currency: account.default_currency ?? DEFAULT_CURRENCY,
             };
           }
         }
@@ -332,6 +343,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         refreshProfile,
         account,
+        defaultCurrency: account?.default_currency ?? DEFAULT_CURRENCY,
         ...derived,
       }}
     >
@@ -361,6 +373,7 @@ export function useAuth(): AuthContextValue {
       },
       refreshProfile: async () => {},
       account: null,
+      defaultCurrency: DEFAULT_CURRENCY,
       accountId: null,
       accountRole: null,
       isOwner: false,

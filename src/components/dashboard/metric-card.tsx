@@ -80,15 +80,7 @@ export function MetricCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-muted-foreground">{title}</p>
-          {/* Steps down one size below xl, where the five-across row
-              leaves ~200px per card — a "R$ 200.000.000" total wraps
-              under the icon chip at text-2xl and breaks the row's
-              baseline. `title` keeps the full value reachable when the
-              string is long enough to still truncate. */}
-          <p
-            className="mt-1 truncate text-xl leading-none font-bold tabular-nums text-foreground xl:text-2xl"
-            title={value}
-          >
+          <p className="mt-1 text-2xl leading-none font-bold tabular-nums text-foreground">
             {value}
           </p>
         </div>

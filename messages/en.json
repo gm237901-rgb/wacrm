@@ -17,13 +17,22 @@
   "Sidebar": {
     "navPrimaryAria": "Primary",
     "title": "Linovexa",
+    "sectionPrincipal": "Main",
+    "sectionProdutividade": "Productivity",
+    "sectionGestao": "Management",
+    "sectionSistema": "System",
     "dashboard": "Dashboard",
     "inbox": "Inbox",
     "notifications": "Notifications",
     "contacts": "Contacts",
+    "companies": "Companies",
     "agenda": "Calendar",
     "pipelines": "Pipelines",
+    "tasks": "Tasks",
+    "activities": "Activities",
+    "emails": "Emails",
     "reports": "Reports",
+    "products": "Products",
     "broadcasts": "Broadcasts",
     "automations": "Automations",
     "flows": "Flows",
@@ -43,16 +52,20 @@
     "defaultAvatar": "Avatar",
     "menuProfile": "Profile",
     "menuSettings": "Settings",
-    "menuSignOut": "Sign out",
-    "sectionAutomacao": "Automation"
+    "menuSignOut": "Sign out"
   },
   "Header": {
     "dashboard": "Dashboard",
     "inbox": "Inbox",
     "notifications": "Notifications",
     "contacts": "Contacts",
+    "companies": "Companies",
     "pipelines": "Pipelines",
+    "tasks": "Tasks",
+    "activities": "Activities",
+    "emails": "Emails",
     "reports": "Reports",
+    "products": "Products",
     "broadcasts": "Broadcasts",
     "automations": "Automations",
     "settings": "Settings",
@@ -113,6 +126,14 @@
       "noActivitiesHint": "Events scheduled for today will appear here.",
       "viewAll": "View all activities →"
     },
+    "revenueChart": {
+      "title": "Revenue",
+      "days": "{count} days",
+      "allTime": "All",
+      "noRevenue": "No revenue in this range",
+      "noRevenueHint": "Deals marked as won will appear here.",
+      "ariaLabel": "Revenue per day"
+    },
     "leadSource": {
       "title": "Lead Source",
       "description": "Where your contacts come from",
@@ -127,6 +148,17 @@
         "redes_sociais": "Social Media",
         "outros": "Other"
       }
+    },
+    "recentLeads": {
+      "title": "Recent Leads",
+      "noLeads": "No leads yet",
+      "noLeadsHint": "New contacts will appear here.",
+      "unnamed": "Unnamed",
+      "viewAll": "View all leads →",
+      "timeS": "{sec}s ago",
+      "timeM": "{min}m ago",
+      "timeH": "{hr}h ago",
+      "timeD": "{day}d ago"
     },
     "quickActions": {
       "newContact": "New Contact",
@@ -178,6 +210,214 @@
     },
     "emptyState": {
       "title": "Not enough data yet"
+    }
+  },
+  "Companies": {
+    "page": {
+      "title": "Companies",
+      "subtitle": "{count} {count, plural, =1 {company} other {companies}}",
+      "subtitleZero": "No companies yet",
+      "addBtn": "New company",
+      "searchPlaceholder": "Search companies...",
+      "loading": "Loading...",
+      "noCompaniesYet": "No companies yet",
+      "noCompaniesMatch": "No companies found",
+      "addFirst": "Add first company",
+      "columnName": "Name",
+      "columnIndustry": "Industry",
+      "columnPhone": "Phone",
+      "columnWebsite": "Website",
+      "editAction": "Edit",
+      "deleteAction": "Delete",
+      "deleteTitle": "Delete company?",
+      "deleteDesc": "\"{name}\" will be permanently deleted. Linked contacts are not deleted.",
+      "cancel": "Cancel",
+      "deleteBtn": "Delete",
+      "toastSaved": "Company saved",
+      "toastFailedSave": "Failed to save company",
+      "toastDeleted": "Company deleted",
+      "toastFailedDelete": "Failed to delete company",
+      "toastFailedLoad": "Failed to load companies",
+      "gateCreate": "create companies",
+      "gateEdit": "edit companies",
+      "gateDelete": "delete companies"
+    },
+    "form": {
+      "titleNew": "New company",
+      "titleEdit": "Edit company",
+      "fieldName": "Name",
+      "fieldIndustry": "Industry",
+      "fieldWebsite": "Website",
+      "fieldPhone": "Phone",
+      "fieldNotes": "Notes",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    }
+  },
+  "Products": {
+    "page": {
+      "title": "Products",
+      "subtitle": "{count} {count, plural, =1 {product} other {products}}",
+      "subtitleZero": "No products yet",
+      "addBtn": "New product",
+      "searchPlaceholder": "Search products...",
+      "loading": "Loading...",
+      "noProductsYet": "No products yet",
+      "noProductsMatch": "No products found",
+      "addFirst": "Add first product",
+      "columnName": "Name",
+      "columnSku": "SKU",
+      "columnPrice": "Price",
+      "columnStatus": "Status",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "editAction": "Edit",
+      "deleteAction": "Delete",
+      "deleteTitle": "Delete product?",
+      "deleteDesc": "\"{name}\" will be permanently deleted.",
+      "cancel": "Cancel",
+      "deleteBtn": "Delete",
+      "toastSaved": "Product saved",
+      "toastFailedSave": "Failed to save product",
+      "toastDeleted": "Product deleted",
+      "toastFailedDelete": "Failed to delete product",
+      "toastFailedLoad": "Failed to load products",
+      "gateCreate": "create products",
+      "gateEdit": "edit products",
+      "gateDelete": "delete products"
+    },
+    "form": {
+      "titleNew": "New product",
+      "titleEdit": "Edit product",
+      "fieldName": "Name",
+      "fieldSku": "SKU",
+      "fieldPrice": "Price",
+      "fieldCurrency": "Currency",
+      "fieldDescription": "Description",
+      "fieldActive": "Active",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    }
+  },
+  "Tasks": {
+    "page": {
+      "title": "Tasks",
+      "subtitle": "{count} {count, plural, =1 {task} other {tasks}}",
+      "subtitleZero": "No tasks yet",
+      "addBtn": "New task",
+      "searchPlaceholder": "Search tasks...",
+      "loading": "Loading...",
+      "noTasksYet": "No tasks yet",
+      "noTasksMatch": "No tasks found",
+      "addFirst": "Add first task",
+      "columnTitle": "Title",
+      "columnDueDate": "Due date",
+      "columnPriority": "Priority",
+      "columnStatus": "Status",
+      "priorityLow": "Low",
+      "priorityMedium": "Medium",
+      "priorityHigh": "High",
+      "statusPending": "Pending",
+      "statusDone": "Done",
+      "noDueDate": "No due date",
+      "editAction": "Edit",
+      "deleteAction": "Delete",
+      "markDone": "Mark as done",
+      "markPending": "Mark as pending",
+      "deleteTitle": "Delete task?",
+      "deleteDesc": "\"{name}\" will be permanently deleted.",
+      "cancel": "Cancel",
+      "deleteBtn": "Delete",
+      "toastSaved": "Task saved",
+      "toastFailedSave": "Failed to save task",
+      "toastDeleted": "Task deleted",
+      "toastFailedDelete": "Failed to delete task",
+      "toastFailedLoad": "Failed to load tasks",
+      "toastFailedUpdate": "Failed to update task",
+      "gateCreate": "create tasks",
+      "gateEdit": "edit tasks",
+      "gateDelete": "delete tasks"
+    },
+    "form": {
+      "titleNew": "New task",
+      "titleEdit": "Edit task",
+      "fieldTitle": "Title",
+      "fieldDescription": "Description",
+      "fieldDueDate": "Due date",
+      "fieldPriority": "Priority",
+      "fieldContact": "Linked contact",
+      "noneOption": "None",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    }
+  },
+  "Activities": {
+    "page": {
+      "title": "Activities",
+      "subtitle": "{count} {count, plural, =1 {activity} other {activities}}",
+      "subtitleZero": "No activities yet",
+      "addBtn": "Log activity",
+      "loading": "Loading...",
+      "noActivitiesYet": "No activities logged yet",
+      "noActivitiesHint": "Log calls, meetings, and notes linked to contacts or deals.",
+      "typeCall": "Call",
+      "typeMeeting": "Meeting",
+      "typeNote": "Note",
+      "typeEmail": "Email",
+      "deleteAction": "Delete",
+      "toastSaved": "Activity logged",
+      "toastFailedSave": "Failed to log activity",
+      "toastDeleted": "Activity deleted",
+      "toastFailedDelete": "Failed to delete activity",
+      "toastFailedLoad": "Failed to load activities",
+      "gateCreate": "log activities",
+      "gateDelete": "delete activities"
+    },
+    "form": {
+      "title": "Log activity",
+      "fieldType": "Type",
+      "fieldSummary": "Summary",
+      "fieldContact": "Linked contact",
+      "noneOption": "None",
+      "fieldOccurredAt": "When",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    }
+  },
+  "Emails": {
+    "page": {
+      "title": "Emails",
+      "subtitle": "{count} {count, plural, =1 {email} other {emails}}",
+      "subtitleZero": "No emails logged yet",
+      "addBtn": "Log email",
+      "loading": "Loading...",
+      "noEmailsYet": "No emails logged yet",
+      "noEmailsHint": "This is a manual log only — there's no real email sending or receiving yet.",
+      "directionInbound": "Received",
+      "directionOutbound": "Sent",
+      "deleteAction": "Delete",
+      "toastSaved": "Email logged",
+      "toastFailedSave": "Failed to log email",
+      "toastDeleted": "Email deleted",
+      "toastFailedDelete": "Failed to delete email",
+      "toastFailedLoad": "Failed to load emails",
+      "gateCreate": "log emails",
+      "gateDelete": "delete emails"
+    },
+    "form": {
+      "title": "Log email",
+      "fieldDirection": "Direction",
+      "fieldSubject": "Subject",
+      "fieldBody": "Message",
+      "fieldContact": "Linked contact",
+      "noneOption": "None",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel"
     }
   },
   "Reports": {
@@ -253,11 +493,17 @@
       "noTeammates": "No teammates available",
       "me": " (me)",
       "noMessagesYet": "No messages yet",
-      "sendTemplateHint": "Send a message to start the conversation",
+      "sendTemplateHint": "Send a template to start the conversation",
       "selectConversation": "Select a conversation",
       "selectConversationHint": "Choose a conversation from the left to start messaging",
       "today": "Today",
       "yesterday": "Yesterday"
+    },
+    "sessionTimer": {
+      "expired": "Expired",
+      "xhRemaining": "{hours}h remaining",
+      "xmRemaining": "{minutes}m remaining",
+      "noCustomerMessages": "No customer messages"
     },
     "composer": {
       "toastAiNotConfigured": "AI isn't set up yet — enable it in Settings → AI Assistant.",
@@ -270,7 +516,10 @@
       "toastVoiceUnsupported": "Voice recording isn't supported in this browser.",
       "toastMicDenied": "Microphone access denied or unavailable.",
       "draftHint": "Tap the ✨ to draft a reply with AI — you can edit it before sending",
+      "sessionExpiredHint": "24-hour session expired. Use a template to re-engage.",
+      "templates": "Templates",
       "readOnlyPlaceholder": "Read-only — viewers can browse but not reply",
+      "sessionExpiredPlaceholder": "Session expired - use a template",
       "typeMessagePlaceholder": "Type a message... (Shift+Enter for new line)",
       "readOnlyTitle": "Read-only — your role can't send messages",
       "recording": "Recording… {current} / {max}",
@@ -281,6 +530,7 @@
       "video": "Video",
       "document": "Document",
       "voiceNote": "Voice note",
+      "sendTemplate": "Send template",
       "draftWithAI": "Draft a reply with AI",
       "addCaption": "Add a caption…",
       "removeAttachment": "Remove attachment",
@@ -640,9 +890,9 @@
         "deals": "Deals",
         "tags": "Tags",
         "agenda": "Calendar",
-        "noTags": "No tags",
-        "noDeals": "No deals",
-        "addNotePlaceholder": "Add a note..."
+      "noTags": "No tags",
+      "noDeals": "No deals",
+      "addNotePlaceholder": "Add a note..."
       },
       "actions": {
         "edit": "Edit",
@@ -1691,11 +1941,13 @@
       "deleteLocallyAria": "Delete template locally",
       "deleteMetaLocallyTitle": "Delete from Meta and locally",
       "deleteLocallyTitle": "Delete locally",
+      
       "dialogEditTitle": "Edit Message Template",
       "dialogNewTitle": "New Message Template",
       "dialogEditDesc": "Save your changes to re-submit to Meta. Status will flip back to PENDING during review.",
       "dialogNewDesc": "Build a template and submit it to Meta for approval. Once approved, you can use it in broadcasts and the inbox.",
       "authWarning": "AUTHENTICATION templates have a fixed body + OTP button shape that needs a different builder. Create them in Meta WhatsApp Manager for now and use <bold>Sync from Meta</bold> to bring them in.",
+      
       "templateName": "Template Name",
       "namePlaceholder": "e.g. order_confirmation",
       "nameFixed": "Name is fixed once a template exists on Meta — create a new template to change it.",
@@ -1704,6 +1956,7 @@
       "language": "Language",
       "langFixed": "Language is fixed once a template exists on Meta.",
       "langHint": "Must match the exact code on Meta — <code>en_US</code> and <code>en</code> are distinct.",
+      
       "header": "Header",
       "headerNone": "None",
       "headerText": "Text",
@@ -1716,6 +1969,7 @@
       "headerSampleImageAlt": "Header sample",
       "qualityScoreTitle": "Meta quality score",
       "headerSamplePlaceholder": "Sample value for {{1}} (required for Meta review)",
+      
       "uploadImage": "Upload image",
       "uploadHint": "JPEG or PNG, ≤5 MB",
       "mediaUrlPlaceholder": "https://… (or paste a public {format} link)",
@@ -1723,14 +1977,17 @@
       "mediaHint": "Must be a publicly accessible HTTPS link. Meta fetches it once during review, so it needs to stay live for ~24 hrs.",
       "videoHint": " Recommended: MP4 / 3GPP, ≤16 MB, ≤60 seconds.",
       "documentHint": " Recommended: PDF, ≤100 MB.",
+      
       "bodyText": "Body Text",
       "bodyPlaceholder": "Hello {{1}}, your order {{2}} is confirmed.",
       "bodyHint": "Use {{1}}, {{2}} for variables (must be contiguous starting at {{1}}).",
       "sampleValues": "Sample values (Meta uses these to review your template)",
       "sampleAria": "Sample value for body variable {var}",
       "samplePlaceholder": "Sample for {var}",
+      
       "footer": "Footer (optional)",
       "footerPlaceholder": "Optional footer text (max 60 chars)",
+      
       "buttons": "Buttons (optional)",
       "addButton": "Add Button",
       "buttonsLimit": "Up to {max} buttons. QUICK_REPLY buttons must come before URL / phone / copy-code buttons.",
@@ -1743,16 +2000,19 @@
       "urlSamplePlaceholder": "Example value for {{1}} (required when URL has a variable)",
       "phonePlaceholder": "+15551234567",
       "codePlaceholder": "Example code (e.g. SUMMER20)",
+      
       "cancel": "Cancel",
       "saving": "Saving…",
       "submitting": "Submitting…",
       "saveResubmit": "Save & Resubmit",
       "submitApproval": "Submit for Approval",
+      
       "deleteDialogTitle": "Delete template?",
       "deleteMetaDesc": "\"{name}\" will be deleted from Meta and from Linovexa. Active broadcasts using this template will start failing on their next send. This can't be undone.",
       "deleteLocalDesc": "\"{name}\" will be deleted from Linovexa. It was never submitted to Meta, so no remote cleanup is needed.",
       "deleting": "Deleting…",
       "delete": "Delete",
+      
       "toastLoadFailed": "Failed to load templates",
       "toastSubmitFailed": "Failed to submit",
       "toastSubmitEditSuccess": "Edit submitted — Meta typically reviews within 24 hours.",
@@ -1914,6 +2174,7 @@
       "profileSaved": "Profile saved",
       "emailChangeFailed": "Email change failed: {message}",
       "profileSavedEmailCheck": "Profile saved — check your email to confirm the address change",
+      
       "passwordTitle": "Password",
       "passwordDesc": "Use at least {min} characters. You will stay signed in on this device after changing it.",
       "currentPassword": "Current password",
@@ -1927,6 +2188,7 @@
       "currentPasswordIncorrect": "Current password is incorrect",
       "passwordUpdateFailed": "Password update failed: {message}",
       "passwordUpdated": "Password updated",
+      
       "sessionsTitle": "Active sessions",
       "sessionsDesc": "Sign out of every device where you're logged in — including this one. Useful if you lost a laptop or shared your password.",
       "signOutAll": "Sign out of all devices",
@@ -1993,10 +2255,15 @@
     },
     "deals": {
       "title": "Deals & currency",
-      "description": "The currency used across the CRM.",
-      "defaultCurrency": "Currency",
-      "currencyName": "Brazilian real (R$)",
-      "currencyNote": "The CRM operates in Brazilian reais only. Every deal value, product price and dashboard total is stored and shown in BRL."
+      "description": "The currency used for new deals and for pipeline and dashboard totals.",
+      "defaultCurrency": "Default currency",
+      "defaultCurrencyDesc": "New deals default to this currency, and pipeline and dashboard totals are shown in it. Existing deals keep the currency they were saved with.",
+      "currencyLabel": "Currency",
+      "adminOnlyHint": "Only account admins can change the default currency.",
+      "save": "Save",
+      "saving": "Saving...",
+      "saveFailed": "Failed to save default currency",
+      "saveSuccess": "Default currency updated"
     },
     "aiConfig": {
       "title": "Agent setup",
@@ -2066,11 +2333,6 @@
       "editButtonTitle": "Edit",
       "deleteButtonTitle": "Delete",
       "loading": "Loading…"
-    },
-    "whatsappDesc": "Connect the WhatsApp number the CRM uses to talk to your customers."
-  },
-  "Account": {
-    "title": "My account",
-    "description": "Profile, password, quick replies, tags, members and API keys."
+    }
   }
 }

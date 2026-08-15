@@ -1,6 +1,5 @@
 'use client';
 
-import { formatNumber } from '@/lib/datetime';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { CustomField, Tag } from '@/types';
@@ -440,7 +439,7 @@ export function Step2SelectAudience({
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             <span className="text-sm text-foreground">
-              {formatNumber(estimatedCount)}
+              {estimatedCount.toLocaleString()}
             </span>
             <span className="text-xs text-muted-foreground">estimated recipients</span>
           </div>

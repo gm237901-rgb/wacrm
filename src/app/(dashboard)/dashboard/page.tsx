@@ -1,16 +1,17 @@
 "use client"
 
-import { formatNumber } from '@/lib/datetime'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatCurrency } from '@/lib/currency'
-import { Briefcase, Banknote, Percent, Plus, Trophy, Users } from 'lucide-react'
+import { Briefcase, DollarSign, Percent, Plus, Trophy, Users } from 'lucide-react'
 
 import {
   loadKpiRow,
   loadKpiSparklines,
   loadLeadSource,
+  loadRecentLeads,
+  loadRevenueSeries,
   loadSalesFunnel,
   loadTodayActivities,
 } from '@/lib/dashboard/queries'
@@ -19,6 +20,9 @@ import type {
   KpiCard,
   KpiSparklines,
   LeadSourceData,
+  RecentLead,
+  RevenuePoint,
+  RevenueRange,
   SalesFunnelData,
   TodayActivity,
 } from '@/lib/dashboard/types'
@@ -27,7 +31,9 @@ import { MetricCard } from '@/components/dashboard/metric-card'
 import { SkeletonCard } from '@/components/dashboard/skeleton'
 import { SalesFunnel } from '@/components/dashboard/sales-funnel'
 import { TodayActivities } from '@/components/dashboard/today-activities'
+import { RevenueChart } from '@/components/dashboard/revenue-chart'
 import { LeadSourceDonut } from '@/components/dashboard/lead-source-donut'
+import { RecentLeads } from '@/components/dashboard/recent-leads'
 import { DealForm } from '@/components/pipelines/deal-form'
 import { Button } from '@/components/ui/button'
 import type { PipelineStage } from '@/types'
@@ -36,7 +42,7 @@ import { useTranslations } from 'next-intl'
 
 export default function DashboardPage() {
   const t = useTranslations('Dashboard.page')
-  const { profile } = useAuth()
+  const { profile, defaultCurrency } = useAuth()
 
   const [kpis, setKpis] = useState<KpiBundle | null>(null)
   const [kpisLoading, setKpisLoading] = useState(true)
@@ -50,8 +56,22 @@ export default function DashboardPage() {
   const [today, setToday] = useState<TodayActivity[] | null>(null)
   const [todayLoading, setTodayLoading] = useState(true)
 
+  const [range, setRange] = useState<RevenueRange>(30)
+  // Mirrors `range` for loadAll(), which must stay []-dep stable.
+  const rangeRef = useRef<RevenueRange>(30)
+  const [revenue, setRevenue] = useState<Record<RevenueRange, RevenuePoint[] | null>>({
+    7: null,
+    30: null,
+    90: null,
+    all: null,
+  })
+  const [revenueLoading, setRevenueLoading] = useState(true)
+
   const [leadSource, setLeadSource] = useState<LeadSourceData | null>(null)
   const [leadSourceLoading, setLeadSourceLoading] = useState(true)
+
+  const [recentLeads, setRecentLeads] = useState<RecentLead[] | null>(null)
+  const [recentLeadsLoading, setRecentLeadsLoading] = useState(true)
 
   // Wiring for "+ Novo negócio" — same "first pipeline by created_at"
   // convention the Pipelines page uses as its default selection.
@@ -81,10 +101,29 @@ export default function DashboardPage() {
       .catch((err) => console.error('[dashboard] today failed:', err))
       .finally(() => setTodayLoading(false))
 
+    // Refetch whichever window the user is actually looking at, and drop
+    // the other cached windows — a won/lost deal invalidates all of them,
+    // so they must refetch when next selected rather than serve stale
+    // numbers. Read via ref so this stays a stable []-dep callback and
+    // the Realtime subscription below doesn't resubscribe on every
+    // range switch.
+    const activeRange = rangeRef.current
+    void loadRevenueSeries(db, activeRange)
+      .then((s) =>
+        setRevenue({ 7: null, 30: null, 90: null, all: null, [activeRange]: s }),
+      )
+      .catch((err) => console.error('[dashboard] revenue failed:', err))
+      .finally(() => setRevenueLoading(false))
+
     void loadLeadSource(db)
       .then(setLeadSource)
       .catch((err) => console.error('[dashboard] lead source failed:', err))
       .finally(() => setLeadSourceLoading(false))
+
+    void loadRecentLeads(db, 5)
+      .then(setRecentLeads)
+      .catch((err) => console.error('[dashboard] recent leads failed:', err))
+      .finally(() => setRecentLeadsLoading(false))
 
     void db
       .from('pipelines')
@@ -131,10 +170,25 @@ export default function DashboardPage() {
     }
   }, [instanceId, loadAll])
 
+  const handleRangeChange = useCallback(
+    (r: RevenueRange) => {
+      setRange(r)
+      rangeRef.current = r
+      if (revenue[r] !== null) return
+      setRevenueLoading(true)
+      const db = createClient()
+      loadRevenueSeries(db, r)
+        .then((s) => setRevenue((prev) => ({ ...prev, [r]: s })))
+        .catch((err) => console.error('[dashboard] revenue failed:', err))
+        .finally(() => setRevenueLoading(false))
+    },
+    [revenue],
+  )
+
   const greetingName = profile?.full_name?.split(' ')[0] || t('fallbackName')
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -147,16 +201,15 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {/* KPI row. Five cards at 1280px+; below that they'd be ~200px
-          wide, which is narrower than a formatted BRL total needs. */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {/* KPI row */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {kpisLoading || !kpis ? (
           Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (
           <>
             <MetricCard
               title={t('kpiContacts')}
-              value={formatNumber(kpis.contactsTotal.current)}
+              value={kpis.contactsTotal.current.toLocaleString()}
               icon={Users}
               tone="blue"
               spark={sparks?.contacts}
@@ -164,7 +217,7 @@ export default function DashboardPage() {
             />
             <MetricCard
               title={t('kpiDeals')}
-              value={formatNumber(kpis.openDeals.current)}
+              value={kpis.openDeals.current.toLocaleString()}
               icon={Briefcase}
               tone="blue"
               spark={sparks?.deals}
@@ -172,15 +225,15 @@ export default function DashboardPage() {
             />
             <MetricCard
               title={t('kpiRevenue')}
-              value={formatCurrency(kpis.revenueThisMonth.current)}
-              icon={Banknote}
+              value={formatCurrency(kpis.revenueThisMonth.current, defaultCurrency)}
+              icon={DollarSign}
               tone="green"
               spark={sparks?.revenue}
               delta={countDelta(kpis.revenueThisMonth, t)}
             />
             <MetricCard
               title={t('kpiWonDeals')}
-              value={formatNumber(kpis.wonDealsThisMonth.current)}
+              value={kpis.wonDealsThisMonth.current.toLocaleString()}
               icon={Trophy}
               tone="orange"
               spark={sparks?.wonDeals}
@@ -197,22 +250,32 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Funnel takes the width it needs to stay readable; the two
-          narrow cards stack beside it rather than each claiming a full
-          row of their own. */}
+      {/* Sales funnel + today's activities */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <SalesFunnel data={funnel} loading={funnelLoading} />
+          <SalesFunnel data={funnel} loading={funnelLoading} currency={defaultCurrency} />
         </div>
-        {/* self-start stops the grid from stretching this column to the
-            funnel's height. Both cards carry `h-full` for their previous
-            one-per-cell layout, and two of those in a stretched column
-            would each claim the full height and overflow. */}
-        <div className="flex flex-col gap-4 self-start">
-          <TodayActivities items={today} loading={todayLoading} />
+        <TodayActivities items={today} loading={todayLoading} />
+      </div>
+
+      {/* Revenue + lead source */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="h-full lg:col-span-2">
+          <RevenueChart
+            series={revenue}
+            loading={revenueLoading}
+            range={range}
+            onRangeChange={handleRangeChange}
+            currency={defaultCurrency}
+          />
+        </div>
+        <div className="h-full">
           <LeadSourceDonut data={leadSource} loading={leadSourceLoading} />
         </div>
       </div>
+
+      {/* Recent leads */}
+      <RecentLeads items={recentLeads} loading={recentLeadsLoading} />
 
       <DealForm
         open={dealFormOpen}

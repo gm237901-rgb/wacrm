@@ -72,15 +72,12 @@ export interface FlowTemplate {
 // ============================================================
 const WELCOME_MENU: FlowTemplate = {
   slug: "welcome_menu",
-  name: "Menu de boas-vindas",
+  name: "Welcome menu",
   description:
-    "Recebe quem manda uma palavra-chave e encaminha para o atendente certo, conforme seja cliente novo ou antigo.",
+    "Greet customers who type a keyword and route them to the right agent based on whether they're new or existing.",
   icon: "MessageSquare",
   trigger_type: "keyword",
-  trigger_config: {
-    keywords: ["suporte", "ajuda", "oi"],
-    match_type: "contains",
-  },
+  trigger_config: { keywords: ["support", "help", "hi"], match_type: "contains" },
   entry_node_id: "start",
   nodes: [
     {
@@ -92,17 +89,17 @@ const WELCOME_MENU: FlowTemplate = {
       node_key: "welcome",
       node_type: "send_buttons",
       config: {
-        text: "Olá! 👋 Bem-vindo ao atendimento. Você já é nosso cliente ou está chegando agora?",
-        footer_text: "Toque em um botão abaixo para continuar.",
+        text: "Hi! 👋 Welcome to support. Are you an existing customer or new here?",
+        footer_text: "Tap a button below to continue.",
         buttons: [
           {
             reply_id: "existing",
-            title: "Já sou cliente",
+            title: "Existing customer",
             next_node_key: "existing_handoff",
           },
           {
             reply_id: "new",
-            title: "Novo cliente",
+            title: "New customer",
             next_node_key: "new_handoff",
           },
         ],
@@ -112,14 +109,14 @@ const WELCOME_MENU: FlowTemplate = {
       node_key: "existing_handoff",
       node_type: "handoff",
       config: {
-        note: "Cliente já cadastrado precisa de ajuda — confira o histórico da conta antes de responder.",
+        note: "Existing customer needs assistance — please check account history before replying.",
       } as HandoffNodeConfig,
     },
     {
       node_key: "new_handoff",
       node_type: "handoff",
       config: {
-        note: "Cliente novo — envie os preços e o link de primeiros passos.",
+        note: "New customer — share pricing + onboarding link.",
       } as HandoffNodeConfig,
     },
   ],
@@ -130,13 +127,13 @@ const WELCOME_MENU: FlowTemplate = {
 // ============================================================
 const FAQ_BOT: FlowTemplate = {
   slug: "faq_bot",
-  name: "Bot de dúvidas",
+  name: "FAQ bot",
   description:
-    "Responde as perguntas mais comuns sozinho. O cliente escolhe um assunto na lista, o bot responde e encerra.",
+    "Answer common questions automatically. Customer picks a topic from a list; the bot replies with the answer and ends.",
   icon: "HelpCircle",
   trigger_type: "keyword",
   trigger_config: {
-    keywords: ["dúvida", "duvida", "informação", "informacao"],
+    keywords: ["faq", "question", "info"],
     match_type: "contains",
   },
   entry_node_id: "start",
@@ -150,35 +147,35 @@ const FAQ_BOT: FlowTemplate = {
       node_key: "topics",
       node_type: "send_list",
       config: {
-        text: "Como posso ajudar você?",
-        button_label: "Ver assuntos",
+        text: "What can I help you with?",
+        button_label: "View topics",
         sections: [
           {
-            title: "Perguntas frequentes",
+            title: "Common questions",
             rows: [
               {
                 reply_id: "hours",
-                title: "Horário de atendimento",
+                title: "Opening hours",
                 next_node_key: "answer_hours",
               },
               {
                 reply_id: "pricing",
-                title: "Preços",
+                title: "Pricing",
                 next_node_key: "answer_pricing",
               },
               {
                 reply_id: "refunds",
-                title: "Política de reembolso",
+                title: "Refund policy",
                 next_node_key: "answer_refunds",
               },
             ],
           },
           {
-            title: "Outros",
+            title: "Other",
             rows: [
               {
                 reply_id: "human",
-                title: "Falar com atendente",
+                title: "Talk to a human",
                 next_node_key: "human_handoff",
               },
             ],
@@ -190,7 +187,7 @@ const FAQ_BOT: FlowTemplate = {
       node_key: "answer_hours",
       node_type: "send_message",
       config: {
-        text: "Atendemos de segunda a sexta, das 9h às 18h. No fim de semana só atendemos casos urgentes.",
+        text: "We're open Mon–Fri, 9am–6pm local time. Weekend support is limited to urgent issues.",
         next_node_key: "end",
       } as SendMessageNodeConfig,
     },
@@ -198,7 +195,7 @@ const FAQ_BOT: FlowTemplate = {
       node_key: "answer_pricing",
       node_type: "send_message",
       config: {
-        text: "Nossos planos começam em R$ 49/mês. Acesse https://exemplo.com.br/precos para ver todos os detalhes.",
+        text: "Our pricing starts at $9/mo. Visit https://example.com/pricing for the full breakdown.",
         next_node_key: "end",
       } as SendMessageNodeConfig,
     },
@@ -206,7 +203,7 @@ const FAQ_BOT: FlowTemplate = {
       node_key: "answer_refunds",
       node_type: "send_message",
       config: {
-        text: "Aceitamos reembolso em até 30 dias após a compra. Responda com o número do pedido que nós resolvemos.",
+        text: "Refunds are honored within 30 days of purchase. Reply with your order number and we'll process it.",
         next_node_key: "end",
       } as SendMessageNodeConfig,
     },
@@ -214,7 +211,7 @@ const FAQ_BOT: FlowTemplate = {
       node_key: "human_handoff",
       node_type: "handoff",
       config: {
-        note: "Cliente pediu para falar com um atendente durante o bot de dúvidas.",
+        note: "Customer asked to talk to a human from the FAQ bot.",
       } as HandoffNodeConfig,
     },
     {
@@ -230,9 +227,9 @@ const FAQ_BOT: FlowTemplate = {
 // ============================================================
 const LEAD_CAPTURE: FlowTemplate = {
   slug: "lead_capture",
-  name: "Captura de lead",
+  name: "Lead capture",
   description:
-    "Recebe quem chega pela primeira vez, coleta nome, e-mail e empresa, e passa para o vendedor com as respostas na nota.",
+    "Greet first-time inbounds, capture name + email + company, then hand off to sales with the answers in the note.",
   icon: "UserPlus",
   trigger_type: "first_inbound_message",
   trigger_config: {},
@@ -247,7 +244,7 @@ const LEAD_CAPTURE: FlowTemplate = {
       node_key: "intro",
       node_type: "send_message",
       config: {
-        text: "Seja bem-vindo! 👋 Vou fazer algumas perguntas rápidas para te encaminhar à pessoa certa.",
+        text: "Welcome! 👋 I'll ask a few quick questions so we can get you to the right person.",
         next_node_key: "ask_name",
       } as SendMessageNodeConfig,
     },
@@ -255,7 +252,7 @@ const LEAD_CAPTURE: FlowTemplate = {
       node_key: "ask_name",
       node_type: "collect_input",
       config: {
-        prompt_text: "Qual é o seu nome?",
+        prompt_text: "What's your name?",
         var_key: "name",
         next_node_key: "ask_email",
       } as CollectInputNodeConfig,
@@ -264,7 +261,7 @@ const LEAD_CAPTURE: FlowTemplate = {
       node_key: "ask_email",
       node_type: "collect_input",
       config: {
-        prompt_text: "Obrigado, {{vars.name}}! Qual é o seu e-mail de trabalho?",
+        prompt_text: "Thanks {{vars.name}}! What's your work email?",
         var_key: "email",
         next_node_key: "ask_company",
       } as CollectInputNodeConfig,
@@ -273,7 +270,7 @@ const LEAD_CAPTURE: FlowTemplate = {
       node_key: "ask_company",
       node_type: "collect_input",
       config: {
-        prompt_text: "Estamos quase lá — qual é o nome da sua empresa?",
+        prompt_text: "Almost done — what's your company name?",
         var_key: "company",
         next_node_key: "handoff",
       } as CollectInputNodeConfig,
@@ -282,7 +279,7 @@ const LEAD_CAPTURE: FlowTemplate = {
       node_key: "handoff",
       node_type: "handoff",
       config: {
-        note: "Lead novo — nome={{vars.name}}, e-mail={{vars.email}}, empresa={{vars.company}}.",
+        note: "New lead — name={{vars.name}}, email={{vars.email}}, company={{vars.company}}.",
       } as HandoffNodeConfig,
     },
   ],

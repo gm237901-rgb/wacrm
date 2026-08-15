@@ -16,12 +16,21 @@
   },
   "Sidebar": {
     "title": "Linovexa",
+    "sectionPrincipal": "기본",
+    "sectionProdutividade": "생산성",
+    "sectionGestao": "관리",
+    "sectionSistema": "시스템",
     "dashboard": "대시보드",
     "inbox": "인박스",
     "notifications": "알림",
     "contacts": "연락처",
+    "companies": "회사",
     "pipelines": "파이프라인",
+    "tasks": "작업",
+    "activities": "활동",
+    "emails": "이메일",
     "reports": "보고서",
+    "products": "제품",
     "broadcasts": "브로드캐스트",
     "automations": "자동화",
     "flows": "플로우",
@@ -41,16 +50,20 @@
     "defaultAvatar": "아바타",
     "menuProfile": "프로필",
     "menuSettings": "설정",
-    "menuSignOut": "로그아웃",
-    "sectionAutomacao": "자동화"
+    "menuSignOut": "로그아웃"
   },
   "Header": {
     "dashboard": "대시보드",
     "inbox": "인박스",
     "notifications": "알림",
     "contacts": "연락처",
+    "companies": "회사",
     "pipelines": "파이프라인",
+    "tasks": "작업",
+    "activities": "활동",
+    "emails": "이메일",
     "reports": "보고서",
+    "products": "제품",
     "broadcasts": "브로드캐스트",
     "automations": "자동화",
     "settings": "설정",
@@ -111,6 +124,14 @@
       "noActivitiesHint": "오늘 예정된 일정이 여기에 표시됩니다.",
       "viewAll": "모든 활동 보기 →"
     },
+    "revenueChart": {
+      "title": "매출",
+      "days": "{count}일",
+      "allTime": "전체",
+      "noRevenue": "이 기간에는 매출이 없습니다",
+      "noRevenueHint": "성사된 딜이 여기에 표시됩니다.",
+      "ariaLabel": "일별 매출"
+    },
     "leadSource": {
       "title": "리드 출처",
       "description": "연락처의 유입 경로",
@@ -125,6 +146,17 @@
         "redes_sociais": "소셜 미디어",
         "outros": "기타"
       }
+    },
+    "recentLeads": {
+      "title": "최근 리드",
+      "noLeads": "아직 리드가 없습니다",
+      "noLeadsHint": "새 연락처가 여기에 표시됩니다.",
+      "unnamed": "이름 없음",
+      "viewAll": "모든 리드 보기 →",
+      "timeS": "{sec}초 전",
+      "timeM": "{min}분 전",
+      "timeH": "{hr}시간 전",
+      "timeD": "{day}일 전"
     },
     "quickActions": {
       "newContact": "새 연락처",
@@ -176,6 +208,214 @@
     },
     "emptyState": {
       "title": "아직 데이터가 충분하지 않습니다"
+    }
+  },
+  "Companies": {
+    "page": {
+      "title": "회사",
+      "subtitle": "회사 {count}개",
+      "subtitleZero": "아직 회사가 없습니다",
+      "addBtn": "새 회사",
+      "searchPlaceholder": "회사 검색...",
+      "loading": "불러오는 중...",
+      "noCompaniesYet": "아직 회사가 없습니다",
+      "noCompaniesMatch": "회사를 찾을 수 없습니다",
+      "addFirst": "첫 회사 추가",
+      "columnName": "이름",
+      "columnIndustry": "업종",
+      "columnPhone": "전화번호",
+      "columnWebsite": "웹사이트",
+      "editAction": "수정",
+      "deleteAction": "삭제",
+      "deleteTitle": "회사를 삭제할까요?",
+      "deleteDesc": "\"{name}\"이(가) 영구적으로 삭제됩니다. 연결된 연락처는 삭제되지 않습니다.",
+      "cancel": "취소",
+      "deleteBtn": "삭제",
+      "toastSaved": "회사가 저장되었습니다",
+      "toastFailedSave": "회사 저장에 실패했습니다",
+      "toastDeleted": "회사가 삭제되었습니다",
+      "toastFailedDelete": "회사 삭제에 실패했습니다",
+      "toastFailedLoad": "회사를 불러오지 못했습니다",
+      "gateCreate": "회사 생성",
+      "gateEdit": "회사 수정",
+      "gateDelete": "회사 삭제"
+    },
+    "form": {
+      "titleNew": "새 회사",
+      "titleEdit": "회사 수정",
+      "fieldName": "이름",
+      "fieldIndustry": "업종",
+      "fieldWebsite": "웹사이트",
+      "fieldPhone": "전화번호",
+      "fieldNotes": "메모",
+      "save": "저장",
+      "saving": "저장 중...",
+      "cancel": "취소"
+    }
+  },
+  "Products": {
+    "page": {
+      "title": "제품",
+      "subtitle": "제품 {count}개",
+      "subtitleZero": "아직 제품이 없습니다",
+      "addBtn": "새 제품",
+      "searchPlaceholder": "제품 검색...",
+      "loading": "불러오는 중...",
+      "noProductsYet": "아직 제품이 없습니다",
+      "noProductsMatch": "제품을 찾을 수 없습니다",
+      "addFirst": "첫 제품 추가",
+      "columnName": "이름",
+      "columnSku": "SKU",
+      "columnPrice": "가격",
+      "columnStatus": "상태",
+      "statusActive": "활성",
+      "statusInactive": "비활성",
+      "editAction": "수정",
+      "deleteAction": "삭제",
+      "deleteTitle": "제품을 삭제할까요?",
+      "deleteDesc": "\"{name}\"이(가) 영구적으로 삭제됩니다.",
+      "cancel": "취소",
+      "deleteBtn": "삭제",
+      "toastSaved": "제품이 저장되었습니다",
+      "toastFailedSave": "제품 저장에 실패했습니다",
+      "toastDeleted": "제품이 삭제되었습니다",
+      "toastFailedDelete": "제품 삭제에 실패했습니다",
+      "toastFailedLoad": "제품을 불러오지 못했습니다",
+      "gateCreate": "제품 생성",
+      "gateEdit": "제품 수정",
+      "gateDelete": "제품 삭제"
+    },
+    "form": {
+      "titleNew": "새 제품",
+      "titleEdit": "제품 수정",
+      "fieldName": "이름",
+      "fieldSku": "SKU",
+      "fieldPrice": "가격",
+      "fieldCurrency": "통화",
+      "fieldDescription": "설명",
+      "fieldActive": "활성",
+      "save": "저장",
+      "saving": "저장 중...",
+      "cancel": "취소"
+    }
+  },
+  "Tasks": {
+    "page": {
+      "title": "작업",
+      "subtitle": "작업 {count}개",
+      "subtitleZero": "아직 작업이 없습니다",
+      "addBtn": "새 작업",
+      "searchPlaceholder": "작업 검색...",
+      "loading": "불러오는 중...",
+      "noTasksYet": "아직 작업이 없습니다",
+      "noTasksMatch": "작업을 찾을 수 없습니다",
+      "addFirst": "첫 작업 추가",
+      "columnTitle": "제목",
+      "columnDueDate": "마감일",
+      "columnPriority": "우선순위",
+      "columnStatus": "상태",
+      "priorityLow": "낮음",
+      "priorityMedium": "보통",
+      "priorityHigh": "높음",
+      "statusPending": "대기 중",
+      "statusDone": "완료",
+      "noDueDate": "마감일 없음",
+      "editAction": "수정",
+      "deleteAction": "삭제",
+      "markDone": "완료로 표시",
+      "markPending": "대기 중으로 표시",
+      "deleteTitle": "작업을 삭제할까요?",
+      "deleteDesc": "\"{name}\"이(가) 영구적으로 삭제됩니다.",
+      "cancel": "취소",
+      "deleteBtn": "삭제",
+      "toastSaved": "작업이 저장되었습니다",
+      "toastFailedSave": "작업 저장에 실패했습니다",
+      "toastDeleted": "작업이 삭제되었습니다",
+      "toastFailedDelete": "작업 삭제에 실패했습니다",
+      "toastFailedLoad": "작업을 불러오지 못했습니다",
+      "toastFailedUpdate": "작업 업데이트에 실패했습니다",
+      "gateCreate": "작업 생성",
+      "gateEdit": "작업 수정",
+      "gateDelete": "작업 삭제"
+    },
+    "form": {
+      "titleNew": "새 작업",
+      "titleEdit": "작업 수정",
+      "fieldTitle": "제목",
+      "fieldDescription": "설명",
+      "fieldDueDate": "마감일",
+      "fieldPriority": "우선순위",
+      "fieldContact": "연결된 연락처",
+      "noneOption": "없음",
+      "save": "저장",
+      "saving": "저장 중...",
+      "cancel": "취소"
+    }
+  },
+  "Activities": {
+    "page": {
+      "title": "활동",
+      "subtitle": "활동 {count}건",
+      "subtitleZero": "아직 활동이 없습니다",
+      "addBtn": "활동 기록",
+      "loading": "불러오는 중...",
+      "noActivitiesYet": "아직 기록된 활동이 없습니다",
+      "noActivitiesHint": "연락처나 딜에 연결된 통화, 미팅, 메모를 기록하세요.",
+      "typeCall": "통화",
+      "typeMeeting": "미팅",
+      "typeNote": "메모",
+      "typeEmail": "이메일",
+      "deleteAction": "삭제",
+      "toastSaved": "활동이 기록되었습니다",
+      "toastFailedSave": "활동 기록에 실패했습니다",
+      "toastDeleted": "활동이 삭제되었습니다",
+      "toastFailedDelete": "활동 삭제에 실패했습니다",
+      "toastFailedLoad": "활동을 불러오지 못했습니다",
+      "gateCreate": "활동 기록",
+      "gateDelete": "활동 삭제"
+    },
+    "form": {
+      "title": "활동 기록",
+      "fieldType": "유형",
+      "fieldSummary": "요약",
+      "fieldContact": "연결된 연락처",
+      "noneOption": "없음",
+      "fieldOccurredAt": "일시",
+      "save": "저장",
+      "saving": "저장 중...",
+      "cancel": "취소"
+    }
+  },
+  "Emails": {
+    "page": {
+      "title": "이메일",
+      "subtitle": "이메일 {count}건",
+      "subtitleZero": "아직 기록된 이메일이 없습니다",
+      "addBtn": "이메일 기록",
+      "loading": "불러오는 중...",
+      "noEmailsYet": "아직 기록된 이메일이 없습니다",
+      "noEmailsHint": "이것은 수동 기록일 뿐이며, 아직 실제 이메일 발송/수신 기능은 없습니다.",
+      "directionInbound": "수신",
+      "directionOutbound": "발신",
+      "deleteAction": "삭제",
+      "toastSaved": "이메일이 기록되었습니다",
+      "toastFailedSave": "이메일 기록에 실패했습니다",
+      "toastDeleted": "이메일이 삭제되었습니다",
+      "toastFailedDelete": "이메일 삭제에 실패했습니다",
+      "toastFailedLoad": "이메일을 불러오지 못했습니다",
+      "gateCreate": "이메일 기록",
+      "gateDelete": "이메일 삭제"
+    },
+    "form": {
+      "title": "이메일 기록",
+      "fieldDirection": "방향",
+      "fieldSubject": "제목",
+      "fieldBody": "내용",
+      "fieldContact": "연결된 연락처",
+      "noneOption": "없음",
+      "save": "저장",
+      "saving": "저장 중...",
+      "cancel": "취소"
     }
   },
   "Reports": {
@@ -230,15 +470,24 @@
       "noTeammates": "지정 가능한 팀원이 없습니다",
       "me": " (나)",
       "noMessagesYet": "아직 메시지가 없습니다",
-      "sendTemplateHint": "메시지를 보내 대화를 시작하세요",
+      "sendTemplateHint": "템플릿을 보내 대화를 시작하세요",
       "selectConversation": "대화를 선택하세요",
       "selectConversationHint": "왼쪽에서 대화를 선택해 메시지를 시작하세요",
       "today": "오늘",
       "yesterday": "어제"
     },
+    "sessionTimer": {
+      "expired": "만료됨",
+      "xhRemaining": "{hours}시간 남음",
+      "xmRemaining": "{minutes}분 남음",
+      "noCustomerMessages": "고객 메시지 없음"
+    },
     "composer": {
       "draftHint": "✨를 눌러 AI로 답장 초안을 작성하세요 — 보내기 전에 수정할 수 있습니다",
+      "sessionExpiredHint": "24시간 세션이 만료되었습니다. 다시 연결하려면 템플릿을 사용하세요.",
+      "templates": "템플릿",
       "readOnlyPlaceholder": "읽기 전용 — 뷰어는 열람만 가능하고 답장할 수 없습니다",
+      "sessionExpiredPlaceholder": "세션 만료 - 템플릿을 사용하세요",
       "typeMessagePlaceholder": "메시지를 입력하세요... (줄바꿈은 Shift+Enter)",
       "readOnlyTitle": "읽기 전용 — 현재 역할로는 메시지를 보낼 수 없습니다",
       "recording": "녹음 중… {current} / {max}",
@@ -249,6 +498,7 @@
       "video": "동영상",
       "document": "문서",
       "voiceNote": "음성 메모",
+      "sendTemplate": "템플릿 보내기",
       "draftWithAI": "AI로 답장 초안 작성",
       "addCaption": "캡션 추가…",
       "removeAttachment": "첨부 파일 제거",
@@ -1411,11 +1661,13 @@
       "deleteLocallyAria": "로컬에서 템플릿 삭제",
       "deleteMetaLocallyTitle": "Meta와 로컬에서 삭제",
       "deleteLocallyTitle": "로컬에서 삭제",
+
       "dialogEditTitle": "메시지 템플릿 수정",
       "dialogNewTitle": "새 메시지 템플릿",
       "dialogEditDesc": "변경 사항을 저장해 Meta에 재제출하세요. 검토 중에는 상태가 다시 대기 중으로 바뀝니다.",
       "dialogNewDesc": "템플릿을 만들어 Meta 승인을 요청하세요. 승인되면 브로드캐스트와 인박스에서 사용할 수 있습니다.",
       "authWarning": "AUTHENTICATION 템플릿은 본문과 OTP 버튼 형식이 고정되어 있어 별도의 빌더가 필요합니다. 지금은 Meta WhatsApp 관리자에서 만든 뒤 <bold>Meta에서 동기화</bold>로 가져오세요.",
+
       "templateName": "템플릿 이름",
       "namePlaceholder": "예: order_confirmation",
       "nameFixed": "템플릿이 Meta에 존재하면 이름이 고정됩니다 — 변경하려면 새 템플릿을 만드세요.",
@@ -1424,6 +1676,7 @@
       "language": "언어",
       "langFixed": "템플릿이 Meta에 존재하면 언어가 고정됩니다.",
       "langHint": "Meta의 정확한 코드와 일치해야 합니다 — <code>en_US</code>와 <code>en</code>은 다른 코드입니다.",
+
       "header": "헤더",
       "headerNone": "없음",
       "headerText": "텍스트",
@@ -1433,6 +1686,7 @@
       "headerTextPlaceholder": "헤더 텍스트 (최대 60자, {{1}} 선택 가능)",
       "headerSampleAria": "헤더 변수 샘플 값",
       "headerSamplePlaceholder": "{{1}}의 샘플 값 (Meta 검토에 필요)",
+
       "uploadImage": "이미지 업로드",
       "uploadHint": "JPEG 또는 PNG, 5MB 이하",
       "mediaUrlPlaceholder": "https://… (또는 공개 {format} 링크 붙여넣기)",
@@ -1440,14 +1694,17 @@
       "mediaHint": "공개적으로 접근 가능한 HTTPS 링크여야 합니다. Meta가 검토 중 한 번 가져오므로 약 24시간 동안 살아있어야 합니다.",
       "videoHint": " 권장: MP4 / 3GPP, 16MB 이하, 60초 이하.",
       "documentHint": " 권장: PDF, 100MB 이하.",
+
       "bodyText": "본문 텍스트",
       "bodyPlaceholder": "안녕하세요 {{1}}님, 주문 {{2}}이(가) 확정되었습니다.",
       "sampleValues": "샘플 값 (Meta가 템플릿 검토에 사용합니다)",
       "bodyHint": "변수에는 {{1}}, {{2}}를 사용하세요 ({{1}}부터 연속되어야 합니다).",
       "sampleAria": "본문 변수 {var}의 샘플 값",
       "samplePlaceholder": "{var}의 샘플",
+
       "footer": "푸터 (선택)",
       "footerPlaceholder": "선택적 푸터 텍스트 (최대 60자)",
+
       "buttons": "버튼 (선택)",
       "addButton": "버튼 추가",
       "buttonsLimit": "최대 {max}개 버튼. QUICK_REPLY 버튼은 URL / 전화 / 코드 복사 버튼보다 앞에 와야 합니다.",
@@ -1460,16 +1717,19 @@
       "urlSamplePlaceholder": "{{1}}의 예시 값 (URL에 변수가 있을 때 필요)",
       "phonePlaceholder": "+15551234567",
       "codePlaceholder": "예시 코드 (예: SUMMER20)",
+
       "cancel": "취소",
       "saving": "저장 중…",
       "submitting": "제출 중…",
       "saveResubmit": "저장 & 재제출",
       "submitApproval": "승인 요청",
+
       "deleteDialogTitle": "템플릿을 삭제하시겠습니까?",
       "deleteMetaDesc": "\"{name}\"이(가) Meta와 Linovexa에서 삭제됩니다. 이 템플릿을 사용하는 활성 브로드캐스트는 다음 전송부터 실패하기 시작합니다. 되돌릴 수 없습니다.",
       "deleteLocalDesc": "\"{name}\"이(가) Linovexa에서 삭제됩니다. Meta에 제출된 적이 없으므로 별도의 원격 정리가 필요하지 않습니다.",
       "deleting": "삭제 중…",
       "delete": "삭제",
+
       "toastLoadFailed": "템플릿을 불러오지 못했습니다",
       "toastSubmitFailed": "제출하지 못했습니다",
       "toastSubmitEditSuccess": "수정 사항이 제출되었습니다 — Meta는 보통 24시간 이내에 검토합니다.",
@@ -1608,6 +1868,7 @@
       "profileSaved": "프로필이 저장되었습니다",
       "emailChangeFailed": "이메일 변경 실패: {message}",
       "profileSavedEmailCheck": "프로필이 저장되었습니다 — 이메일 주소 변경을 확인하려면 이메일을 확인하세요",
+
       "passwordTitle": "비밀번호",
       "passwordDesc": "최소 {min}자 이상 사용하세요. 변경 후에도 이 기기에서는 로그인이 유지됩니다.",
       "currentPassword": "현재 비밀번호",
@@ -1621,6 +1882,7 @@
       "currentPasswordIncorrect": "현재 비밀번호가 올바르지 않습니다",
       "passwordUpdateFailed": "비밀번호 업데이트 실패: {message}",
       "passwordUpdated": "비밀번호가 업데이트되었습니다",
+
       "sessionsTitle": "활성 세션",
       "sessionsDesc": "이 기기를 포함해 로그인되어 있는 모든 기기에서 로그아웃합니다. 노트북을 분실했거나 비밀번호를 공유한 경우 유용합니다.",
       "signOutAll": "모든 기기에서 로그아웃",
@@ -1684,10 +1946,15 @@
     },
     "deals": {
       "title": "딜 & 통화",
-      "description": "CRM 전체에서 사용하는 통화입니다.",
-      "defaultCurrency": "통화",
-      "currencyName": "브라질 헤알 (R$)",
-      "currencyNote": "이 CRM은 브라질 헤알로만 운영됩니다. 모든 딜 금액, 상품 가격, 대시보드 합계는 BRL로 저장되고 표시됩니다."
+      "description": "새 딜과 파이프라인, 대시보드 합계에 사용되는 통화입니다.",
+      "defaultCurrency": "기본 통화",
+      "defaultCurrencyDesc": "새 딜은 이 통화를 기본값으로 사용하며, 파이프라인과 대시보드 합계도 이 통화로 표시됩니다. 기존 딜은 저장 당시의 통화를 그대로 유지합니다.",
+      "currencyLabel": "통화",
+      "adminOnlyHint": "계정 관리자만 기본 통화를 변경할 수 있습니다.",
+      "save": "저장",
+      "saving": "저장 중...",
+      "saveFailed": "기본 통화를 저장하지 못했습니다",
+      "saveSuccess": "기본 통화가 업데이트되었습니다"
     },
     "aiConfig": {
       "title": "에이전트 설정",
@@ -1755,11 +2022,6 @@
       "reindex": "재색인",
       "reindexTooltip": "모든 문서를 다시 임베딩합니다 (예: 임베딩 키 추가 후)",
       "loading": "불러오는 중…"
-    },
-    "whatsappDesc": "CRM이 고객과 대화할 때 사용할 WhatsApp을 연결하세요."
-  },
-  "Account": {
-    "title": "내 계정",
-    "description": "프로필, 비밀번호, 빠른 답장, 태그, 멤버, API 키."
+    }
   }
 }

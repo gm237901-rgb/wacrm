@@ -20,8 +20,11 @@ import type {
   MetricsBundle,
   PipelineDonutData,
   PipelineStageSlice,
+  RecentLead,
   ResponseTimeBucket,
   ResponseTimeSummary,
+  RevenuePoint,
+  RevenueRange,
   SalesFunnelData,
   TodayActivity,
 } from './types'
@@ -632,7 +635,62 @@ export async function loadTodayActivities(db: DB): Promise<TodayActivity[]> {
   })
 }
 
-// --- 9. Lead source donut ---------------------------------------------------
+// --- 9. Revenue over time --------------------------------------------------
+
+export async function loadRevenueSeries(
+  db: DB,
+  range: RevenueRange,
+): Promise<RevenuePoint[]> {
+  let rangeDays: number
+  if (range === 'all') {
+    // Span from the first won deal to today. Without a won deal there's
+    // nothing to chart at all — return empty so the caller renders its
+    // empty state rather than a flat zero line over an arbitrary window.
+    const { data: earliest } = await db
+      .from('deals')
+      .select('updated_at')
+      .eq('status', 'won')
+      .order('updated_at', { ascending: true })
+      .limit(1)
+    const firstWonAt = (earliest as { updated_at: string }[] | null)?.[0]?.updated_at
+    if (!firstWonAt) return []
+    const spanDays =
+      Math.ceil(
+        (startOfLocalDay().getTime() - startOfLocalDay(new Date(firstWonAt)).getTime()) /
+          86_400_000,
+      ) + 1
+    // Floor at a week so a company whose first sale was yesterday still
+    // gets a readable axis instead of a two-point chart.
+    rangeDays = Math.max(7, spanDays)
+  } else {
+    rangeDays = range
+  }
+
+  const start = daysAgoStart(rangeDays - 1).toISOString()
+  // deals has no dedicated "won_at" column — updated_at is the best
+  // available proxy for when the "Marcar como ganho" action landed.
+  const { data, error } = await db
+    .from('deals')
+    .select('value, updated_at')
+    .eq('status', 'won')
+    .gte('updated_at', start)
+    .order('updated_at', { ascending: true })
+  if (error) throw error
+
+  const keys = lastNDayKeys(rangeDays)
+  const buckets = new Map<string, number>()
+  for (const k of keys) buckets.set(k, 0)
+
+  for (const row of (data ?? []) as { value: number | null; updated_at: string }[]) {
+    const key = localDayKey(row.updated_at)
+    if (!buckets.has(key)) continue
+    buckets.set(key, (buckets.get(key) ?? 0) + (row.value ?? 0))
+  }
+
+  return keys.map((day) => ({ day, value: buckets.get(day) ?? 0 }))
+}
+
+// --- 10. Lead source donut --------------------------------------------------
 
 export async function loadLeadSource(db: DB): Promise<LeadSourceData> {
   const { data, error } = await db.from('contacts').select('source')
@@ -656,3 +714,29 @@ export async function loadLeadSource(db: DB): Promise<LeadSourceData> {
   }
 }
 
+// --- 11. Recent leads --------------------------------------------------------
+
+export async function loadRecentLeads(db: DB, limit = 5): Promise<RecentLead[]> {
+  const { data, error } = await db
+    .from('contacts')
+    .select('id, name, email, avatar_url, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) throw error
+
+  return (
+    (data ?? []) as Array<{
+      id: string
+      name: string | null
+      email: string | null
+      avatar_url: string | null
+      created_at: string
+    }>
+  ).map((c) => ({
+    id: c.id,
+    name: c.name ?? '',
+    email: c.email,
+    avatarUrl: c.avatar_url,
+    createdAt: c.created_at,
+  }))
+}

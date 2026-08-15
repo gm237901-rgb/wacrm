@@ -17,13 +17,22 @@
   "Sidebar": {
     "navPrimaryAria": "Principal",
     "title": "Linovexa",
+    "sectionPrincipal": "Principal",
+    "sectionProdutividade": "Produtividade",
+    "sectionGestao": "Gestão",
+    "sectionSistema": "Sistema",
     "dashboard": "Painel",
     "inbox": "Caixa de entrada",
     "notifications": "Notificações",
     "contacts": "Contatos",
+    "companies": "Empresas",
     "agenda": "Agenda",
     "pipelines": "Funis",
+    "tasks": "Tarefas",
+    "activities": "Atividades",
+    "emails": "E-mails",
     "reports": "Relatórios",
+    "products": "Produtos",
     "broadcasts": "Transmissões",
     "automations": "Automações",
     "flows": "Fluxos",
@@ -43,16 +52,20 @@
     "defaultAvatar": "Avatar",
     "menuProfile": "Perfil",
     "menuSettings": "Configurações",
-    "menuSignOut": "Sair",
-    "sectionAutomacao": "Automação"
+    "menuSignOut": "Sair"
   },
   "Header": {
     "dashboard": "Painel",
     "inbox": "Caixa de entrada",
     "notifications": "Notificações",
     "contacts": "Contatos",
+    "companies": "Empresas",
     "pipelines": "Funis",
+    "tasks": "Tarefas",
+    "activities": "Atividades",
+    "emails": "E-mails",
     "reports": "Relatórios",
+    "products": "Produtos",
     "broadcasts": "Transmissões",
     "automations": "Automações",
     "settings": "Configurações",
@@ -113,6 +126,14 @@
       "noActivitiesHint": "Compromissos agendados para hoje aparecem aqui.",
       "viewAll": "Ver todas as atividades →"
     },
+    "revenueChart": {
+      "title": "Faturamento",
+      "days": "{count} dias",
+      "allTime": "Tudo",
+      "noRevenue": "Nenhum faturamento nesse período",
+      "noRevenueHint": "Negócios marcados como ganhos vão aparecer aqui.",
+      "ariaLabel": "Faturamento por dia"
+    },
     "leadSource": {
       "title": "Origem dos leads",
       "description": "De onde vêm seus contatos",
@@ -127,6 +148,17 @@
         "redes_sociais": "Redes Sociais",
         "outros": "Outros"
       }
+    },
+    "recentLeads": {
+      "title": "Leads mais recentes",
+      "noLeads": "Nenhum lead ainda",
+      "noLeadsHint": "Novos contatos aparecem aqui.",
+      "unnamed": "Sem nome",
+      "viewAll": "Ver todos os leads →",
+      "timeS": "há {sec}s",
+      "timeM": "há {min}min",
+      "timeH": "há {hr}h",
+      "timeD": "há {day}d"
     },
     "quickActions": {
       "newContact": "Novo contato",
@@ -178,6 +210,214 @@
     },
     "emptyState": {
       "title": "Ainda não há dados suficientes"
+    }
+  },
+  "Companies": {
+    "page": {
+      "title": "Empresas",
+      "subtitle": "{count} {count, plural, =1 {empresa} other {empresas}}",
+      "subtitleZero": "Nenhuma empresa ainda",
+      "addBtn": "Nova empresa",
+      "searchPlaceholder": "Buscar empresas...",
+      "loading": "Carregando...",
+      "noCompaniesYet": "Nenhuma empresa ainda",
+      "noCompaniesMatch": "Nenhuma empresa encontrada",
+      "addFirst": "Adicionar primeira empresa",
+      "columnName": "Nome",
+      "columnIndustry": "Setor",
+      "columnPhone": "Telefone",
+      "columnWebsite": "Site",
+      "editAction": "Editar",
+      "deleteAction": "Excluir",
+      "deleteTitle": "Excluir empresa?",
+      "deleteDesc": "\"{name}\" será excluída permanentemente. Contatos vinculados não são excluídos.",
+      "cancel": "Cancelar",
+      "deleteBtn": "Excluir",
+      "toastSaved": "Empresa salva",
+      "toastFailedSave": "Falha ao salvar empresa",
+      "toastDeleted": "Empresa excluída",
+      "toastFailedDelete": "Falha ao excluir empresa",
+      "toastFailedLoad": "Falha ao carregar empresas",
+      "gateCreate": "criar empresas",
+      "gateEdit": "editar empresas",
+      "gateDelete": "excluir empresas"
+    },
+    "form": {
+      "titleNew": "Nova empresa",
+      "titleEdit": "Editar empresa",
+      "fieldName": "Nome",
+      "fieldIndustry": "Setor",
+      "fieldWebsite": "Site",
+      "fieldPhone": "Telefone",
+      "fieldNotes": "Notas",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "cancel": "Cancelar"
+    }
+  },
+  "Products": {
+    "page": {
+      "title": "Produtos",
+      "subtitle": "{count} {count, plural, =1 {produto} other {produtos}}",
+      "subtitleZero": "Nenhum produto ainda",
+      "addBtn": "Novo produto",
+      "searchPlaceholder": "Buscar produtos...",
+      "loading": "Carregando...",
+      "noProductsYet": "Nenhum produto ainda",
+      "noProductsMatch": "Nenhum produto encontrado",
+      "addFirst": "Adicionar primeiro produto",
+      "columnName": "Nome",
+      "columnSku": "SKU",
+      "columnPrice": "Preço",
+      "columnStatus": "Status",
+      "statusActive": "Ativo",
+      "statusInactive": "Inativo",
+      "editAction": "Editar",
+      "deleteAction": "Excluir",
+      "deleteTitle": "Excluir produto?",
+      "deleteDesc": "\"{name}\" será excluído permanentemente.",
+      "cancel": "Cancelar",
+      "deleteBtn": "Excluir",
+      "toastSaved": "Produto salvo",
+      "toastFailedSave": "Falha ao salvar produto",
+      "toastDeleted": "Produto excluído",
+      "toastFailedDelete": "Falha ao excluir produto",
+      "toastFailedLoad": "Falha ao carregar produtos",
+      "gateCreate": "criar produtos",
+      "gateEdit": "editar produtos",
+      "gateDelete": "excluir produtos"
+    },
+    "form": {
+      "titleNew": "Novo produto",
+      "titleEdit": "Editar produto",
+      "fieldName": "Nome",
+      "fieldSku": "SKU",
+      "fieldPrice": "Preço",
+      "fieldCurrency": "Moeda",
+      "fieldDescription": "Descrição",
+      "fieldActive": "Ativo",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "cancel": "Cancelar"
+    }
+  },
+  "Tasks": {
+    "page": {
+      "title": "Tarefas",
+      "subtitle": "{count} {count, plural, =1 {tarefa} other {tarefas}}",
+      "subtitleZero": "Nenhuma tarefa ainda",
+      "addBtn": "Nova tarefa",
+      "searchPlaceholder": "Buscar tarefas...",
+      "loading": "Carregando...",
+      "noTasksYet": "Nenhuma tarefa ainda",
+      "noTasksMatch": "Nenhuma tarefa encontrada",
+      "addFirst": "Adicionar primeira tarefa",
+      "columnTitle": "Título",
+      "columnDueDate": "Vencimento",
+      "columnPriority": "Prioridade",
+      "columnStatus": "Status",
+      "priorityLow": "Baixa",
+      "priorityMedium": "Média",
+      "priorityHigh": "Alta",
+      "statusPending": "Pendente",
+      "statusDone": "Concluída",
+      "noDueDate": "Sem vencimento",
+      "editAction": "Editar",
+      "deleteAction": "Excluir",
+      "markDone": "Marcar como concluída",
+      "markPending": "Marcar como pendente",
+      "deleteTitle": "Excluir tarefa?",
+      "deleteDesc": "\"{name}\" será excluída permanentemente.",
+      "cancel": "Cancelar",
+      "deleteBtn": "Excluir",
+      "toastSaved": "Tarefa salva",
+      "toastFailedSave": "Falha ao salvar tarefa",
+      "toastDeleted": "Tarefa excluída",
+      "toastFailedDelete": "Falha ao excluir tarefa",
+      "toastFailedLoad": "Falha ao carregar tarefas",
+      "toastFailedUpdate": "Falha ao atualizar tarefa",
+      "gateCreate": "criar tarefas",
+      "gateEdit": "editar tarefas",
+      "gateDelete": "excluir tarefas"
+    },
+    "form": {
+      "titleNew": "Nova tarefa",
+      "titleEdit": "Editar tarefa",
+      "fieldTitle": "Título",
+      "fieldDescription": "Descrição",
+      "fieldDueDate": "Vencimento",
+      "fieldPriority": "Prioridade",
+      "fieldContact": "Contato vinculado",
+      "noneOption": "Nenhum",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "cancel": "Cancelar"
+    }
+  },
+  "Activities": {
+    "page": {
+      "title": "Atividades",
+      "subtitle": "{count} {count, plural, =1 {atividade} other {atividades}}",
+      "subtitleZero": "Nenhuma atividade ainda",
+      "addBtn": "Registrar atividade",
+      "loading": "Carregando...",
+      "noActivitiesYet": "Nenhuma atividade registrada ainda",
+      "noActivitiesHint": "Registre ligações, reuniões e notas vinculadas a contatos ou negócios.",
+      "typeCall": "Ligação",
+      "typeMeeting": "Reunião",
+      "typeNote": "Nota",
+      "typeEmail": "E-mail",
+      "deleteAction": "Excluir",
+      "toastSaved": "Atividade registrada",
+      "toastFailedSave": "Falha ao registrar atividade",
+      "toastDeleted": "Atividade excluída",
+      "toastFailedDelete": "Falha ao excluir atividade",
+      "toastFailedLoad": "Falha ao carregar atividades",
+      "gateCreate": "registrar atividades",
+      "gateDelete": "excluir atividades"
+    },
+    "form": {
+      "title": "Registrar atividade",
+      "fieldType": "Tipo",
+      "fieldSummary": "Resumo",
+      "fieldContact": "Contato vinculado",
+      "noneOption": "Nenhum",
+      "fieldOccurredAt": "Quando",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "cancel": "Cancelar"
+    }
+  },
+  "Emails": {
+    "page": {
+      "title": "E-mails",
+      "subtitle": "{count} {count, plural, =1 {e-mail} other {e-mails}}",
+      "subtitleZero": "Nenhum e-mail registrado ainda",
+      "addBtn": "Registrar e-mail",
+      "loading": "Carregando...",
+      "noEmailsYet": "Nenhum e-mail registrado ainda",
+      "noEmailsHint": "Este é só um registro manual — ainda não há envio ou recebimento real de e-mails.",
+      "directionInbound": "Recebido",
+      "directionOutbound": "Enviado",
+      "deleteAction": "Excluir",
+      "toastSaved": "E-mail registrado",
+      "toastFailedSave": "Falha ao registrar e-mail",
+      "toastDeleted": "E-mail excluído",
+      "toastFailedDelete": "Falha ao excluir e-mail",
+      "toastFailedLoad": "Falha ao carregar e-mails",
+      "gateCreate": "registrar e-mails",
+      "gateDelete": "excluir e-mails"
+    },
+    "form": {
+      "title": "Registrar e-mail",
+      "fieldDirection": "Direção",
+      "fieldSubject": "Assunto",
+      "fieldBody": "Mensagem",
+      "fieldContact": "Contato vinculado",
+      "noneOption": "Nenhum",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "cancel": "Cancelar"
     }
   },
   "Reports": {
@@ -253,11 +493,17 @@
       "noTeammates": "Nenhum colega de equipe disponível",
       "me": " (eu)",
       "noMessagesYet": "Nenhuma mensagem ainda",
-      "sendTemplateHint": "Envie uma mensagem para iniciar a conversa",
+      "sendTemplateHint": "Envie um modelo para iniciar a conversa",
       "selectConversation": "Selecione uma conversa",
       "selectConversationHint": "Escolha uma conversa à esquerda para começar a conversar",
       "today": "Hoje",
       "yesterday": "Ontem"
+    },
+    "sessionTimer": {
+      "expired": "Expirada",
+      "xhRemaining": "faltam {hours}h",
+      "xmRemaining": "faltam {minutes}min",
+      "noCustomerMessages": "Nenhuma mensagem do cliente"
     },
     "composer": {
       "toastAiNotConfigured": "A IA ainda não foi configurada — ative em Configurações → Assistente de IA.",
@@ -270,7 +516,10 @@
       "toastVoiceUnsupported": "Gravação de voz não é suportada neste navegador.",
       "toastMicDenied": "Acesso ao microfone negado ou indisponível.",
       "draftHint": "Toque no ✨ para gerar uma resposta com IA — você pode editá-la antes de enviar",
+      "sessionExpiredHint": "Sessão de 24 horas expirada. Use um modelo para reengajar.",
+      "templates": "Modelos",
       "readOnlyPlaceholder": "Somente leitura — visualizadores podem navegar, mas não responder",
+      "sessionExpiredPlaceholder": "Sessão expirada - use um modelo",
       "typeMessagePlaceholder": "Digite uma mensagem... (Shift+Enter para nova linha)",
       "readOnlyTitle": "Somente leitura — sua função não permite enviar mensagens",
       "recording": "Gravando… {current} / {max}",
@@ -281,6 +530,7 @@
       "video": "Vídeo",
       "document": "Documento",
       "voiceNote": "Mensagem de voz",
+      "sendTemplate": "Enviar modelo",
       "draftWithAI": "Gerar resposta com IA",
       "addCaption": "Adicionar legenda…",
       "removeAttachment": "Remover anexo",
@@ -1691,11 +1941,13 @@
       "deleteLocallyAria": "Excluir modelo localmente",
       "deleteMetaLocallyTitle": "Excluir da Meta e localmente",
       "deleteLocallyTitle": "Excluir localmente",
+
       "dialogEditTitle": "Editar modelo de mensagem",
       "dialogNewTitle": "Novo modelo de mensagem",
       "dialogEditDesc": "Salve suas alterações para reenviar à Meta. O status volta para PENDENTE durante a revisão.",
       "dialogNewDesc": "Crie um modelo e envie-o para aprovação da Meta. Após aprovado, você pode usá-lo em transmissões e na caixa de entrada.",
       "authWarning": "Modelos de AUTENTICAÇÃO têm um formato fixo de corpo + botão de OTP que precisa de um construtor diferente. Crie-os no Gerenciador do WhatsApp da Meta por enquanto e use <bold>Sincronizar da Meta</bold> para trazê-los.",
+
       "templateName": "Nome do modelo",
       "namePlaceholder": "ex.: confirmacao_pedido",
       "nameFixed": "O nome é fixo assim que um modelo existe na Meta — crie um novo modelo para alterá-lo.",
@@ -1704,6 +1956,7 @@
       "language": "Idioma",
       "langFixed": "O idioma é fixo assim que um modelo existe na Meta.",
       "langHint": "Deve corresponder exatamente ao código na Meta — <code>pt_BR</code> e <code>pt</code> são distintos.",
+
       "header": "Cabeçalho",
       "headerNone": "Nenhum",
       "headerText": "Texto",
@@ -1716,6 +1969,7 @@
       "headerSampleImageAlt": "Exemplo de imagem do cabeçalho",
       "qualityScoreTitle": "Nota de qualidade da Meta",
       "headerSamplePlaceholder": "Valor de exemplo para {{1}} (obrigatório para revisão da Meta)",
+
       "uploadImage": "Enviar imagem",
       "uploadHint": "JPEG ou PNG, ≤5 MB",
       "mediaUrlPlaceholder": "https://… (ou cole um link público {format})",
@@ -1723,14 +1977,17 @@
       "mediaHint": "Deve ser um link HTTPS publicamente acessível. A Meta o acessa uma vez durante a revisão, então ele precisa ficar disponível por ~24h.",
       "videoHint": " Recomendado: MP4 / 3GPP, ≤16 MB, ≤60 segundos.",
       "documentHint": " Recomendado: PDF, ≤100 MB.",
+
       "bodyText": "Texto do corpo",
       "bodyPlaceholder": "Olá {{1}}, seu pedido {{2}} está confirmado.",
       "bodyHint": "Use {{1}}, {{2}} para variáveis (devem ser contínuas a partir de {{1}}).",
       "sampleValues": "Valores de exemplo (a Meta os usa para revisar seu modelo)",
       "sampleAria": "Valor de exemplo para a variável do corpo {var}",
       "samplePlaceholder": "Exemplo para {var}",
+
       "footer": "Rodapé (opcional)",
       "footerPlaceholder": "Texto de rodapé opcional (máx. 60 caracteres)",
+
       "buttons": "Botões (opcional)",
       "addButton": "Adicionar botão",
       "buttonsLimit": "Até {max} botões. Botões de RESPOSTA RÁPIDA devem vir antes dos botões de URL / telefone / código de cópia.",
@@ -1743,16 +2000,19 @@
       "urlSamplePlaceholder": "Valor de exemplo para {{1}} (obrigatório quando a URL tem uma variável)",
       "phonePlaceholder": "+5511999999999",
       "codePlaceholder": "Código de exemplo (ex.: VERAO20)",
+
       "cancel": "Cancelar",
       "saving": "Salvando…",
       "submitting": "Enviando…",
       "saveResubmit": "Salvar e reenviar",
       "submitApproval": "Enviar para aprovação",
+
       "deleteDialogTitle": "Excluir modelo?",
       "deleteMetaDesc": "\"{name}\" será excluído da Meta e do Linovexa. Transmissões ativas usando este modelo começarão a falhar no próximo envio. Isso não pode ser desfeito.",
       "deleteLocalDesc": "\"{name}\" será excluído do Linovexa. Ele nunca foi enviado à Meta, então nenhuma limpeza remota é necessária.",
       "deleting": "Excluindo…",
       "delete": "Excluir",
+
       "toastLoadFailed": "Falha ao carregar modelos",
       "toastSubmitFailed": "Falha ao enviar",
       "toastSubmitEditSuccess": "Edição enviada — a Meta costuma revisar em até 24 horas.",
@@ -1914,6 +2174,7 @@
       "profileSaved": "Perfil salvo",
       "emailChangeFailed": "Falha ao alterar e-mail: {message}",
       "profileSavedEmailCheck": "Perfil salvo — verifique seu e-mail para confirmar a alteração do endereço",
+
       "passwordTitle": "Senha",
       "passwordDesc": "Use pelo menos {min} caracteres. Você continuará conectado neste dispositivo após alterá-la.",
       "currentPassword": "Senha atual",
@@ -1927,6 +2188,7 @@
       "currentPasswordIncorrect": "Senha atual incorreta",
       "passwordUpdateFailed": "Falha ao atualizar a senha: {message}",
       "passwordUpdated": "Senha atualizada",
+
       "sessionsTitle": "Sessões ativas",
       "sessionsDesc": "Desconecte-se de todos os dispositivos em que você está conectado — incluindo este. Útil se você perdeu um notebook ou compartilhou sua senha.",
       "signOutAll": "Sair de todos os dispositivos",
@@ -1993,10 +2255,15 @@
     },
     "deals": {
       "title": "Negócios e moeda",
-      "description": "A moeda usada em todo o CRM.",
-      "defaultCurrency": "Moeda",
-      "currencyName": "Real brasileiro (R$)",
-      "currencyNote": "O CRM opera exclusivamente em real. Todo valor de negócio, preço de produto e total do painel é gravado e exibido em BRL."
+      "description": "A moeda usada para novos negócios e para os totais do funil e do painel.",
+      "defaultCurrency": "Moeda padrão",
+      "defaultCurrencyDesc": "Novos negócios usam esta moeda por padrão, e os totais do funil e do painel são exibidos nela. Negócios existentes mantêm a moeda com que foram salvos.",
+      "currencyLabel": "Moeda",
+      "adminOnlyHint": "Somente administradores da conta podem alterar a moeda padrão.",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "saveFailed": "Falha ao salvar a moeda padrão",
+      "saveSuccess": "Moeda padrão atualizada"
     },
     "aiConfig": {
       "title": "Configuração do agente",
@@ -2066,11 +2333,6 @@
       "editButtonTitle": "Editar",
       "deleteButtonTitle": "Excluir",
       "loading": "Carregando…"
-    },
-    "whatsappDesc": "Conecte o WhatsApp que o CRM vai usar para conversar com seus clientes."
-  },
-  "Account": {
-    "title": "Minha conta",
-    "description": "Perfil, senha, respostas rápidas, etiquetas, membros e chaves de API."
+    }
   }
 }

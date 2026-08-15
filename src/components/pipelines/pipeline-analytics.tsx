@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import type { Deal, PipelineStage } from "@/types";
 import {
-  Banknote,
+  DollarSign,
   TrendingUp,
   Target,
   BarChart3,
@@ -48,6 +48,7 @@ function computeStageProbability(
 
 export function PipelineAnalytics({ stages, deals }: PipelineAnalyticsProps) {
   const t = useTranslations("Pipelines.analytics");
+  const { defaultCurrency } = useAuth();
   const sortedStages = useMemo(
     () => [...stages].sort((a, b) => a.position - b.position),
     [stages],
@@ -103,23 +104,23 @@ export function PipelineAnalytics({ stages, deals }: PipelineAnalyticsProps) {
           t={t}
         />
         <Metric
-          icon={<Banknote className="h-4 w-4 text-primary" />}
+          icon={<DollarSign className="h-4 w-4 text-primary" />}
           label={t("pipelineValue")}
-          value={formatCurrency(stats.totalValue)}
+          value={formatCurrency(stats.totalValue, defaultCurrency)}
           tooltip={t("pipelineValueTooltip")}
           t={t}
         />
         <Metric
           icon={<Target className="h-4 w-4 text-blue-400" />}
           label={t("avgDealSize")}
-          value={formatCurrency(stats.avgValue)}
+          value={formatCurrency(stats.avgValue, defaultCurrency)}
           tooltip={t("avgDealSizeTooltip")}
           t={t}
         />
         <Metric
           icon={<TrendingUp className="h-4 w-4 text-purple-400" />}
           label={t("weightedValue")}
-          value={formatCurrency(stats.weightedValue)}
+          value={formatCurrency(stats.weightedValue, defaultCurrency)}
           tooltip={t("weightedValueTooltip")}
           t={t}
         />

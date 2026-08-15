@@ -9,11 +9,13 @@ import { Skeleton } from './skeleton'
 interface PipelineDonutProps {
   data: PipelineDonutData | null
   loading: boolean
+  /** Account default currency for the totals. */
+  currency: string
 }
 
 import { useTranslations } from 'next-intl'
 
-export function PipelineDonut({ data, loading }: PipelineDonutProps) {
+export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
   const t = useTranslations('Dashboard.pipelineDonut')
   return (
     <section className="flex h-full flex-col rounded-xl border border-border bg-card">
@@ -35,7 +37,7 @@ export function PipelineDonut({ data, loading }: PipelineDonutProps) {
           />
         ) : (
           <>
-            <Donut data={data} />
+            <Donut data={data} currency={currency} />
             <ul className="mt-5 space-y-2">
               {data.stages.map((s) => (
                 <li key={s.id} className="flex items-center gap-3 text-xs">
@@ -49,7 +51,7 @@ export function PipelineDonut({ data, loading }: PipelineDonutProps) {
                     {t('dealCount', { count: s.dealCount })}
                   </span>
                   <span className="w-20 text-right text-muted-foreground tabular-nums">
-                    {formatCurrencyShort(s.totalValue)}
+                    {formatCurrencyShort(s.totalValue, currency)}
                   </span>
                 </li>
               ))}
@@ -67,7 +69,7 @@ export function PipelineDonut({ data, loading }: PipelineDonutProps) {
 // between segments are implied by a thin slate-900 stroke between
 // them for a cleaner look.
 // ------------------------------------------------------------
-function Donut({ data }: { data: PipelineDonutData }) {
+function Donut({ data, currency }: { data: PipelineDonutData; currency: string }) {
   const t = useTranslations('Dashboard.pipelineDonut')
   const size = 200
   const r = 80
@@ -126,7 +128,7 @@ function Donut({ data }: { data: PipelineDonutData }) {
           textAnchor="middle"
           className="fill-foreground text-[18px] font-semibold tabular-nums"
         >
-          {formatCurrencyShort(data.totalValue)}
+          {formatCurrencyShort(data.totalValue, currency)}
         </text>
       </svg>
     </div>

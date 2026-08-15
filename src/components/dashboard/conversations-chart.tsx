@@ -1,6 +1,5 @@
 "use client"
 
-import { formatDayMonth, formatWeekdayDayMonth } from '@/lib/datetime'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MessageSquare } from 'lucide-react'
 import type { ConversationsSeriesPoint } from '@/lib/dashboard/types'
@@ -320,13 +319,13 @@ function shortDayLabel(key: string): string {
   // appended time avoids timezone-shift surprises across midnight.
   const [y, m, d] = key.split('-').map(Number)
   const date = new Date(y, m - 1, d)
-  return formatDayMonth(date)
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 }
 
 function longDayLabel(key: string): string {
   const [y, m, d] = key.split('-').map(Number)
   const date = new Date(y, m - 1, d)
-  return formatWeekdayDayMonth(date)
+  return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
 /**

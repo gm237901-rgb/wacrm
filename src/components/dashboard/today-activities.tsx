@@ -1,6 +1,5 @@
 "use client"
 
-import { formatTime as formatTimeBR } from '@/lib/datetime'
 import Link from 'next/link'
 import { CalendarClock, CheckCircle2, Clock, XCircle } from 'lucide-react'
 import type { ComponentType } from 'react'
@@ -98,5 +97,7 @@ export function TodayActivities({ items, loading }: TodayActivitiesProps) {
 }
 
 function formatTime(iso: string): string {
-  return formatTimeBR(iso)
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 }

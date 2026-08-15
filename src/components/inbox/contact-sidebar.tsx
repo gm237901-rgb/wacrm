@@ -1,6 +1,5 @@
 "use client";
 
-import { formatNumber } from "@/lib/datetime";
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,7 +12,7 @@ import {
   Check,
   User,
   Tag as TagIcon,
-  Banknote,
+  DollarSign,
   StickyNote,
   Plus,
 } from "lucide-react";
@@ -221,7 +220,7 @@ export function ContactSidebar({ contact, widthClassName = "w-70" }: ContactSide
           {/* Active Deals */}
           <div>
             <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <Banknote className="h-3 w-3" />
+              <DollarSign className="h-3 w-3" />
               {tSidebar("deals")}
             </div>
             <div className="mt-2 space-y-2">
@@ -239,7 +238,7 @@ export function ContactSidebar({ contact, widthClassName = "w-70" }: ContactSide
                     <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
                       <span>
                         {deal.currency ?? "$"}
-                        {formatNumber(deal.value)}
+                        {deal.value.toLocaleString()}
                       </span>
                       {deal.stage && (
                         <span

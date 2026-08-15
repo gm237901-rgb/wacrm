@@ -36,8 +36,13 @@ const pageTitles: Record<string, string> = {
   "/inbox": "inbox",
   "/notifications": "notifications",
   "/contacts": "contacts",
+  "/companies": "companies",
   "/pipelines": "pipelines",
+  "/tasks": "tasks",
+  "/activities": "activities",
+  "/emails": "emails",
   "/reports": "reports",
+  "/products": "products",
   "/broadcasts": "broadcasts",
   "/automations": "automations",
   "/settings": "settings",
@@ -207,7 +212,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
           <DropdownMenuItem
             render={
               <Link
-                href="/conta"
+                href="/settings?tab=profile"
                 className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
               />
             }
@@ -218,7 +223,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
           <DropdownMenuItem
             render={
               <Link
-                href="/settings"
+                href="/settings?tab=whatsapp"
                 className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
               />
             }
