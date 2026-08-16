@@ -20,7 +20,10 @@ import {
   GitBranch,
   LayoutDashboard,
   LogOut,
+  Mail,
+  Megaphone,
   MessageSquare,
+  Package,
   Settings,
   Shield,
   User,
@@ -101,6 +104,11 @@ interface NavSection {
 
 // Grouped nav — every route that existed before this reorganisation
 // is still here, just filed under a section instead of one flat list.
+//
+// Produtos, E-mails and Transmissões were built and routable but had no
+// row here, so the only way in was typing the URL. They're filed with
+// their neighbours: Produtos beside the other records, E-mails beside
+// the other conversations, Transmissões beside the other outbound work.
 const navSections: NavSection[] = [
   {
     labelKey: "sectionPrincipal",
@@ -108,6 +116,7 @@ const navSections: NavSection[] = [
       { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
       { href: "/contacts", labelKey: "contacts", icon: Users },
       { href: "/companies", labelKey: "companies", icon: Building2 },
+      { href: "/products", labelKey: "products", icon: Package },
       { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
     ],
   },
@@ -118,12 +127,14 @@ const navSections: NavSection[] = [
       { href: "/activities", labelKey: "activities", icon: Activity },
       { href: "/agenda", labelKey: "agenda", icon: CalendarDays },
       { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
+      { href: "/emails", labelKey: "emails", icon: Mail },
     ],
   },
   {
     labelKey: "sectionGestao",
     items: [
       { href: "/reports", labelKey: "reports", icon: BarChart3 },
+      { href: "/broadcasts", labelKey: "broadcasts", icon: Megaphone },
       { href: "/automations", labelKey: "automations", icon: Zap },
       { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
     ],
@@ -338,7 +349,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                           "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
                           collapsed && "lg:justify-center lg:px-0",
                           isActive
-                            ? "bg-primary/10 text-primary"
+                            ? "glow-nav bg-primary/10 text-primary"
                             : "text-muted-foreground hover:bg-muted hover:text-foreground",
                         )}
                       >

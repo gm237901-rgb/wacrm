@@ -68,7 +68,7 @@ export function MetricCard({
   const palette = tone ? TONE[tone] : null
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="glow-card rounded-xl border border-border bg-card p-5">
       <div className="flex items-start gap-3">
         <div
           className={cn(
