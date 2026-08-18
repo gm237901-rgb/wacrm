@@ -58,6 +58,17 @@ export const CURRENCIES: CurrencyOption[] = [
  * "United States". We never let that crash a render — on a bad code
  * we fall back to "CODE 1,234".
  */
+/**
+ * The app is pt-BR (NEXT_PUBLIC_APP_LOCALE), so the locale is pinned
+ * rather than left as `undefined`. Passing `undefined` means "format for
+ * whoever is looking", which made the same deal render "R$ 300.000" on a
+ * Brazilian machine and "BRL300,000" on an English one — a difference no
+ * code change could explain, because the code was identical. Pinning also
+ * makes the output deterministic in tests and removes a class of
+ * server/client hydration mismatch.
+ */
+const LOCALE = "pt-BR";
+
 export function formatCurrency(
   value: number,
   currency: string = DEFAULT_CURRENCY,
@@ -65,7 +76,7 @@ export function formatCurrency(
   const code = (currency || DEFAULT_CURRENCY).trim();
   const amount = Number(value) || 0;
   try {
-    return new Intl.NumberFormat(undefined, {
+    return new Intl.NumberFormat(LOCALE, {
       style: "currency",
       currency: code,
       minimumFractionDigits: 0,
@@ -74,7 +85,7 @@ export function formatCurrency(
   } catch {
     // Invalid ISO code — show the raw code + grouped number so the
     // value is still legible instead of throwing.
-    return `${code} ${new Intl.NumberFormat(undefined, {
+    return `${code} ${new Intl.NumberFormat(LOCALE, {
       maximumFractionDigits: 0,
     }).format(amount)}`;
   }

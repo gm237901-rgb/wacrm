@@ -105,19 +105,25 @@ describe("lastNDayKeys", () => {
 });
 
 describe("mondayIndex", () => {
+  // Built with the numeric constructor, never from a "YYYY-MM-DD" string.
+  // A date-only string parses as UTC midnight, while getDay() reads the
+  // local weekday — so west of Greenwich the string lands on the previous
+  // day and every assertion here shifts by one. mondayIndex is only ever
+  // handed locally-built dates in production; the string form was the bug.
+  const seg = new Date(2026, 4, 18); // segunda, 18/05/2026
+  const ter = new Date(2026, 4, 19);
+  const sab = new Date(2026, 4, 23);
+  const dom = new Date(2026, 4, 24);
+
   it("maps Monday → 0 and Sunday → 6", () => {
-    expect(mondayIndex(new Date("2026-05-18"))).toBe(0); // Mon
-    expect(mondayIndex(new Date("2026-05-19"))).toBe(1); // Tue
-    expect(mondayIndex(new Date("2026-05-23"))).toBe(5); // Sat
-    expect(mondayIndex(new Date("2026-05-24"))).toBe(6); // Sun
+    expect(mondayIndex(seg)).toBe(0);
+    expect(mondayIndex(ter)).toBe(1);
+    expect(mondayIndex(sab)).toBe(5);
+    expect(mondayIndex(dom)).toBe(6);
   });
 
   it("aligns with DOW_SHORT_MON_FIRST labels", () => {
-    expect(DOW_SHORT_MON_FIRST[mondayIndex(new Date("2026-05-18"))]).toBe(
-      "Mon",
-    );
-    expect(DOW_SHORT_MON_FIRST[mondayIndex(new Date("2026-05-24"))]).toBe(
-      "Sun",
-    );
+    expect(DOW_SHORT_MON_FIRST[mondayIndex(seg)]).toBe("Mon");
+    expect(DOW_SHORT_MON_FIRST[mondayIndex(dom)]).toBe("Sun");
   });
 });

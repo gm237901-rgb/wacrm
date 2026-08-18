@@ -69,11 +69,36 @@ export async function middleware(request: NextRequest) {
     return withRefreshedCookies(NextResponse.redirect(url))
   }
 
-  // Protected pages - redirect to login if not authenticated
-  const protectedPaths = ['/dashboard', '/inbox', '/contacts', '/pipelines', '/broadcasts', '/automations', '/settings']
-  if (!user && protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+  // Everything that isn't on this list requires a session.
+  //
+  // This used to be the other way round — a list of protected paths —
+  // and it had drifted badly: it named 7 routes while the app had 17,
+  // so /agenda, /reports, /tasks, /activities, /flows, /agents,
+  // /companies, /products, /emails and /notifications all rendered for
+  // signed-out visitors. RLS still withheld the data, so the pages came
+  // up empty rather than leaking anything, but the gate itself was open
+  // and nothing pointed that out.
+  //
+  // An allowlist of protected paths fails OPEN: a page added tomorrow is
+  // public until someone remembers this file. A denylist of public paths
+  // fails CLOSED — the new page is protected by default, and making
+  // something public becomes a deliberate edit here.
+  const rotasPublicas = [
+    '/login',
+    '/signup',
+    '/forgot-password',
+    '/auth/',   // callback do Supabase
+    '/join/',   // aceitar convite (o token é a credencial)
+    '/api/',    // as rotas de API têm suas próprias regras, abaixo
+  ]
+  const ehPublica =
+    request.nextUrl.pathname === '/' ||
+    rotasPublicas.some((rota) => request.nextUrl.pathname.startsWith(rota))
+
+  if (!user && !ehPublica) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
+    url.search = ''
     return withRefreshedCookies(NextResponse.redirect(url))
   }
 

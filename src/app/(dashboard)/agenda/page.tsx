@@ -86,14 +86,31 @@ function AgendaPageInner() {
   // dialog, or null when closed.
   const [overflowDay, setOverflowDay] = useState<string | null>(null);
 
-  const monthStart = startOfMonth(monthAnchor);
-  const monthEnd = endOfMonth(monthAnchor);
-  const gridStart = startOfWeek(monthStart, { weekStartsOn: 0 });
-  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  // The grid range has to be memoised, not recomputed inline. date-fns
+  // returns a fresh Date on every call and React compares deps with
+  // Object.is, so a Date dependency never matches the previous render's —
+  // which made fetchEvents a new function every render, re-fired the
+  // effect below, and looped: fetch → setState → render → fetch.
+  // `monthAnchor` is state, so its identity is stable until it changes.
+  const { gridStart, gridEnd } = useMemo(() => {
+    const monthStart = startOfMonth(monthAnchor);
+    const monthEnd = endOfMonth(monthAnchor);
+    return {
+      gridStart: startOfWeek(monthStart, { weekStartsOn: 0 }),
+      gridEnd: endOfWeek(monthEnd, { weekStartsOn: 0 }),
+    };
+  }, [monthAnchor]);
+
   const days = useMemo(
     () => eachDayOfInterval({ start: gridStart, end: gridEnd }),
     [gridStart, gridEnd]
   );
+
+  // The query needs these as strings anyway, and strings compare by value —
+  // so the fetch callback below depends on primitives rather than on
+  // objects whose stability we'd have to keep re-proving.
+  const gridStartISO = gridStart.toISOString();
+  const gridEndISO = gridEnd.toISOString();
 
   const fetchEvents = useCallback(async () => {
     if (!accountId) return;
@@ -103,8 +120,8 @@ function AgendaPageInner() {
       .select(
         "*, contact:contacts(id,name,phone), deal:deals(id,title), assignee:profiles!events_assigned_to_fkey(id,full_name,email)"
       )
-      .gte("starts_at", gridStart.toISOString())
-      .lte("starts_at", gridEnd.toISOString())
+      .gte("starts_at", gridStartISO)
+      .lte("starts_at", gridEndISO)
       .order("starts_at", { ascending: true });
     setLoading(false);
     if (error) {
@@ -112,7 +129,7 @@ function AgendaPageInner() {
       return;
     }
     setEvents((data ?? []) as CalendarEvent[]);
-  }, [supabase, accountId, gridStart, gridEnd]);
+  }, [supabase, accountId, gridStartISO, gridEndISO]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
