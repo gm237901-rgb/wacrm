@@ -166,18 +166,6 @@
       "newBroadcast": "Nova transmissão",
       "newAutomation": "Nova automação"
     },
-    "activityFeed": {
-      "title": "Atividade recente",
-      "viewAll": "Ver tudo →",
-      "noActivity": "Nenhuma atividade ainda",
-      "noActivityHint": "Atividades de mensagens, negócios, transmissões e automações vão aparecer aqui.",
-      "showingOf": "Mostrando {visible} de {totalLoaded}{plus}",
-      "show": "Mostrar",
-      "timeS": "há {sec}s",
-      "timeM": "há {min}min",
-      "timeH": "há {hr}h",
-      "timeD": "há {day}d"
-    },
     "conversationsChart": {
       "title": "Conversas ao longo do tempo",
       "description": "Volume diário de mensagens por direção",
